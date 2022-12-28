@@ -71,7 +71,7 @@ const ManufacturerPage = (props: Props) => {
         name: "Actions",
         cell: (row: any) => (
           <>
-            <Button className="bg-blue-500" compact>
+            <Button className="bg-[#002884]" compact>
               <AiFillEdit />
             </Button>
           </>
