@@ -11,10 +11,10 @@ export default function DashboardLayout({
       <div>
         <Sidebar />
       </div>
-      <div className="relative w-[100%] bg-green-600">
+      <div className="relative w-[100%]">
         <Navbar />
         <div className="h-[70px]" />
-        <div className="overflow-y-scroll overflow-x-hidden h-[calc(100vh_-_70px)] p-2">
+        <div className="overflow-y-scroll overflow-x-hidden max-w-[calc(100vw_-_300px)] h-[calc(100vh_-_70px)] p-2 bg-[#f4f5fd]">
           {children}
         </div>
       </div>

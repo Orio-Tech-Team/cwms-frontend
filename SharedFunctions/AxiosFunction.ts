@@ -2,7 +2,7 @@ import axios from "axios";
 import {getCookie} from "cookies-next";
 // 
 type axiosParams = {
-    method: string;
+    method?: string;
     urlPath: string;
     data?: any;
     params?: any;
