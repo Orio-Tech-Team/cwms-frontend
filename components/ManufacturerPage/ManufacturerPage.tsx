@@ -2,7 +2,7 @@
 // import { useRouter } from "next/router";
 import React from "react";
 import UseManufacturerData from "../../modules/Manufacturer/UseManufacturerData";
-import { Button } from "@mantine/core";
+import { Button, Loader } from "@mantine/core";
 import { AiFillEdit } from "react-icons/ai";
 import DataTableComponent from "../Shared/DataTableComponent/DataTableComponent";
 import Link from "next/link";
@@ -127,7 +127,15 @@ const ManufacturerPage = (props: Props) => {
               Add Manufacturer
             </Link>
           </div>
-          <DataTableComponent columns={columns} data={data} />
+          {isLoading ? (
+            <Loader
+              style={{ margin: "auto", padding: "10px 0px" }}
+              color="dark"
+              size="xl"
+            />
+          ) : (
+            <DataTableComponent columns={columns} data={data} />
+          )}
         </div>
       </main>
     </>
