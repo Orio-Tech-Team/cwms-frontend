@@ -23,7 +23,7 @@ export default function DashboardLayout({
     <section className="flex">
       <Sidebar sidebarActive={sidebarActive} />
       <div className="relative">
-        <Navbar sidebarHandler={sidebarHandler} />
+        <Navbar sidebarActive={sidebarActive} sidebarHandler={sidebarHandler} />
         <div className="h-[70px] w-[100%]" />
         <div className={mainDashboardClass}>{children}</div>
       </div>

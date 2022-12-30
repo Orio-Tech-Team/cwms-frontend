@@ -2,12 +2,55 @@
 import React from "react";
 //
 import { useSearchParams } from "next/navigation";
-
+// components
+import { Switch } from "@mantine/core";
+import InputComponent from "../Shared/InputComponent/InputComponent";
+//
 type Props = {};
-
+//
 const ManufacturerAddUpdatePage = (props: Props) => {
   const searchParams = useSearchParams();
-  return <div>{searchParams.get("id")}</div>;
+  const [isUpdate, setIsUpdate] = React.useState(
+    searchParams.get("id") != "add"
+  );
+  React.useEffect(() => {
+    const searchedId = searchParams.get("id");
+  }, []);
+  return (
+    <>
+      <main className="flex flex-col justify-center px-5">
+        <div className="mt-5 mb-7">
+          <h1 className="font-semibold text-[1.5rem] text-[#3b3e66]">
+            {isUpdate ? "Update Manufacturer" : "Add Manufacturer"}
+          </h1>
+          <p className="text-gray-500">
+            Please see Add or Update Manufacturer form below all connected
+            channels
+          </p>
+        </div>
+        <div className="shadow-xl border border-gray-100 rounded-md bg-white">
+          <div className="flex justify-between items-center px-2 py-5 border-b-[1px]">
+            <p className="font-semibold text-gray-500 py-2">
+              Here you can manage your all Add and Update Manufacturers!
+            </p>
+          </div>
+          <form className="p-5 flex flex-col gap-5">
+            <Switch
+              label="Manufacturer Status"
+              description="Active / In-Active"
+            />
+            <InputComponent
+              placeholder="Manufacturer Name"
+              //   size="xs"
+              label="Manufacturer Name"
+              required={true}
+              type={"text"}
+            />
+          </form>
+        </div>
+      </main>
+    </>
+  );
 };
 
 export default ManufacturerAddUpdatePage;

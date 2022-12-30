@@ -4,12 +4,14 @@ import React from "react";
 import { Button } from "@mantine/core";
 import { FiSearch } from "react-icons/fi";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { GrClose } from "react-icons/gr";
 //
 type Props = {
   sidebarHandler: () => void;
+  sidebarActive: boolean;
 };
 
-const Navbar = ({ sidebarHandler }: Props) => {
+const Navbar = ({ sidebarHandler, sidebarActive }: Props) => {
   //
 
   //
@@ -20,7 +22,11 @@ const Navbar = ({ sidebarHandler }: Props) => {
           onClick={sidebarHandler}
           className="flex items-center justify-center aspect-square hover:bg-transparent"
         >
-          <GiHamburgerMenu className="text-black text-[1.2rem]" />
+          {sidebarActive ? (
+            <GrClose className="text-black text-[1.2rem]" />
+          ) : (
+            <GiHamburgerMenu className="text-black text-[1.2rem]" />
+          )}
         </Button>
         <div className="w-[1px] mx-5 bg-black h-10" />
         <Button className="flex items-center justify-center aspect-square hover:bg-transparent">

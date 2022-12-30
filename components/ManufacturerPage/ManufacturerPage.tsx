@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import UseManufacturerData from "../../modules/Manufacturer/UseManufacturerData";
-import { Button, Loader } from "@mantine/core";
+import { Loader } from "@mantine/core";
 import { AiFillEdit } from "react-icons/ai";
 import DataTableComponent from "../Shared/DataTableComponent/DataTableComponent";
 import Link from "next/link";
@@ -107,7 +107,7 @@ const ManufacturerPage = (props: Props) => {
   //
   return (
     <>
-      <main className="flex flex-col justify-center">
+      <main className="flex flex-col justify-center px-5">
         <div className="mt-5 mb-7">
           <h1 className="font-semibold text-[1.5rem] text-[#3b3e66]">
             Manufacturer
@@ -117,8 +117,8 @@ const ManufacturerPage = (props: Props) => {
           </p>
         </div>
         <div className="shadow-xl border border-gray-100 rounded-md bg-white">
-          <div className="flex justify-between items-center my-5 px-2">
-            <p className="font-semibold text-gray-500">
+          <div className="flex justify-between items-center px-2 py-5 border-b-[1px]">
+            <p className="font-semibold py-2 text-gray-500">
               Here you can manage your all Manufacturers!
             </p>
             <Link
