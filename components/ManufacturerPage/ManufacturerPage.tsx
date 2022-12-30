@@ -1,5 +1,4 @@
 "use client";
-// import { useRouter } from "next/router";
 import React from "react";
 import UseManufacturerData from "../../modules/Manufacturer/UseManufacturerData";
 import { Button, Loader } from "@mantine/core";
@@ -10,7 +9,6 @@ import Link from "next/link";
 type Props = {};
 
 const ManufacturerPage = (props: Props) => {
-  //   const router = useRouter();
   const [ManufacturerData, setManufacturerData]: Array<any> =
     UseManufacturerData();
   const [columns, setColumns]: Array<any> = React.useState([]);
@@ -71,9 +69,12 @@ const ManufacturerPage = (props: Props) => {
         name: "Actions",
         cell: (row: any) => (
           <>
-            <Button className="bg-[#002884]" compact>
+            <Link
+              className="bg-[#002884] p-1 rounded-md text-white"
+              href={`/dashboard/manufacturer/manufacturer/?id=${row.id}`}
+            >
               <AiFillEdit />
-            </Button>
+            </Link>
           </>
         ),
         ignoreRowClick: true,
@@ -122,7 +123,7 @@ const ManufacturerPage = (props: Props) => {
             </p>
             <Link
               className="bg-[#002884] py-2 px-5 rounded-md text-white"
-              href={"/"}
+              href={"/dashboard/manufacturer/manufacturer/?id=add"}
             >
               Add Manufacturer
             </Link>

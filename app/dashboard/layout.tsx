@@ -1,3 +1,5 @@
+"use client";
+import React from "react";
 import Navbar from "../../components/Layout/Navbar";
 import Sidebar from "../../components/Layout/Sidebar";
 
@@ -6,17 +8,24 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [sidebarActive, setSidebarActive] = React.useState(true);
+  const sidebarHandler = () => {
+    setSidebarActive((pre: boolean) => {
+      return !pre;
+    });
+  };
+  //
+  const mainDashboardClass = sidebarActive
+    ? "overflow-y-scroll overflow-x-hidden w-[calc(100vw_-_300px)] h-[calc(100vh_-_70px)] transition-all p-2 bg-[#f4f5fd]"
+    : "overflow-y-scroll overflow-x-hidden w-[100vw] h-[calc(100vh_-_70px)] transition-all p-2 bg-[#f4f5fd] ";
+  //
   return (
     <section className="flex">
-      <div>
-        <Sidebar />
-      </div>
-      <div className="relative w-[100%]">
-        <Navbar />
-        <div className="h-[70px]" />
-        <div className="overflow-y-scroll overflow-x-hidden max-w-[calc(100vw_-_300px)] h-[calc(100vh_-_70px)] p-2 bg-[#f4f5fd]">
-          {children}
-        </div>
+      <Sidebar sidebarActive={sidebarActive} />
+      <div className="relative">
+        <Navbar sidebarHandler={sidebarHandler} />
+        <div className="h-[70px] w-[100%]" />
+        <div className={mainDashboardClass}>{children}</div>
       </div>
     </section>
   );

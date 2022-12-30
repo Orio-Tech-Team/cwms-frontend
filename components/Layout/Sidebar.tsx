@@ -1,11 +1,16 @@
 import React from "react";
 
-type Props = {};
+type Props = {
+  sidebarActive: boolean;
+};
 
-const Sidebar = (props: Props) => {
+const Sidebar = ({ sidebarActive }: Props) => {
+  const sidebarClass: string = sidebarActive
+    ? "bg-[#ffffff] h-screen w-[300px] shadow-2xl z-20 transition-all"
+    : "bg-[#ffffff] h-screen w-[0px] overflow-hidden z-20 transition-all translate-x-[-1000px]";
   return (
     <>
-      <div className="bg-blue-500 h-screen w-[300px]">Side Bar</div>
+      <div className={sidebarClass}>Side Bar</div>
     </>
   );
 };
