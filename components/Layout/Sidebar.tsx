@@ -1,5 +1,6 @@
+"use client";
 import React from "react";
-
+import Link from "next/link";
 type Props = {
   sidebarActive: boolean;
 };
@@ -10,7 +11,19 @@ const Sidebar = ({ sidebarActive }: Props) => {
     : "bg-[#ffffff] h-screen w-[0px] overflow-hidden z-20 transition-all translate-x-[-1000px]";
   return (
     <>
-      <div className={sidebarClass}>Side Bar</div>
+      <div className={sidebarClass}>
+        <ul>
+          <li>
+            <Link href={"/dashboard/"}>Dashboard</Link>
+          </li>
+          <li>
+            <Link href={"/dashboard/manufacturer/"}>Manufacturer</Link>
+          </li>
+          <li>
+            <Link href={"/dashboard/purchase_order/"}>Purchase Order</Link>
+          </li>
+        </ul>
+      </div>
     </>
   );
 };

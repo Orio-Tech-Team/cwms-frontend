@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 // components
 import { Switch } from "@mantine/core";
 import InputComponent from "../Shared/InputComponent/InputComponent";
+import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbComponent";
 //
 type Props = {};
 //
@@ -18,8 +19,9 @@ const ManufacturerAddUpdatePage = (props: Props) => {
   }, []);
   return (
     <>
-      <main className="flex flex-col justify-center px-5">
+      <main className="flex flex-col justify-center px-5 pb-7">
         <div className="mt-5 mb-7">
+          <BreadcrumbComponent />
           <h1 className="font-semibold text-[1.5rem] text-[#3b3e66]">
             {isUpdate ? "Update Manufacturer" : "Add Manufacturer"}
           </h1>
