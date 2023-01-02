@@ -128,7 +128,7 @@ const PurchaseOrderPage = (props: Props) => {
           </p>
         </div>
         <div className="shadow-xl border border-gray-100 rounded-md bg-white">
-          <div className="flex justify-between items-center px-2 py-5 border-b-[1px]">
+          <div className="flex justify-between items-center p-5 border-b-[1px]">
             <p className="font-semibold py-2 text-gray-500">
               Here you can manage your all Purchase Orders!
             </p>
