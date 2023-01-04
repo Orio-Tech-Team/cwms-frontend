@@ -3,16 +3,16 @@ export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const token = req.cookies.get("token");
   if (url.pathname === "/") {
-    //@ts-ignore
-    if (token === undefined || token === null || token === "") {
+    console.log(token);
+
+    if (token === undefined || token === null || token.value === "") {
       //   return NextResponse.redirect(new URL("/", req.url));
     } else {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
   }
   if (url.pathname != "/") {
-    //@ts-ignore
-    if (token === undefined || token === null || token === "") {
+    if (token === undefined || token === null || token.value === "") {
       return NextResponse.redirect(new URL("/", req.url));
     }
   }

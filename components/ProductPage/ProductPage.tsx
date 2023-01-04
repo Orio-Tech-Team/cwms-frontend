@@ -99,7 +99,7 @@ const ProductPage = (props: Props) => {
           <>
             <Link
               className="bg-[#002884] p-1 rounded-md text-white"
-              href={`/dashboard/manufacturer/manufacturer/?id=${row.id}`}
+              href={`/dashboard/products/update_product/?id=${row.id}`}
             >
               <AiFillEdit />
             </Link>
@@ -156,7 +156,7 @@ const ProductPage = (props: Props) => {
             </p>
             <Link
               className="bg-[#002884] py-2 px-5 rounded-md text-white"
-              href={"/dashboard/manufacturer/manufacturer/?id=add"}
+              href={"/dashboard/products/add_product/?id=add"}
             >
               Add Product
             </Link>

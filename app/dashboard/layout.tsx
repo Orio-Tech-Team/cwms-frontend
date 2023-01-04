@@ -16,9 +16,12 @@ export default function DashboardLayout({
     });
   };
   React.useEffect(() => {
-    const local_storage_sidebar_active: boolean =
-      localStorage.getItem("sidebar_active") === "true";
-    setSidebarActive(local_storage_sidebar_active);
+    const local_storage_sidebar_active = localStorage.getItem("sidebar_active");
+    setSidebarActive(
+      local_storage_sidebar_active
+        ? local_storage_sidebar_active === "true"
+        : true || true
+    );
   }, []);
 
   const mainDashboardClass = sidebarActive

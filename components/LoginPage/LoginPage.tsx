@@ -78,7 +78,7 @@ const LoginPage = (props: Props) => {
     <>
       <main className="w-[100%] h-screen flex justify-center items-center select-none">
         <div className="w-[700px] max-w-[95%]">
-          <div className="border mx-auto w-[300px] h-[80px]">
+          <div className=" mx-auto w-[300px] h-[80px]">
             <Image
               src="/pharm_logo.png"
               width={300}
