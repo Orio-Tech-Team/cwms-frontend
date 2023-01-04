@@ -19,39 +19,24 @@ const ManufacturerPage = (props: Props) => {
   const tableGenerator = () => {
     const columnsTemp = [
       {
-        name: "#",
-        cell: (row: any) => <>{row.key + 1}</>,
-        grow: 0,
-        width: "80px",
-        sortable: true,
-      },
-      {
         name: "ID",
         selector: (row: any) => row.id,
         grow: 0,
         center: true,
         width: "66px",
-        sortable: true,
       },
       {
         name: "Manufacturer",
         selector: (row: any) => row.manufacturer_name,
-        grow: 2,
+        grow: 1,
         sortable: true,
       },
       {
         name: "LOB",
         selector: (row: any) => row.line_of_business,
-        grow: 2,
-        sortable: true,
+        grow: 1,
       },
-      {
-        name: "Status",
-        selector: (row: any) => row.status,
-        grow: 0,
-        center: true,
-        width: "190px",
-      },
+
       {
         name: "Created At",
         selector: (row: any) => row.createdAt,
@@ -65,6 +50,21 @@ const ManufacturerPage = (props: Props) => {
         grow: 0,
         center: true,
         width: "190px",
+      },
+      {
+        name: "Status",
+        selector: (row: any) => (
+          <span
+            className={`font-semibold ${
+              row.status === "Active" ? "text-green-700" : "text-red-700"
+            }`}
+          >
+            {row.status}
+          </span>
+        ),
+        grow: 0,
+        width: "100px",
+        center: true,
       },
       {
         name: "Actions",

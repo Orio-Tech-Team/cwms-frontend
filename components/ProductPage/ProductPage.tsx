@@ -80,9 +80,17 @@ const ProductPage = (props: Props) => {
       },
       {
         name: "Status",
-        selector: (row: any) => row.item_status,
+        selector: (row: any) => (
+          <span
+            className={`font-semibold ${
+              row.item_status === "Active" ? "text-green-700" : "text-red-700"
+            }`}
+          >
+            {row.item_status}
+          </span>
+        ),
         grow: 0,
-        width: "116px",
+        width: "100px",
         center: true,
       },
       {

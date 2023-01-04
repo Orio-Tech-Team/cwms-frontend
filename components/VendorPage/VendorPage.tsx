@@ -73,7 +73,15 @@ const VendorPage = (props: Props) => {
       },
       {
         name: "Status",
-        selector: (row: any) => row.vendor_status,
+        selector: (row: any) => (
+          <span
+            className={`font-semibold ${
+              row.vendor_status === "Active" ? "text-green-700" : "text-red-700"
+            }`}
+          >
+            {row.vendor_status}
+          </span>
+        ),
         grow: 0,
         width: "100px",
         center: true,
