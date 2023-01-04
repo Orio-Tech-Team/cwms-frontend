@@ -21,21 +21,22 @@ const NotificationComponent = ({
   setNotification,
 }: Props) => {
   //
-
   React.useEffect(() => {
-    setTimeout(() => {
-      setNotification((pre: any) => {
-        return {
-          ...pre,
-          trigger: false,
-        };
-      });
-    }, 4000);
+    if (trigger) {
+      setTimeout(() => {
+        setNotification((pre: any) => {
+          return {
+            ...pre,
+            trigger: false,
+          };
+        });
+      }, 4000);
+    }
   }, [trigger]);
   //
   return (
     <Notification
-      className={`fixed right-5 bottom-5 z-[999] shadow-xl min-w-[250px] transition-all ${
+      className={`fixed right-28 bottom-8 z-[999] shadow-2xl min-w-[250px] scale-150 transition-all ${
         !trigger && "translate-x-[1000px]"
       }`}
       icon={isSuccess ? <BiCheck /> : <MdClose />}

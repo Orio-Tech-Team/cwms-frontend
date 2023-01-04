@@ -17,7 +17,11 @@ const ModalComponent = ({ modalHandler, modalStatus, children }: Props) => {
           modalStatus ? "visible" : "invisible"
         }`}
       >
-        <div className="flex flex-col bg-white w-[1000px] max-w-[95%] rounded-md p-5">
+        <div
+          className={`flex flex-col bg-white w-[1000px] max-w-[95%] rounded-md p-5  transition-all s ${
+            modalStatus ? "scale-100" : "scale-0"
+          }`}
+        >
           <div className="flex justify-end border-b-2 pb-3 px-3">
             <Button
               onClick={modalHandler}

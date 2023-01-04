@@ -4,10 +4,66 @@ import DataTable from "react-data-table-component";
 import { AiOutlineSearch } from "react-icons/ai";
 import { Input } from "@mantine/core";
 //
+const customStyles = {
+  table: {
+    style: {
+      width: "100%",
+    },
+  },
+  header: {
+    style: {
+      minHeight: "56px",
+    },
+  },
+  headRow: {
+    style: {
+      borderTopStyle: "solid",
+      borderTopWidth: "1px",
+      borderTopColor: "lightGray",
+    },
+  },
+  headCells: {
+    style: {
+      "&:not(:last-of-type)": {
+        borderRightStyle: "solid",
+        borderRightWidth: "1px",
+        borderRightColor: "lightGray",
+      },
+    },
+  },
+  row: {
+    style: {
+      borderRightStyle: "solid",
+      borderRightWidth: "1px",
+      borderRightColor: "red",
+    },
+  },
+  cells: {
+    style: {
+      "&:not(:last-of-type)": {
+        borderRightStyle: "solid",
+        borderRightWidth: "1px",
+        borderRightColor: "lightGray",
+      },
+      ">input": {
+        width: "100%",
+        padding: "2px",
+        fontSize: "12px",
+      },
+      ">div": {
+        display: "flex",
+      },
+    },
+  },
+};
+//
 type Props = {
   columns: any;
   data: any;
   title?: string;
+  selectableRows?: boolean;
+  onSelectedRowsChange?: (row: any) => void;
+  clearSelectedRows?: boolean;
 };
 //
 type FilterProps = {
@@ -29,7 +85,14 @@ const FilterComponent = ({ filterText, onFilter, title }: FilterProps) => (
 );
 //
 
-const DataTableComponent = ({ columns, data, title }: Props) => {
+const DataTableComponent = ({
+  selectableRows,
+  onSelectedRowsChange,
+  columns,
+  data,
+  title,
+  clearSelectedRows,
+}: Props) => {
   const [filterText, setFilterText] = React.useState("");
   const [resetPaginationToggle, setResetPaginationToggle] =
     React.useState(false);
@@ -86,9 +149,13 @@ const DataTableComponent = ({ columns, data, title }: Props) => {
       responsive
       subHeader
       subHeaderComponent={subHeaderComponentMemo}
+      selectableRows={selectableRows}
+      onSelectedRowsChange={onSelectedRowsChange}
       //@ts-ignore
       subHeaderAlign="right"
       subHeaderWrap
+      customStyles={customStyles}
+      clearSelectedRows={clearSelectedRows}
     />
   );
 };

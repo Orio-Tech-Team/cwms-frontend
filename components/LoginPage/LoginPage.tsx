@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 //
 import { Input, Button } from "@mantine/core";
 import { MdAlternateEmail, MdPassword } from "react-icons/md";
@@ -7,6 +8,7 @@ import NotificationComponent from "../Shared/NotificationComponent/NotificationC
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
+//
 //
 type Props = {};
 
@@ -46,7 +48,7 @@ const LoginPage = (props: Props) => {
     if (response.status === 402) {
       setNotification((pre) => {
         return {
-          description: "Incorred Cridentitals or User Not Found!",
+          description: "Incorrect Credentials or User Not Found!",
           title: "Error",
           isSuccess: false,
           trigger: true,
@@ -76,6 +78,14 @@ const LoginPage = (props: Props) => {
     <>
       <main className="w-[100%] h-screen flex justify-center items-center select-none">
         <div className="w-[700px] max-w-[95%]">
+          <div className="border mx-auto w-[300px] h-[80px]">
+            <Image
+              src="/pharm_logo.png"
+              width={300}
+              height={80}
+              alt="Pharmacy Logo"
+            />
+          </div>
           <div className="text-center">
             <h1 className="text-[2rem] font-semibold">Login to your account</h1>
             <p>and let's get those orders moving!</p>

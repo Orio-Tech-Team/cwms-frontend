@@ -31,7 +31,7 @@ const ManufacturerAddUpdatePage = (props: Props) => {
           </p>
         </div>
         <div className="shadow-xl border border-gray-100 rounded-md bg-white">
-          <div className="flex justify-between items-center px-2 py-5 border-b-[1px]">
+          <div className="flex justify-between items-center p-5 border-b-[1px]">
             <p className="font-semibold text-gray-500 py-2">
               Here you can manage your all Add and Update Manufacturers!
             </p>
