@@ -93,6 +93,7 @@ const ProductAddUpdatePage = (props: Props) => {
             className="p-5 flex gap-5 justify-between flex-wrap"
           >
             <Switch
+              size="md"
               className="w-[100%]"
               label="Product Status"
               description="Active / In-Active"
@@ -101,7 +102,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <TextInput
               className="w-[47%]"
               placeholder="Enter Product Name"
-              size="xs"
+              size="md"
               label="Product Name"
               required
               withAsterisk
@@ -111,7 +112,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <Select
               className="w-[47%]"
               placeholder="Pick SKU Department"
-              size="xs"
+              size="md"
               label="SKU Department"
               required
               withAsterisk
@@ -123,7 +124,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <Select
               className="w-[47%]"
               placeholder="Pick Item Nature"
-              size="xs"
+              size="md"
               label="Item Nature"
               required
               withAsterisk
@@ -135,7 +136,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <TextInput
               className="w-[47%]"
               placeholder=""
-              size="xs"
+              size="md"
               label="Trade Price"
               //   required
               //   withAsterisk
@@ -146,7 +147,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <TextInput
               className="w-[100%]"
               placeholder=""
-              size="xs"
+              size="md"
               label="Maximum Retail Price"
               //   required
               //   withAsterisk
@@ -157,7 +158,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <TextInput
               className="w-[47%]"
               placeholder=""
-              size="xs"
+              size="md"
               label="Margin"
               //   required
               //   withAsterisk
@@ -168,7 +169,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <TextInput
               className="w-[47%]"
               placeholder=""
-              size="xs"
+              size="md"
               label="Purchasing Price"
               //   required
               //   withAsterisk
@@ -179,7 +180,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <TextInput
               className="w-[47%]"
               placeholder="Enter SKU Minimum Level"
-              size="xs"
+              size="md"
               label="SKU Minimum Level"
               required
               withAsterisk
@@ -189,7 +190,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <TextInput
               className="w-[47%]"
               placeholder="Enter SKU Maximum Level"
-              size="xs"
+              size="md"
               label="SKU Maximum Level"
               required
               withAsterisk
@@ -199,7 +200,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <Select
               className="w-[47%]"
               placeholder="Pick Sales Tax Group"
-              size="xs"
+              size="md"
               label="Sales Tax Group"
               required
               withAsterisk
@@ -211,7 +212,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <TextInput
               className="w-[47%]"
               placeholder=""
-              size="xs"
+              size="md"
               label="Sales Tax Percentage"
               //   required
               //   withAsterisk
@@ -222,7 +223,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <TextInput
               className="w-[100%]"
               placeholder="Enter SKU Reorder Level"
-              size="xs"
+              size="md"
               label="SKU Reorder Level"
               required
               withAsterisk
@@ -232,7 +233,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <DatePicker
               className="w-[47%]"
               placeholder="Pick SKU Warehouse Lead Time"
-              size="xs"
+              size="md"
               label="SKU Warehouse Lead Time"
               required
               withAsterisk
@@ -241,7 +242,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <Select
               className="w-[47%]"
               placeholder="Pick Item Release Level"
-              size="xs"
+              size="md"
               label="Item Release Level"
               required
               withAsterisk
@@ -253,7 +254,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <Select
               className="w-[47%]"
               placeholder="Pick Price Levels"
-              size="xs"
+              size="md"
               label="Item Price Levels"
               required
               withAsterisk
@@ -265,7 +266,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <Select
               className="w-[47%]"
               placeholder="Pick Stock Nature"
-              size="xs"
+              size="md"
               label="Item Stock Nature"
               required
               withAsterisk
@@ -277,7 +278,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <TextInput
               className="w-[100%]"
               placeholder="Enter Bar Code"
-              size="xs"
+              size="md"
               label="Bar Code"
               required
               withAsterisk
@@ -288,7 +289,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <TextInput
               className="w-[47%]"
               placeholder="Enter Drap ID"
-              size="xs"
+              size="md"
               label="Drap ID"
               required
               withAsterisk
@@ -299,7 +300,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <TextInput
               className="w-[47%]"
               placeholder="Enter Dosage Instructions"
-              size="xs"
+              size="md"
               label="Dosage Instructions"
               required
               withAsterisk
@@ -309,7 +310,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <TextInput
               className="w-[47%]"
               placeholder="Enter Side Effects"
-              size="xs"
+              size="md"
               label="Side Effects"
               required
               withAsterisk
@@ -320,7 +321,7 @@ const ProductAddUpdatePage = (props: Props) => {
             <Select
               className="w-[47%]"
               placeholder="Pick Manufacturer"
-              size="xs"
+              size="md"
               label="Manufacturer"
               required
               withAsterisk
@@ -334,6 +335,47 @@ const ProductAddUpdatePage = (props: Props) => {
               })}
               {...form.getInputProps("manufacturer_id")}
             />
+
+            <MultiSelect
+              className="w-[47%]"
+              placeholder="Select Product Tags"
+              size="md"
+              label="Product Tags"
+              creatable
+              clearable
+              searchable
+              maxSelectedValues={3}
+              getCreateLabel={(query: any) => `Create ${query}`}
+              onCreate={(query: any) => {
+                const tag_temp = { value: query, label: query };
+                setProductTags((pre: Array<any>) => [...pre, tag_temp]);
+                return tag_temp;
+              }}
+              data={productTags}
+              {...form.getInputProps("product_tags")}
+            />
+            <MultiSelect
+              className="w-[47%]"
+              placeholder="Select Product Generic Formula"
+              size="md"
+              label="Product Generic Formula"
+              creatable
+              clearable
+              searchable
+              maxSelectedValues={3}
+              getCreateLabel={(query: any) => `Create ${query}`}
+              onCreate={(query: any) => {
+                const tag_temp = { value: query, label: query };
+                setProductGenericFormula((pre: Array<any>) => [
+                  ...pre,
+                  tag_temp,
+                ]);
+                return tag_temp;
+              }}
+              data={productGenericFormula}
+              {...form.getInputProps("product_generic_formula")}
+            />
+
             <div
               id="product_conversion_div"
               className="w-[100%] border rounded-md p-5 shadow-sm"
@@ -366,7 +408,7 @@ const ProductAddUpdatePage = (props: Props) => {
                 <Select
                   className="w-[47%]"
                   placeholder="Pick Selling Unit"
-                  size="xs"
+                  size="md"
                   label="Selling Unit"
                   required
                   withAsterisk
@@ -379,7 +421,7 @@ const ProductAddUpdatePage = (props: Props) => {
                 <TextInput
                   className="w-[47%]"
                   placeholder="Enter Item Conversion"
-                  size="xs"
+                  size="md"
                   label="Item Conversion"
                   required
                   withAsterisk
@@ -392,7 +434,7 @@ const ProductAddUpdatePage = (props: Props) => {
                 <Select
                   className="w-[47%]"
                   placeholder="Pick Selling Unit"
-                  size="xs"
+                  size="md"
                   label="Selling Unit"
                   required
                   withAsterisk
@@ -404,7 +446,7 @@ const ProductAddUpdatePage = (props: Props) => {
                 <TextInput
                   className="w-[47%]"
                   placeholder="Enter Item Conversion"
-                  size="xs"
+                  size="md"
                   label="Item Conversion"
                   required
                   withAsterisk
@@ -422,7 +464,7 @@ const ProductAddUpdatePage = (props: Props) => {
                 <Select
                   className="w-[47%]"
                   placeholder="Pick Selling Unit"
-                  size="xs"
+                  size="md"
                   label="Selling Unit"
                   searchable
                   nothingFound="No options"
@@ -432,57 +474,18 @@ const ProductAddUpdatePage = (props: Props) => {
                 <TextInput
                   className="w-[47%]"
                   placeholder="Enter Item Conversion"
-                  size="xs"
+                  size="md"
                   label="Item Conversion"
                   type={"text"}
                   {...form.getInputProps("product_conversion_ic_3")}
                 />
               </div>
             </div>
-            <MultiSelect
-              className="w-[47%]"
-              placeholder="Select Product Tags"
-              size="xs"
-              label="Product Tags"
-              creatable
-              clearable
-              searchable
-              maxSelectedValues={3}
-              getCreateLabel={(query: any) => `Create ${query}`}
-              onCreate={(query: any) => {
-                const tag_temp = { value: query, label: query };
-                setProductTags((pre: Array<any>) => [...pre, tag_temp]);
-                return tag_temp;
-              }}
-              data={productTags}
-              {...form.getInputProps("product_tags")}
-            />
-            <MultiSelect
-              className="w-[47%]"
-              placeholder="Select Product Generic Formula"
-              size="xs"
-              label="Product Generic Formula"
-              creatable
-              clearable
-              searchable
-              maxSelectedValues={3}
-              getCreateLabel={(query: any) => `Create ${query}`}
-              onCreate={(query: any) => {
-                const tag_temp = { value: query, label: query };
-                setProductGenericFormula((pre: Array<any>) => [
-                  ...pre,
-                  tag_temp,
-                ]);
-                return tag_temp;
-              }}
-              data={productGenericFormula}
-              {...form.getInputProps("product_generic_formula")}
-            />
 
             <TextInput
               className="w-[100%]"
               placeholder=""
-              size="xs"
+              size="md"
               label="Quantity"
               //   required
               //   withAsterisk
@@ -491,7 +494,7 @@ const ProductAddUpdatePage = (props: Props) => {
               {...form.getInputProps("quantity")}
             />
 
-            <Button className="bg-red-500" type={"submit"}>
+            <Button size="md" className="bg-red-500" type={"submit"}>
               Submit
             </Button>
           </form>

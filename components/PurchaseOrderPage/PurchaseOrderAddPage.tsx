@@ -18,11 +18,15 @@ import {
 //icons
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import UseProductConversionData from "../../modules/Product/UseProductConversionData";
+import axiosFunction from "../../SharedFunctions/AxiosFunction";
+import { useRouter } from "next/navigation";
 //
 type Props = {};
 var addToCartDisabler = true;
+var po_created_id: number = 0;
 
 const PurchaseOrderAddPage = (props: Props) => {
+  const router = useRouter();
   const [vendorData, setVendorData]: Array<any> = UseVendorData();
   const [locationData, setLocationData]: Array<any> = UseLocationData();
   const [productData, setProductData]: Array<any> = UseProductData();
@@ -246,9 +250,6 @@ const PurchaseOrderAddPage = (props: Props) => {
     //
     orderedProducts.forEach((each_ordered_products: any) => {
       disabled_products_temp.forEach((each_disabled_product: any) => {
-        console.log("Each Ordered Products: ", each_ordered_products);
-        console.log("Each Disabled Products: ", each_disabled_product);
-
         if (
           each_ordered_products.product_id ===
             each_disabled_product.product_id &&
@@ -293,8 +294,28 @@ const PurchaseOrderAddPage = (props: Props) => {
       order_type: form.getInputProps("order_type").value,
       delivery_location: form.getInputProps("delivery_location").value,
       orders: orderedProducts,
+      subtotal: subtotal,
+      total_discounted_price: subtotalDiscount,
+      total_tax: totalTax,
+      grand_total: subtotal + totalTax - subtotalDiscount,
     };
-    console.log(dataToSend);
+    const po_id_response = await axiosFunction({
+      data: dataToSend,
+      method: "POST",
+      urlPath: "/product_order/add_product_order/",
+    });
+    po_created_id = po_id_response.data.po_id;
+    setNotification((pre) => {
+      return {
+        description: `Purchase Order ID:${po_created_id} created successfully!`,
+        title: "Success",
+        isSuccess: true,
+        trigger: true,
+      };
+    });
+    setTimeout(() => {
+      router.push("/dashboard/purchase_order/");
+    }, 3000);
   };
   // Modal Work
   const [modalStatus, setModalStatus] = React.useState(false);
@@ -691,7 +712,7 @@ const PurchaseOrderAddPage = (props: Props) => {
             <Button
               className="bg-[#002884] hover:bg-[#0e2762] w-[300px] ml-auto"
               type={"submit"}
-              disabled={orderedProducts.length === 0}
+              disabled={orderedProducts.length === 0 || po_created_id != 0}
             >
               Order
             </Button>

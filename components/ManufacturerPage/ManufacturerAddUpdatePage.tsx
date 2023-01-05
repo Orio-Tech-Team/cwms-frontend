@@ -38,12 +38,13 @@ const ManufacturerAddUpdatePage = (props: Props) => {
           </div>
           <form className="p-5 flex flex-col gap-5">
             <Switch
+              size="md"
               label="Manufacturer Status"
               description="Active / In-Active"
             />
             <InputComponent
               placeholder="Manufacturer Name"
-              //   size="xs"
+              size="md"
               label="Manufacturer Name"
               required={true}
               type={"text"}
