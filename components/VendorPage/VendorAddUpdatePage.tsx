@@ -57,7 +57,6 @@ const VendorAddUpdatePage = (props: Props) => {
     },
   });
   //
-  console.log(withHoldTaxPercentage);
 
   //
   React.useEffect(() => {
