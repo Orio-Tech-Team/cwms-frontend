@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { Button } from "@mantine/core";
 import { setCookie } from "cookies-next";
@@ -46,7 +47,18 @@ const Sidebar = ({ sidebarActive }: Props) => {
   return (
     <>
       <div className={sidebarClass}>
-        <div className="h-[70px] border-gray-100"></div>
+        <div className="h-[70px] border-gray-100 flex justify-center items-center">
+          <div className="w-[170px] h-[60px] flex items-center">
+            <Image
+              priority
+              className="h-auto w-auto"
+              src="/pharm_logo.png"
+              width={170}
+              height={60}
+              alt="Pharmacy Logo"
+            />
+          </div>
+        </div>
         <div className="border-y-2 h-[calc(100vh_-_140px)] overflow-y-scroll overflow-x-hidden scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent">
           <ul className="flex flex-col gap-1">
             <li>

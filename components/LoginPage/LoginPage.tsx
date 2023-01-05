@@ -80,6 +80,8 @@ const LoginPage = (props: Props) => {
         <div className="w-[700px] max-w-[95%]">
           <div className=" mx-auto w-[300px] h-[80px]">
             <Image
+              priority
+              className="h-auto w-auto"
               src="/pharm_logo.png"
               width={300}
               height={80}

@@ -19,7 +19,6 @@ import {
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import UseProductConversionData from "../../modules/Product/UseProductConversionData";
 //
-
 type Props = {};
 var addToCartDisabler = true;
 
@@ -167,7 +166,7 @@ const PurchaseOrderAddPage = (props: Props) => {
   };
   // Add to Cart Function
   const addToCartFunction = () => {
-    var disabled_products_temp: Array<any> = [];
+    var disabled_products_temp: any[] = [];
     var total_temp = 0;
     var total_discount_temp = 0;
     var tax_temp = 0;
@@ -244,6 +243,22 @@ const PurchaseOrderAddPage = (props: Props) => {
         });
       }
     });
+    //
+    orderedProducts.forEach((each_ordered_products: any) => {
+      disabled_products_temp.forEach((each_disabled_product: any) => {
+        console.log("Each Ordered Products: ", each_ordered_products);
+        console.log("Each Disabled Products: ", each_disabled_product);
+
+        if (
+          each_ordered_products.product_id ===
+            each_disabled_product.product_id &&
+          each_ordered_products.foc != each_disabled_product.foc
+        ) {
+          console.log("Hello");
+        }
+      });
+    });
+    //
     setOrderedProducts(disabled_products_temp);
     setSubtotal(total_temp);
     setSubtotalDiscount(total_discount_temp);

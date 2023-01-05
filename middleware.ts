@@ -3,8 +3,6 @@ export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const token = req.cookies.get("token");
   if (url.pathname === "/") {
-    console.log(token);
-
     if (token === undefined || token === null || token.value === "") {
       //   return NextResponse.redirect(new URL("/", req.url));
     } else {
@@ -18,5 +16,5 @@ export async function middleware(req: NextRequest) {
   }
 }
 export const config = {
-  matcher: ["/((?!api|_next|static|favicon.ico).*)"],
+  matcher: ["/((?!api|_next|static|favicon.ico|pharm_logo.png).*)"],
 };

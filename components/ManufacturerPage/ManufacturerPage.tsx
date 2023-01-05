@@ -72,7 +72,7 @@ const ManufacturerPage = (props: Props) => {
           <>
             <Link
               className="bg-[#002884] p-1 rounded-md text-white"
-              href={`/dashboard/manufacturer/manufacturer/?id=${row.id}`}
+              href={`/dashboard/manufacturer/update_manufacturer/?id=${row.id}`}
             >
               <AiFillEdit />
             </Link>
@@ -125,7 +125,7 @@ const ManufacturerPage = (props: Props) => {
             </p>
             <Link
               className="bg-[#002884] py-2 px-5 rounded-md text-white"
-              href={"/dashboard/manufacturer/manufacturer/?id=add"}
+              href={"/dashboard/manufacturer/add_manufacturer/?id=add"}
             >
               Add Manufacturer
             </Link>
