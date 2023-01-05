@@ -92,7 +92,7 @@ const VendorPage = (props: Props) => {
           <>
             <Link
               className="bg-[#002884] p-1 rounded-md text-white"
-              href={`/dashboard/manufacturer/manufacturer/?id=${row.id}`}
+              href={`/dashboard/vendors/update_vendor/?id=${row.id}`}
             >
               <AiFillEdit />
             </Link>
@@ -146,7 +146,7 @@ const VendorPage = (props: Props) => {
             </p>
             <Link
               className="bg-[#002884] py-2 px-5 rounded-md text-white"
-              href={"/dashboard/manufacturer/manufacturer/?id=add"}
+              href={"/dashboard/vendors/add_vendor/?id=add"}
             >
               Add Vendor
             </Link>

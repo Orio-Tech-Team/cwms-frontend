@@ -53,7 +53,7 @@ const Sidebar = ({ sidebarActive }: Props) => {
               priority
               className="h-auto w-auto"
               src="/pharm_logo.png"
-              width={170}
+              width={100}
               height={60}
               alt="Pharmacy Logo"
             />

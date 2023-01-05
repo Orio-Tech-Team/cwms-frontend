@@ -26,7 +26,7 @@ export default function DashboardLayout({
 
   const mainDashboardClass = sidebarActive
     ? "scrollbar-thin scrollbar-thumb-[#aaa] scrollbar-track-transparent overflow-y-scroll overflow-x-hidden w-[calc(100vw_-_300px)] h-[calc(100vh_-_70px)] transition-all p-2 bg-[#f4f5fd]"
-    : "scrollbar-thin scrollbar-thumb-[#aaa] scrollbar-track-transparent overflow-y-scroll overflow-x-hidden w-[100vw] h-[calc(100vh_-_70px)] transition-all p-2 bg-[#f4f5fd] ";
+    : "scrollbar-thin scrollbar-thumb-[#aaa] scrollbar-track-transparent overflow-y-scroll overflow-x-hidden w-[100vw] h-[calc(100vh_-_70px)] transition-all p-2 bg-[#f4f5fd]";
   //
   return (
     <section className="flex ">

@@ -13,15 +13,14 @@ type Props = {};
 
 const ProductAddUpdatePage = (props: Props) => {
   const searchParams = useSearchParams();
+  const isUpdate = searchParams.get("id") != "add";
+
   const [manufacturerData, setManufacturerData]: Array<any> =
     UseManufacturerData();
   const [vendorData, setVendorData]: Array<any> = UseVendorData();
   const [productTags, setProductTags]: Array<any> = React.useState([]);
   const [productGenericFormula, setProductGenericFormula]: Array<any> =
     React.useState([]);
-  const [isUpdate, setIsUpdate] = React.useState(
-    searchParams.get("id") != "add"
-  );
   React.useEffect(() => {
     const searchedId = searchParams.get("id");
   }, []);
