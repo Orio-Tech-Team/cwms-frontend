@@ -14,7 +14,8 @@ const axiosFunction = async ({
   data = {},
   params = {},
 }: axiosParams) => {
-  const url = process.env.NEXT_PUBLIC_THIS_URL;
+  // const url = process.env.NEXT_PUBLIC_THIS_URL;
+  const url = "http://localhost:3001/dashboard";
   var config: any = {
     method: method,
     url: `${url}${urlPath}`,

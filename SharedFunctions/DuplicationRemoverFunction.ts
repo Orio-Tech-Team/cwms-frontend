@@ -1,3 +1,9 @@
 export default function duplicationRemoverFunction<T>(array: T[]): T[] {
-  return Array.from(new Set(array));
+  var temp_arr = Array.from(new Set(array)).filter((each_element: any) => {
+    return (
+      each_element != undefined && each_element != "" && each_element != null
+    );
+  });
+
+  return temp_arr;
 }

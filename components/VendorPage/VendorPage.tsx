@@ -4,16 +4,38 @@ import Link from "next/link";
 import { AiFillEdit } from "react-icons/ai";
 import UseVendorData from "../../modules/Vendor/UseVendorData";
 import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbComponent";
-import { Loader } from "@mantine/core";
+import { Button, Loader } from "@mantine/core";
 import DataTableComponent from "../Shared/DataTableComponent/DataTableComponent";
+import axiosFunction from "../../SharedFunctions/AxiosFunction";
+import { useRouter } from "next/navigation";
 
 type Props = {};
 
 const VendorPage = (props: Props) => {
+  const router = useRouter();
   const [columns, setColumns]: Array<any> = React.useState([]);
   const [data, setData]: Array<any> = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [vendorData, setVendorData]: Array<any> = UseVendorData();
+  //
+  const updateHandler = async (_id: number) => {
+    const vendor_response = await axiosFunction({
+      urlPath: `/vendor/update/${_id}`,
+    });
+    var manufacturer_id_temp: any[] = [];
+    vendor_response.data.manufacturer.forEach((each_manufacturer: any) => {
+      manufacturer_id_temp.push(each_manufacturer.id);
+    });
+    localStorage.setItem(
+      "vendor_data",
+      JSON.stringify({
+        ...vendor_response.data,
+        manufacturer: manufacturer_id_temp,
+      })
+    );
+    router.push(`/dashboard/vendors/update_vendor/?id=${_id}`);
+  };
+  //
   const tableGenerator = () => {
     const columnTemp = [
       {
@@ -90,12 +112,12 @@ const VendorPage = (props: Props) => {
         name: "Action",
         cell: (row: any) => (
           <>
-            <Link
-              className="bg-[#002884] p-1 rounded-md text-white"
-              href={`/dashboard/vendors/update_vendor/?id=${row.id}`}
+            <span
+              className="bg-[#002884] rounded-md w-5 h-5 flex justify-center items-center"
+              onClick={() => updateHandler(row.id)}
             >
-              <AiFillEdit />
-            </Link>
+              <AiFillEdit className="text-white" />
+            </span>
           </>
         ),
         ignoreRowClick: true,

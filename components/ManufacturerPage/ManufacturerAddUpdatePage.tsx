@@ -4,7 +4,6 @@ import React from "react";
 import { useSearchParams } from "next/navigation";
 // components
 import { Switch } from "@mantine/core";
-import InputComponent from "../Shared/InputComponent/InputComponent";
 import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbComponent";
 //
 type Props = {};
@@ -41,13 +40,6 @@ const ManufacturerAddUpdatePage = (props: Props) => {
               size="md"
               label="Manufacturer Status"
               description="Active / In-Active"
-            />
-            <InputComponent
-              placeholder="Manufacturer Name"
-              size="md"
-              label="Manufacturer Name"
-              required={true}
-              type={"text"}
             />
           </form>
         </div>

@@ -1,0 +1,8 @@
+.dual_list_component input {
+  border-radius: 4px;
+  height: 45px;
+}
+.dual_list_component > div select {
+  border-radius: 4px;
+  @apply scrollbar-thin;
+}

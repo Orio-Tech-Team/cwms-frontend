@@ -63,8 +63,8 @@ const PurchaseOrderAddPage = (props: Props) => {
       order_type: "",
     },
   });
-  // tableInputHandler
 
+  // tableInputHandler
   const tableInputHandler = (row: any, name: string, value: any) => {
     if (name === "unit_of_measurement" || name === "foc") {
       var temp_data_variable = [...selectedProducts];
