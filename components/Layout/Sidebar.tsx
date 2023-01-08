@@ -75,6 +75,14 @@ const Sidebar = ({ sidebarActive }: Props) => {
               </Link>
             </li>
             <li>
+              <Link className={linkClass} href={"/dashboard/categories/"}>
+                <span>Categories</span>
+                <span className="text-xl flex justify-center items-center">
+                  <MdKeyboardArrowRight />
+                </span>
+              </Link>
+            </li>
+            <li>
               <Link className={linkClass} href={"/dashboard/vendors/"}>
                 <span>Vendors</span>
                 <span className="text-xl flex justify-center items-center">

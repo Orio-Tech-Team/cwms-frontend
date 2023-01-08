@@ -1,34 +1,31 @@
 "use client";
 import React from "react";
-import UseManufacturerData from "../../modules/Manufacturer/UseManufacturerData";
-import { Loader } from "@mantine/core";
-import { AiFillEdit } from "react-icons/ai";
-import DataTableComponent from "../Shared/DataTableComponent/DataTableComponent";
 import Link from "next/link";
-import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbComponent";
+import { Loader } from "@mantine/core";
 import { useRouter } from "next/navigation";
+import { AiFillEdit } from "react-icons/ai";
+// Components
+import UseCategoryData from "../../modules/Category/UseCategoryData";
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
+import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbComponent";
+import DataTableComponent from "../Shared/DataTableComponent/DataTableComponent";
 //
 type Props = {};
 
-const ManufacturerPage = (props: Props) => {
+const CategoryPage = (props: Props) => {
   const router = useRouter();
-  const [ManufacturerData, setManufacturerData]: Array<any> =
-    UseManufacturerData();
+  const [categoryData, setCategoryData]: any[] = UseCategoryData();
   const [columns, setColumns]: Array<any> = React.useState([]);
   const [data, setData]: Array<any> = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   //
   const updateHandler = async (_id: number) => {
-    const manufacturer_response = await axiosFunction({
-      urlPath: `/manufacturer/update/${_id}`,
+    const category_response = await axiosFunction({
+      urlPath: `/product/category/update/${_id}`,
     });
-    const [data_to_send_temp] = manufacturer_response.data;
-    localStorage.setItem(
-      "manufacturer_data",
-      JSON.stringify(data_to_send_temp)
-    );
-    router.push(`/dashboard/manufacturer/update_manufacturer/?id=${_id}`);
+    const [data_to_send_temp] = category_response.data;
+    localStorage.setItem("category_data", JSON.stringify(data_to_send_temp));
+    router.push(`/dashboard/categories/update_category/?id=${_id}`);
   };
   //
   const tableGenerator = () => {
@@ -41,27 +38,26 @@ const ManufacturerPage = (props: Props) => {
         width: "66px",
       },
       {
-        name: "Manufacturer",
-        selector: (row: any) => row.manufacturer_name,
+        name: "Category Name",
+        selector: (row: any) => row.category_name,
         grow: 1,
         sortable: true,
       },
       {
-        name: "LOB",
-        selector: (row: any) => row.line_of_business,
-        grow: 1,
-      },
-
-      {
-        name: "Created At",
-        selector: (row: any) => row.createdAt,
+        name: "Description",
+        selector: (row: any) => row.category_description || "-",
         grow: 0,
-        center: true,
         width: "190px",
       },
       {
-        name: "Updated At",
-        selector: (row: any) => row.updatedAt,
+        name: "Sorting",
+        selector: (row: any) => row.category_sorting,
+        grow: 0,
+        width: "100px",
+      },
+      {
+        name: "Level",
+        selector: (row: any) => row.category_level,
         grow: 0,
         center: true,
         width: "190px",
@@ -100,26 +96,28 @@ const ManufacturerPage = (props: Props) => {
         grow: 0,
       },
     ];
-    const dataTemp = ManufacturerData.map((each_item: any, key: number) => {
+    //
+    const dataTemp = categoryData.map((eachItem: any, key: number) => {
       return {
         key: key,
-        id: each_item.id,
-        manufacturer_name: each_item.manufacturer_name,
-        line_of_business: each_item.line_of_business,
-        status: each_item.manufacturer_status ? "Active" : "In-Active",
-        createdAt: each_item.createdAt.toString().substring(0, 10),
-        updatedAt: each_item.updatedAt.toString().substring(0, 10),
+        id: eachItem.id,
+        category_name: eachItem.category_name,
+        category_description: eachItem.category_description,
+        category_sorting: eachItem.category_sorting,
+        status: eachItem.category_status ? "Active" : "In-Active",
+        category_level: eachItem.category_level,
       };
     });
-    setColumns(columnsTemp);
+    //
     setData(dataTemp);
+    setColumns(columnsTemp);
   };
   //
   React.useEffect(() => {
     setIsLoading(true);
     tableGenerator();
     setIsLoading(false);
-  }, [ManufacturerData]);
+  }, [categoryData]);
   //
   return (
     <>
@@ -127,22 +125,22 @@ const ManufacturerPage = (props: Props) => {
         <div className="mt-5 mb-7">
           <BreadcrumbComponent />
           <h1 className="font-semibold text-[1.5rem] text-[#3b3e66]">
-            Manufacturers
+            Category
           </h1>
           <p className="text-gray-500">
-            Please see manufacturers below from all connected channels
+            Please see categories below from all connected channels
           </p>
         </div>
         <div className="shadow-xl border border-gray-100 rounded-md bg-white">
           <div className="flex justify-between items-center p-5 border-b-[1px]">
             <p className="font-semibold py-2 text-gray-500">
-              Here you can manage your all Manufacturers!
+              Here you can manage your all Category!
             </p>
             <Link
               className="bg-[#002884] py-2 px-5 rounded-md text-white"
-              href={"/dashboard/manufacturer/add_manufacturer/?id=add"}
+              href={"/dashboard/categories/add_category/?id=add"}
             >
-              Add Manufacturer
+              Add Category
             </Link>
           </div>
           {isLoading ? (
@@ -162,4 +160,4 @@ const ManufacturerPage = (props: Props) => {
   );
 };
 
-export default ManufacturerPage;
+export default CategoryPage;
