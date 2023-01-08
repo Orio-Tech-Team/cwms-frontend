@@ -1,29 +1,38 @@
 "use client";
 import React from "react";
 import { Button, MultiSelect, Select, Switch, TextInput } from "@mantine/core";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "@mantine/form";
 import { DatePicker } from "@mantine/dates";
 import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbComponent";
 import { ProductDropDownData } from "../../modules/Product/ProductDropDownData";
 import UseManufacturerData from "../../modules/Manufacturer/UseManufacturerData";
 import UseVendorData from "../../modules/Vendor/UseVendorData";
+import UseProductData from "../../modules/Product/UseProductData";
 
 type Props = {};
 
 const ProductAddUpdatePage = (props: Props) => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const isUpdate = searchParams.get("id") != "add";
-
+  const [submitButtonDisabler, setSubmitButtonDisabler] = React.useState(false);
+  const [notification, setNotification] = React.useState({
+    title: "",
+    description: "",
+    isSuccess: true,
+    trigger: false,
+  });
+  //
   const [manufacturerData, setManufacturerData]: Array<any> =
     UseManufacturerData();
   const [vendorData, setVendorData]: Array<any> = UseVendorData();
+  const [productData, setProductData]: any[] = UseProductData();
+  //
   const [productTags, setProductTags]: Array<any> = React.useState([]);
   const [productGenericFormula, setProductGenericFormula]: Array<any> =
     React.useState([]);
-  React.useEffect(() => {
-    const searchedId = searchParams.get("id");
-  }, []);
+  //
   const form = useForm({
     initialValues: {
       item_status: false,
@@ -365,10 +374,7 @@ const ProductAddUpdatePage = (props: Props) => {
               getCreateLabel={(query: any) => `Create ${query}`}
               onCreate={(query: any) => {
                 const tag_temp = { value: query, label: query };
-                setProductGenericFormula((pre: Array<any>) => [
-                  ...pre,
-                  tag_temp,
-                ]);
+                setProductGenericFormula((pre: any[]) => [...pre, tag_temp]);
                 return tag_temp;
               }}
               data={productGenericFormula}
