@@ -1,21 +1,71 @@
 "use client";
 import React from "react";
 //
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 // components
-import { Switch } from "@mantine/core";
+import { Button, Select, Switch, TextInput } from "@mantine/core";
 import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbComponent";
+import { useForm } from "@mantine/form";
+import ManufacturerDropDownValues from "../../modules/Manufacturer/ManufacturerDropDownValues";
+import NotificationComponent from "../Shared/NotificationComponent/NotificationComponent";
+import axiosFunction from "../../SharedFunctions/AxiosFunction";
+import UseManufacturerData from "../../modules/Manufacturer/UseManufacturerData";
 //
 type Props = {};
 //
 const ManufacturerAddUpdatePage = (props: Props) => {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const [isUpdate, setIsUpdate] = React.useState(
-    searchParams.get("id") != "add"
-  );
-  React.useEffect(() => {
-    const searchedId = searchParams.get("id");
-  }, []);
+  const isUpdate = searchParams.get("id") != "add";
+  const [manufactureData, setManufacturerData]: any[] = UseManufacturerData();
+  const [submitButtonDisabler, setSubmitButtonDisabler] = React.useState(false);
+  //
+  const form = useForm({
+    initialValues: isUpdate
+      ? {
+          ...JSON.parse(localStorage.getItem("manufacturer_data")!),
+        }
+      : {
+          manufacturer_name: "",
+          line_of_business: "",
+          manufacturer_status: true,
+        },
+  });
+  //
+  const [notification, setNotification] = React.useState({
+    title: "",
+    description: "",
+    isSuccess: true,
+    trigger: false,
+  });
+  //
+  const submitHandler = async (values: any) => {
+    setSubmitButtonDisabler(true);
+    const url_temp = isUpdate
+      ? "/manufacturer/update/"
+      : "/manufacturer/add_manufacturer/";
+    const manufacturer_response = await axiosFunction({
+      urlPath: url_temp,
+      data: values,
+      method: isUpdate ? "PUT" : "POST",
+    });
+    setManufacturerData([]);
+    const [new_manufacturer_id] = manufacturer_response.data.data;
+    setNotification((pre) => {
+      return {
+        description: `Manufacturer with ID: ${[new_manufacturer_id]} ${
+          isUpdate ? "Updated" : "Created"
+        } successfully!`,
+        title: "Success",
+        isSuccess: true,
+        trigger: true,
+      };
+    });
+    setTimeout(() => {
+      router.push("/dashboard/manufacturer/");
+    }, 3000);
+  };
+  //
   return (
     <>
       <main className="flex flex-col justify-center px-5 pb-7">
@@ -35,14 +85,58 @@ const ManufacturerAddUpdatePage = (props: Props) => {
               Here you can manage your all Add and Update Manufacturers!
             </p>
           </div>
-          <form className="p-5 flex flex-col gap-5">
+          <form
+            onSubmit={form.onSubmit((values: any) => submitHandler(values))}
+            className="p-5 flex gap-5 justify-between flex-wrap"
+          >
             <Switch
               size="md"
+              className="w-[100%]"
               label="Manufacturer Status"
               description="Active / In-Active"
+              {...form.getInputProps("manufacturer_status", {
+                type: "checkbox",
+              })}
             />
+            <TextInput
+              className="w-[47%]"
+              placeholder="Enter Manufacturer Name"
+              size="md"
+              label="Manufacturer Name"
+              required
+              withAsterisk
+              type={"text"}
+              {...form.getInputProps("manufacturer_name")}
+            />
+            <Select
+              className="w-[47%]"
+              placeholder="Pick Line Of Business"
+              size="md"
+              label="Line Of Business"
+              required
+              withAsterisk
+              searchable
+              nothingFound="No options"
+              data={ManufacturerDropDownValues.line_of_business}
+              {...form.getInputProps("line_of_business")}
+            />
+            <Button
+              size="md"
+              className="bg-red-500 w-56 ml-auto"
+              type={"submit"}
+              disabled={submitButtonDisabler}
+            >
+              {isUpdate ? "Update" : "Submit"}
+            </Button>
           </form>
         </div>
+        <NotificationComponent
+          description={notification.description}
+          isSuccess={notification.isSuccess}
+          title={notification.title}
+          trigger={notification.trigger}
+          setNotification={setNotification}
+        />
       </main>
     </>
   );

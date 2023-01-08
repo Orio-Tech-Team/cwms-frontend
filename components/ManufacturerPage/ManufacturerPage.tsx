@@ -6,15 +6,30 @@ import { AiFillEdit } from "react-icons/ai";
 import DataTableComponent from "../Shared/DataTableComponent/DataTableComponent";
 import Link from "next/link";
 import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbComponent";
+import { useRouter } from "next/navigation";
+import axiosFunction from "../../SharedFunctions/AxiosFunction";
 //
 type Props = {};
 
 const ManufacturerPage = (props: Props) => {
+  const router = useRouter();
   const [ManufacturerData, setManufacturerData]: Array<any> =
     UseManufacturerData();
   const [columns, setColumns]: Array<any> = React.useState([]);
   const [data, setData]: Array<any> = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  //
+  const updateHandler = async (_id: number) => {
+    const manufacturer_response = await axiosFunction({
+      urlPath: `/manufacturer/update/${_id}`,
+    });
+    const [data_to_send_temp] = manufacturer_response.data;
+    localStorage.setItem(
+      "manufacturer_data",
+      JSON.stringify(data_to_send_temp)
+    );
+    router.push(`/dashboard/manufacturer/update_manufacturer/?id=${_id}`);
+  };
   //
   const tableGenerator = () => {
     const columnsTemp = [
@@ -70,12 +85,12 @@ const ManufacturerPage = (props: Props) => {
         name: "Actions",
         cell: (row: any) => (
           <>
-            <Link
-              className="bg-[#002884] p-1 rounded-md text-white"
-              href={`/dashboard/manufacturer/update_manufacturer/?id=${row.id}`}
+            <span
+              className="bg-[#002884] rounded-md w-5 h-5 flex justify-center items-center"
+              onClick={() => updateHandler(row.id)}
             >
-              <AiFillEdit />
-            </Link>
+              <AiFillEdit className="text-white" />
+            </span>
           </>
         ),
         ignoreRowClick: true,

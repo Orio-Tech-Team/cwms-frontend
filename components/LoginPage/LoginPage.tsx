@@ -59,7 +59,7 @@ const LoginPage = (props: Props) => {
     //
     setNotification((pre) => {
       return {
-        description: "Login In Success Fully",
+        description: "Login Successfully",
         title: "Success",
         isSuccess: true,
         trigger: true,

@@ -24,7 +24,9 @@ type Props = {
 };
 
 const DualListBoxComponent = (props: Props) => {
-  const [state, setState] = React.useState(props.value);
+  const [state, setState] = React.useState({
+    selected: props.value,
+  });
   const changeHandler = (selected: any) => {
     props.onChange(selected);
     setState({ selected });

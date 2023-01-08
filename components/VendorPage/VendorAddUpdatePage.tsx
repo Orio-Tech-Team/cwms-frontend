@@ -12,6 +12,7 @@ import UseManufacturerData from "../../modules/Manufacturer/UseManufacturerData"
 import NotificationComponent from "../Shared/NotificationComponent/NotificationComponent";
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
 import UseVendorData from "../../modules/Vendor/UseVendorData";
+import { formValidator } from "../../SharedFunctions/NumberValidator";
 
 type Props = {};
 
@@ -19,28 +20,21 @@ const VendorAddUpdatePage = (props: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isUpdate = searchParams.get("id") != "add";
-
   //
-  const updateFinder = async (_id: string) => {
-    const vendor_response = await axiosFunction({
-      urlPath: `/vendor/update/${_id}`,
-    });
-    var manufacturer_id_temp: any[] = [];
-    vendor_response.data.manufacturer.forEach((each_manufacturer: any) => {
-      manufacturer_id_temp.push(each_manufacturer.id);
-    });
-  };
-  React.useEffect(() => {
-    var searchedId = searchParams.get("id")!;
-    if (searchedId != "add") {
-      updateFinder(searchedId);
-    }
-  }, []);
-
+  const [manufacturerData, setManufacturerData]: any[] = UseManufacturerData();
+  const [vendorData, setVendorData]: any[] = UseVendorData();
+  const { withHoldTaxGroup, withHoldTaxPercentage } = UseVendorTaxData();
+  //
+  const [submitButtonDisabler, setSubmitButtonDisabler] = React.useState(false);
   //
   const form = useForm({
+    validateInputOnChange: true,
     initialValues: isUpdate
-      ? JSON.parse(localStorage.getItem("vendor_data")!)
+      ? {
+          ...JSON.parse(localStorage.getItem("vendor_data")!),
+          cnic_expiry_date: new Date(),
+          tax_exemption_validity: new Date(),
+        }
       : {
           vendor_status: false,
           vendor_name: "",
@@ -82,12 +76,43 @@ const VendorAddUpdatePage = (props: Props) => {
           gst: "",
           minimum_order_quantity: "",
         },
+    validate: (values) => {
+      return {
+        vendor_credit_limit: formValidator(
+          values.vendor_credit_limit,
+          "vendor_credit_limit",
+          "double"
+        ),
+        ntn: formValidator(values.ntn, "ntn", "number"),
+        cnic: formValidator(values.cnic, "cnic", "number"),
+        strn: formValidator(values.strn, "strn", "number"),
+        drug_license_no: formValidator(
+          values.drug_license_no,
+          "drug_license_no",
+          "number"
+        ),
+        poc_phone_number: formValidator(
+          values.poc_phone_number,
+          "poc_phone_number",
+          "phone"
+        ),
+        business_phone_number: formValidator(
+          values.business_phone_number,
+          "business_phone_number",
+          "phone"
+        ),
+        poc_email: formValidator(values.poc_email, "poc_email", "email"),
+        email_address: formValidator(
+          values.email_address,
+          "email_address",
+          "email"
+        ),
+      };
+    },
   });
 
   //
-  const [manufacturerData, setManufacturerData]: any[] = UseManufacturerData();
-  const [vendorData, setVendorData]: any[] = UseVendorData();
-  const { withHoldTaxGroup, withHoldTaxPercentage } = UseVendorTaxData();
+
   //
   const [notification, setNotification] = React.useState({
     title: "",
@@ -108,18 +133,23 @@ const VendorAddUpdatePage = (props: Props) => {
       });
       return;
     }
+    setSubmitButtonDisabler(true);
+    //
+    const url_temp = isUpdate ? "/vendor/update/" : "/vendor/add_vendor/";
     //
     const vendor_id_response = await axiosFunction({
-      urlPath: "/vendor/add_vendor/",
+      urlPath: url_temp,
       data: value,
-      method: "POST",
+      method: isUpdate ? "PUT" : "POST",
     });
     //
     setVendorData([]);
     const [new_vendor_id] = vendor_id_response.data.data;
     setNotification((pre) => {
       return {
-        description: `Vendor with ID: ${[new_vendor_id]} created successfully!`,
+        description: `Vendor with ID: ${[new_vendor_id]} ${
+          isUpdate ? "Updated" : "Created"
+        } successfully!`,
         title: "Success",
         isSuccess: true,
         trigger: true,
@@ -509,6 +539,7 @@ const VendorAddUpdatePage = (props: Props) => {
               {...form.getInputProps("stock_return_policy")}
             />
             <Button
+              disabled={submitButtonDisabler}
               size="md"
               className="bg-red-500 w-56 ml-auto"
               type={"submit"}
