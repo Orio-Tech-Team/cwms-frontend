@@ -20,6 +20,7 @@ import { AiOutlineShoppingCart } from "react-icons/ai";
 import UseProductConversionData from "../../modules/Product/UseProductConversionData";
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
 import { useRouter } from "next/navigation";
+import UsePurchaseOrderData from "../../modules/PurchaseOrder/UsePurchaseOrderData";
 //
 type Props = {};
 var addToCartDisabler = true;
@@ -34,6 +35,8 @@ const PurchaseOrderAddPage = (props: Props) => {
     UseProductVendorData();
   const [productConversionData, setProductConversionData]: Array<any> =
     UseProductConversionData();
+  const [purchaseOrderData, setPurchaseOrderData]: any[] =
+    UsePurchaseOrderData();
   // States
   const [orderedProducts, setOrderedProducts]: Array<any> = React.useState([]);
   const [selectedProducts, setSelectedProducts]: Array<any> = React.useState(
@@ -305,6 +308,7 @@ const PurchaseOrderAddPage = (props: Props) => {
       urlPath: "/product_order/add_product_order/",
     });
     po_created_id = po_id_response.data.po_id;
+    setPurchaseOrderData([]);
     setNotification((pre) => {
       return {
         description: `Purchase Order ID:${po_created_id} created successfully!`,
@@ -383,6 +387,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                 nothingFound="No options"
                 required
                 withAsterisk
+                size="md"
                 disabled={form.getInputProps("vendor_id").value != ""}
                 data={vendorData.map((each_item: any) => {
                   return { label: each_item.vendor_name, value: each_item.id };
@@ -395,6 +400,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                 label="Expected Delivery Date"
                 required
                 withAsterisk
+                size="md"
                 {...form.getInputProps("expected_delivery_date")}
               />
               <Select
@@ -405,6 +411,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                 nothingFound="No options"
                 required
                 withAsterisk
+                size="md"
                 data={locationData.map((each_item: any) => {
                   return {
                     label: each_item.loc_name,
@@ -421,6 +428,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                 nothingFound="No options"
                 required
                 withAsterisk
+                size="md"
                 data={["Normal", "Advance"]}
                 {...form.getInputProps("order_type")}
               />

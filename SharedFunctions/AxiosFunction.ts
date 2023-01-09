@@ -1,8 +1,17 @@
 import axios from "axios";
 import { getCookie } from "cookies-next";
 //
+type MethodType =
+  | "POST"
+  | "GET"
+  | "PUT"
+  | "DELETE"
+  | "post"
+  | "get"
+  | "put"
+  | "delete";
 type axiosParams = {
-  method?: string;
+  method?: MethodType;
   urlPath: string;
   data?: any;
   params?: any;
@@ -14,8 +23,8 @@ const axiosFunction = async ({
   data = {},
   params = {},
 }: axiosParams) => {
-  const url = process.env.NEXT_PUBLIC_THIS_URL;
-  // const url = "http://localhost:5000/dashboard";
+  // const url = process.env.NEXT_PUBLIC_THIS_URL;
+  const url = "http://localhost:5000/dashboard";
   var config: any = {
     method: method,
     url: `${url}${urlPath}`,

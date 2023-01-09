@@ -1,7 +1,8 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import Navbar from "../../components/Layout/Navbar";
 import Sidebar from "../../components/Layout/Sidebar";
+import Loading from "./loading";
 
 export default function DashboardLayout({
   children,
@@ -34,7 +35,9 @@ export default function DashboardLayout({
       <div className="relative">
         <Navbar sidebarActive={sidebarActive} sidebarHandler={sidebarHandler} />
         <div className="h-[70px] w-[100%] " />
-        <div className={mainDashboardClass}>{children}</div>
+        <div className={mainDashboardClass}>
+          <Suspense fallback={<Loading />}>{children}</Suspense>
+        </div>
       </div>
     </section>
   );

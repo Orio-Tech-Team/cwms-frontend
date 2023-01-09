@@ -117,6 +117,17 @@ const Sidebar = ({ sidebarActive }: Props) => {
                 </span>
               </Link>
             </li>
+            <li>
+              <Link
+                className={linkClass}
+                href={"/dashboard/purchase_order/quality_check/"}
+              >
+                <span>Quality Check</span>
+                <span className="text-xl flex justify-center items-center">
+                  <MdKeyboardArrowRight />
+                </span>
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="px-10 h-[70px] flex items-center">

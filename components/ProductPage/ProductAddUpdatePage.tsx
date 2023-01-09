@@ -1,6 +1,14 @@
 "use client";
 import React from "react";
-import { Button, MultiSelect, Select, Switch, TextInput } from "@mantine/core";
+import dynamic from "next/dynamic";
+import {
+  Button,
+  MultiSelect,
+  Radio,
+  Select,
+  Switch,
+  TextInput,
+} from "@mantine/core";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "@mantine/form";
 import { DatePicker } from "@mantine/dates";
@@ -9,6 +17,10 @@ import { ProductDropDownData } from "../../modules/Product/ProductDropDownData";
 import UseManufacturerData from "../../modules/Manufacturer/UseManufacturerData";
 import UseVendorData from "../../modules/Vendor/UseVendorData";
 import UseProductData from "../../modules/Product/UseProductData";
+import UseCategoryData from "../../modules/Category/UseCategoryData";
+import DualListBoxComponent from "../Shared/DualListBoxComponent/DualListBoxComponent";
+import RichTextComponent from "../Shared/RichTextComponent/RichTextComponent";
+import axiosFunction from "../../SharedFunctions/AxiosFunction";
 
 type Props = {};
 
@@ -24,13 +36,13 @@ const ProductAddUpdatePage = (props: Props) => {
     trigger: false,
   });
   //
-  const [manufacturerData, setManufacturerData]: Array<any> =
-    UseManufacturerData();
-  const [vendorData, setVendorData]: Array<any> = UseVendorData();
+  const [manufacturerData, setManufacturerData]: any[] = UseManufacturerData();
+  const [vendorData, setVendorData]: any[] = UseVendorData();
   const [productData, setProductData]: any[] = UseProductData();
+  const [categoryData, setCategoryData]: any[] = UseCategoryData();
   //
-  const [productTags, setProductTags]: Array<any> = React.useState([]);
-  const [productGenericFormula, setProductGenericFormula]: Array<any> =
+  const [productTags, setProductTags]: any[] = React.useState([]);
+  const [productGenericFormula, setProductGenericFormula]: any[] =
     React.useState([]);
   //
   const form = useForm({
@@ -40,12 +52,13 @@ const ProductAddUpdatePage = (props: Props) => {
       sku_description: "",
       sku_department: "",
       item_nature: "",
+      trade_discount: 0,
       manufacturer_id: "",
       tax_code: "",
       purchasing_unit: "",
-      trade_price: "",
+      trade_price: 0,
       discounted_price: "",
-      maximum_retail_price: "",
+      maximum_retail_price: 0,
       sku_minimum_level: "",
       sku_maximum_level: "",
       sku_reorder_level: "",
@@ -60,13 +73,18 @@ const ProductAddUpdatePage = (props: Props) => {
       product_lifecycle: "",
       sales_tax_group: "",
       sales_tax_percentage: "",
-      quantity: "",
+      quantity: 0,
       prescription_required: false,
       drap_id: "",
       dosage_instruction: "",
       side_effects: "",
-      product_tags: [],
-      product_generic_formula: [],
+      discount_type: "price",
+      margin: 0,
+      purchasing_price: 0,
+      productTags: [],
+      category: [],
+      vendor: [],
+      productGenericFormula: [],
       product_conversion_su_1: "Carton",
       product_conversion_ic_1: "1",
       product_conversion_su_2: "",
@@ -75,9 +93,76 @@ const ProductAddUpdatePage = (props: Props) => {
       product_conversion_ic_3: "1",
     },
   });
-  const submitHandler = (values: any) => {
-    console.log(values);
+
+  const submitHandler = async (values: any) => {
+    if (values.category.length == 0) {
+      setNotification({
+        description: "Please select at least one category!",
+        title: "Error",
+        isSuccess: false,
+        trigger: true,
+      });
+      return;
+    }
+    if (values.vendor.length == 0) {
+      setNotification({
+        description: "Please select at least one vendor!",
+        title: "Error",
+        isSuccess: false,
+        trigger: true,
+      });
+      return;
+    }
+
+    //
+    var productConversion: any[] = [];
+    productConversion[0] = {
+      selling_unit: values.product_conversion_su_1,
+      item_conversion: values.product_conversion_ic_1,
+    };
+    productConversion[1] = {
+      selling_unit: values.product_conversion_su_2,
+      item_conversion: values.product_conversion_ic_2,
+    };
+    if (values.product_conversion_su_2 == "Box") {
+      productConversion.push({
+        selling_unit: values.product_conversion_su_3,
+        item_conversion: values.product_conversion_ic_3,
+      });
+    }
+    //
+    setSubmitButtonDisabler(true);
+    const url_temp = isUpdate ? "/product/update/" : "/vendor/add_product/";
+    const data_to_send_temp = {
+      ...values,
+      productConversion: productConversion,
+      margin: +values.maximum_retail_price - +values.trade_price,
+    };
+    //
+    const product_id_response = await axiosFunction({
+      urlPath: url_temp,
+      data: data_to_send_temp,
+      method: isUpdate ? "PUT" : "POST",
+    });
+    //
+    setProductData([]);
+    //
+    const [new_product_id] = product_id_response.data.data;
+    setNotification((pre) => {
+      return {
+        description: `Product with ID: ${[new_product_id]} ${
+          isUpdate ? "Updated" : "Created"
+        } successfully!`,
+        title: "Success",
+        isSuccess: true,
+        trigger: true,
+      };
+    });
+    setTimeout(() => {
+      router.push("/dashboard/products/");
+    }, 3000);
   };
+  //
   return (
     <>
       <main className="flex flex-col justify-center px-5 pb-7">
@@ -107,6 +192,15 @@ const ProductAddUpdatePage = (props: Props) => {
               description="Active / In-Active"
               {...form.getInputProps("item_status", { type: "checkbox" })}
             />
+            <Switch
+              size="md"
+              className="w-[100%]"
+              label="Prescription Required"
+              description="Yes / No"
+              {...form.getInputProps("prescription_required", {
+                type: "checkbox",
+              })}
+            />
             <TextInput
               className="w-[47%]"
               placeholder="Enter Product Name"
@@ -126,7 +220,7 @@ const ProductAddUpdatePage = (props: Props) => {
               withAsterisk
               searchable
               nothingFound="No options"
-              data={["Consumer", "Medicine"]}
+              data={ProductDropDownData.sku_department}
               {...form.getInputProps("sku_department")}
             />
             <Select
@@ -138,52 +232,85 @@ const ProductAddUpdatePage = (props: Props) => {
               withAsterisk
               searchable
               nothingFound="No options"
-              data={["Refrigerator", "Room Temperature", "Narcotics"]}
+              data={ProductDropDownData.item_nature}
               {...form.getInputProps("item_nature")}
             />
             <TextInput
               className="w-[47%]"
-              placeholder=""
               size="md"
               label="Trade Price"
-              //   required
-              //   withAsterisk
               type={"text"}
-              disabled
               {...form.getInputProps("trade_price")}
+              disabled
             />
             <TextInput
-              className="w-[100%]"
-              placeholder=""
+              className="w-[47%]"
               size="md"
               label="Maximum Retail Price"
-              //   required
-              //   withAsterisk
               type={"text"}
-              disabled
               {...form.getInputProps("maximum_retail_price")}
-            />
-            <TextInput
-              className="w-[47%]"
-              placeholder=""
-              size="md"
-              label="Margin"
-              //   required
-              //   withAsterisk
-              type={"text"}
               disabled
-              {...form.getInputProps("margin")}
             />
             <TextInput
               className="w-[47%]"
-              placeholder=""
+              size="md"
+              label="Trade Discount"
+              type={"text"}
+              {...form.getInputProps("trade_discount")}
+              disabled
+            />
+            <div className="w-[100%] flex justify-between">
+              <Radio.Group
+                className="w-[47%]"
+                orientation="vertical"
+                label="Select Discount Type"
+                spacing="xs"
+                offset="md"
+                size="md"
+                {...form.getInputProps("discount_type")}
+              >
+                <Radio value="price" label="Discounted Price" />
+                <Radio value="percentage" label="Discounted Percentage" />
+              </Radio.Group>
+              {form.getInputProps("discount_type").value == "price" ? (
+                <TextInput
+                  placeholder="Enter Discount Price"
+                  className="w-[47%]"
+                  size="md"
+                  label="Discount Price"
+                  type={"text"}
+                  required
+                  withAsterisk
+                  {...form.getInputProps("discounted_price")}
+                />
+              ) : (
+                <TextInput
+                  placeholder="Enter Discount Percentage"
+                  className="w-[47%]"
+                  size="md"
+                  label="Discount Percentage"
+                  type={"text"}
+                  required
+                  withAsterisk
+                  {...form.getInputProps("discounted_price")}
+                />
+              )}
+            </div>
+            <TextInput
+              className="w-[47%]"
+              size="md"
+              label="Margins"
+              type={"text"}
+              {...form.getInputProps("margin")}
+              disabled
+            />
+            <TextInput
+              className="w-[47%]"
               size="md"
               label="Purchasing Price"
-              //   required
-              //   withAsterisk
               type={"text"}
-              disabled
               {...form.getInputProps("purchasing_price")}
+              disabled
             />
             <TextInput
               className="w-[47%]"
@@ -219,17 +346,19 @@ const ProductAddUpdatePage = (props: Props) => {
             />
             <TextInput
               className="w-[47%]"
-              placeholder=""
               size="md"
               label="Sales Tax Percentage"
-              //   required
-              //   withAsterisk
               type={"text"}
-              disabled
-              {...form.getInputProps("sales_tax_percentage")}
+              value={form
+                .getInputProps("sales_tax_group")
+                .value.substring(
+                  0,
+                  form.getInputProps("sales_tax_group").value.indexOf("%")
+                )}
+              readOnly
             />
             <TextInput
-              className="w-[100%]"
+              className="w-[47%]"
               placeholder="Enter SKU Reorder Level"
               size="md"
               label="SKU Reorder Level"
@@ -261,9 +390,9 @@ const ProductAddUpdatePage = (props: Props) => {
             />
             <Select
               className="w-[47%]"
-              placeholder="Pick Price Levels"
+              placeholder="Pick Price Level"
               size="md"
-              label="Item Price Levels"
+              label="Price Level"
               required
               withAsterisk
               searchable
@@ -275,7 +404,7 @@ const ProductAddUpdatePage = (props: Props) => {
               className="w-[47%]"
               placeholder="Pick Stock Nature"
               size="md"
-              label="Item Stock Nature"
+              label="Stock Nature"
               required
               withAsterisk
               searchable
@@ -284,16 +413,15 @@ const ProductAddUpdatePage = (props: Props) => {
               {...form.getInputProps("stock_nature")}
             />
             <TextInput
-              className="w-[100%]"
-              placeholder="Enter Bar Code"
+              className="w-[47%]"
+              placeholder="Enter Barcode"
               size="md"
-              label="Bar Code"
+              label="Barcode"
               required
               withAsterisk
               type={"text"}
               {...form.getInputProps("bar_code")}
             />
-
             <TextInput
               className="w-[47%]"
               placeholder="Enter Drap ID"
@@ -304,7 +432,6 @@ const ProductAddUpdatePage = (props: Props) => {
               type={"text"}
               {...form.getInputProps("drap_id")}
             />
-
             <TextInput
               className="w-[47%]"
               placeholder="Enter Dosage Instructions"
@@ -316,7 +443,7 @@ const ProductAddUpdatePage = (props: Props) => {
               {...form.getInputProps("dosage_instruction")}
             />
             <TextInput
-              className="w-[47%]"
+              className="w-[100%]"
               placeholder="Enter Side Effects"
               size="md"
               label="Side Effects"
@@ -326,90 +453,35 @@ const ProductAddUpdatePage = (props: Props) => {
               {...form.getInputProps("side_effects")}
             />
 
-            <Select
-              className="w-[47%]"
-              placeholder="Pick Manufacturer"
-              size="md"
-              label="Manufacturer"
-              required
-              withAsterisk
-              searchable
-              nothingFound="No options"
-              data={manufacturerData.map((each_manufacturer: any) => {
-                return {
-                  value: each_manufacturer.id,
-                  label: each_manufacturer.manufacturer_name,
-                };
-              })}
-              {...form.getInputProps("manufacturer_id")}
-            />
-
-            <MultiSelect
-              className="w-[47%]"
-              placeholder="Select Product Tags"
-              size="md"
-              label="Product Tags"
-              creatable
-              clearable
-              searchable
-              maxSelectedValues={3}
-              getCreateLabel={(query: any) => `Create ${query}`}
-              onCreate={(query: any) => {
-                const tag_temp = { value: query, label: query };
-                setProductTags((pre: Array<any>) => [...pre, tag_temp]);
-                return tag_temp;
-              }}
-              data={productTags}
-              {...form.getInputProps("product_tags")}
-            />
-            <MultiSelect
-              className="w-[47%]"
-              placeholder="Select Product Generic Formula"
-              size="md"
-              label="Product Generic Formula"
-              creatable
-              clearable
-              searchable
-              maxSelectedValues={3}
-              getCreateLabel={(query: any) => `Create ${query}`}
-              onCreate={(query: any) => {
-                const tag_temp = { value: query, label: query };
-                setProductGenericFormula((pre: any[]) => [...pre, tag_temp]);
-                return tag_temp;
-              }}
-              data={productGenericFormula}
-              {...form.getInputProps("product_generic_formula")}
-            />
-
-            <div
-              id="product_conversion_div"
-              className="w-[100%] border rounded-md p-5 shadow-sm"
-            >
-              <div className="flex justify-between items-center">
-                <span>Item Conversion</span>
-                <div className="text-xs flex flex-col overflow-hidden">
-                  <span>{`1 Carton Contains ${
-                    form.getInputProps("product_conversion_ic_2").value
-                  } ${
-                    form.getInputProps("product_conversion_su_2").value
-                  }`}</span>
+            <div className="w-[100%] flex flex-col gap-2 border rounded-md shadow-md p-5">
+              <header className="flex justify-between">
+                <label className="mantine-InputWrapper-label mantine-Select-label mantine-1js7218">
+                  Item Conversion
+                </label>
+                <div className="flex flex-col mantine-InputWrapper-label mantine-Select-label mantine-1js7218">
+                  <span>
+                    1 Carton Contains{" "}
+                    {form.getInputProps("product_conversion_ic_2").value}{" "}
+                    {form.getInputProps("product_conversion_su_2").value}
+                  </span>
                   <span
-                    className={`transition-all ${
-                      form.getInputProps("product_conversion_su_2").value ===
+                    className={`transition ${
+                      form.getInputProps("product_conversion_su_2").value ==
                       "Box"
-                        ? "translate-x-0"
-                        : "translate-x-80"
+                        ? "scale-100"
+                        : "scale-0 h-0"
                     }`}
-                  >{`${form.getInputProps("product_conversion_ic_2").value} ${
-                    form.getInputProps("product_conversion_su_2").value
-                  } Contains ${
-                    form.getInputProps("product_conversion_ic_3").value
-                  } ${
-                    form.getInputProps("product_conversion_su_3").value
-                  }`}</span>
+                  >
+                    1{" " + form.getInputProps("product_conversion_su_2").value}{" "}
+                    Contains
+                    {" " +
+                      form.getInputProps("product_conversion_ic_3").value}{" "}
+                    {form.getInputProps("product_conversion_su_3").value}
+                  </span>
                 </div>
-              </div>
-              <div className="flex justify-between flex-wrap">
+              </header>
+
+              <div className="w-[100%] flex justify-between">
                 <Select
                   className="w-[47%]"
                   placeholder="Pick Selling Unit"
@@ -435,12 +507,12 @@ const ProductAddUpdatePage = (props: Props) => {
                   {...form.getInputProps("product_conversion_ic_1")}
                 />
               </div>
-              <div className="flex justify-between flex-wrap">
+              <div className="w-[100%] flex justify-between">
                 <Select
                   className="w-[47%]"
                   placeholder="Pick Selling Unit"
                   size="md"
-                  label="Selling Unit"
+                  // label="Selling Unit"
                   required
                   withAsterisk
                   searchable
@@ -452,7 +524,7 @@ const ProductAddUpdatePage = (props: Props) => {
                   className="w-[47%]"
                   placeholder="Enter Item Conversion"
                   size="md"
-                  label="Item Conversion"
+                  // label="Item Conversion"
                   required
                   withAsterisk
                   type={"text"}
@@ -460,8 +532,8 @@ const ProductAddUpdatePage = (props: Props) => {
                 />
               </div>
               <div
-                className={`flex transition-all justify-between flex-wrap ${
-                  form.getInputProps("product_conversion_su_2").value === "Box"
+                className={`w-[100%] flex justify-between transition-all ${
+                  form.getInputProps("product_conversion_su_2").value == "Box"
                     ? "scale-100"
                     : "scale-0 h-0"
                 }`}
@@ -470,37 +542,127 @@ const ProductAddUpdatePage = (props: Props) => {
                   className="w-[47%]"
                   placeholder="Pick Selling Unit"
                   size="md"
-                  label="Selling Unit"
+                  // label="Selling Unit"
+                  required={
+                    form.getInputProps("product_conversion_su_2").value == "Box"
+                  }
+                  withAsterisk
                   searchable
                   nothingFound="No options"
-                  data={["Strips", "Pieces"]}
+                  data={["Pieces", "Strips"]}
                   {...form.getInputProps("product_conversion_su_3")}
                 />
                 <TextInput
                   className="w-[47%]"
                   placeholder="Enter Item Conversion"
                   size="md"
-                  label="Item Conversion"
+                  // label="Item Conversion"
+                  required={
+                    form.getInputProps("product_conversion_su_2").value == "Box"
+                  }
+                  withAsterisk
                   type={"text"}
                   {...form.getInputProps("product_conversion_ic_3")}
                 />
               </div>
             </div>
-
+            <Select
+              className="w-[100%]"
+              placeholder="Pick Manufacturer"
+              size="md"
+              label="Manufacturer"
+              required
+              withAsterisk
+              searchable
+              nothingFound="No options"
+              data={
+                manufacturerData.length > 0
+                  ? manufacturerData.map((each_manufacturer: any) => ({
+                      value: each_manufacturer.id,
+                      label: each_manufacturer.manufacturer_name,
+                    }))
+                  : []
+              }
+              {...form.getInputProps("manufacturer_id")}
+            />
+            <DualListBoxComponent
+              label="Categories"
+              data={categoryData.map((each_category: any) => {
+                return {
+                  label: each_category.category_name,
+                  options: each_category.child.map((each_child: any) => {
+                    return {
+                      value: each_child.id,
+                      label: each_child.category_name,
+                    };
+                  }),
+                };
+              })}
+              {...form.getInputProps("category")}
+            />
+            <DualListBoxComponent
+              label="Vendors"
+              data={vendorData.map((each_vendor: any) => {
+                return {
+                  label: each_vendor.vendor_name,
+                  value: each_vendor.id,
+                };
+              })}
+              {...form.getInputProps("vendor")}
+            />
+            <MultiSelect
+              className="w-[47%]"
+              size="md"
+              label="Product Tags"
+              data={productTags}
+              placeholder="Select Product Tags"
+              searchable
+              creatable
+              getCreateLabel={(query) => `+ Create ${query}`}
+              onCreate={(query) => {
+                const item = { value: query, label: query };
+                setProductTags((current: any) => [...current, item]);
+                return item;
+              }}
+              {...form.getInputProps("productTags")}
+            />
+            <MultiSelect
+              className="w-[47%]"
+              size="md"
+              label="Product Generic Formula"
+              data={productGenericFormula}
+              placeholder="Select Generic Formula"
+              searchable
+              creatable
+              getCreateLabel={(query) => `+ Create ${query}`}
+              onCreate={(query) => {
+                const item = { value: query, label: query };
+                setProductGenericFormula((current: any) => [...current, item]);
+                return item;
+              }}
+              {...form.getInputProps("productGenericFormula")}
+            />
             <TextInput
               className="w-[100%]"
-              placeholder=""
               size="md"
               label="Quantity"
-              //   required
-              //   withAsterisk
               type={"text"}
               disabled
               {...form.getInputProps("quantity")}
             />
-
-            <Button size="md" className="bg-red-500" type={"submit"}>
-              Submit
+            <div className="w-[100%]">
+              <label className="mantine-InputWrapper-label mantine-Select-label mantine-1js7218">
+                SKU Description
+              </label>
+              <RichTextComponent {...form.getInputProps("sku_description")} />
+            </div>
+            <Button
+              disabled={submitButtonDisabler}
+              size="md"
+              className="bg-red-500 w-56 ml-auto"
+              type={"submit"}
+            >
+              {isUpdate ? "Update" : "Submit"}
             </Button>
           </form>
         </div>

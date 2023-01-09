@@ -1,5 +1,5 @@
 "use client";
-import { Button, TextInput } from "@mantine/core";
+import { Button, Progress, TextInput } from "@mantine/core";
 import { BsTruck } from "react-icons/bs";
 import React from "react";
 //
@@ -24,6 +24,8 @@ const CreateGrnPage = (props: Props) => {
     UsePurchaseOrderData();
   const [grnData, setGrnData]: any[] = UseGrnData();
   //
+  const [submitButtonDisabler, setSubmitButtonDisabler] = React.useState(false);
+  const [percentOrderCompleted, setPercentOrderCompleted] = React.useState(100);
   const [notification, setNotification] = React.useState({
     title: "",
     description: "",
@@ -71,6 +73,27 @@ const CreateGrnPage = (props: Props) => {
         if (flag_temp) return;
         data_temp[index] = { ...data_temp[index], [name]: return_value };
         setData(data_temp);
+        // progress-bar
+        if (name === "received_quantity") {
+          const total_required_quantity_temp = data_temp.reduce(
+            (partial_sum: any, each_number: any) =>
+              +partial_sum + +each_number.required_quantity,
+            0
+          );
+          const total_received_quantity_temp = data_temp.reduce(
+            (partial_sum: any, each_number: any) =>
+              +partial_sum + +each_number.received_quantity,
+            0
+          );
+          //
+          setPercentOrderCompleted(
+            +(
+              +(+total_received_quantity_temp / +total_required_quantity_temp) *
+              100
+            ).toFixed(2)
+          );
+        }
+        //
       });
       return;
     }
@@ -85,6 +108,8 @@ const CreateGrnPage = (props: Props) => {
   };
   //
   const searchPurchaseOrderFunction = (_id: string) => {
+    setPercentOrderCompleted(100);
+    setSubmitButtonDisabler(false);
     var searched_purchase_order: any = {};
     var searched_grn_purchase_order: any[] = [];
     //
@@ -130,8 +155,12 @@ const CreateGrnPage = (props: Props) => {
     //
     const { order_status } = searched_purchase_order;
     if (order_status != "App" && order_status != "PRec") {
+      var order_status_temp = "";
+      if (order_status === "Pen") {
+        order_status_temp = "Pending for approval";
+      }
       setNotification((pre: any) => ({
-        description: `Purchase Order is ${searched_purchase_order.order_status}!`,
+        description: `Purchase Order is ${order_status_temp}!`,
         title: "Error",
         isSuccess: false,
         trigger: true,
@@ -163,7 +192,7 @@ const CreateGrnPage = (props: Props) => {
           product_id: each_product_item.product_id,
           product_name: each_product_item.product_name,
           required_quantity: each_product_item.required_quantity,
-          received_quantity: 0,
+          received_quantity: each_product_item.required_quantity,
           maximum_retail_price: 0,
           trade_price: each_product_item.trade_price,
           discounted_percentage: each_product_item.trade_discount,
@@ -197,8 +226,10 @@ const CreateGrnPage = (props: Props) => {
       });
       return;
     }
+    setSubmitButtonDisabler(true);
     const data_to_send = {
-      po_id: form.getInputProps("purchase_order_id"),
+      po_id: form.getInputProps("purchase_order_id").value,
+      percentOrderCompleted: percentOrderCompleted,
       grnData: data,
     };
     //
@@ -211,7 +242,7 @@ const CreateGrnPage = (props: Props) => {
     setGrnData([]);
     //
     setNotification({
-      description: "GRN Created/Updated Sucessfully!",
+      description: "GRN Created/Updated Successfully!",
       title: "Success",
       isSuccess: true,
       trigger: true,
@@ -263,6 +294,22 @@ const CreateGrnPage = (props: Props) => {
               Search
             </Button>
           </form>
+          <div
+            className={`p-5 flex flex-col gap-2 ${
+              data.length === 0 && "hidden"
+            }`}
+          >
+            <h2 className="font-semibold">
+              {percentOrderCompleted}% Percent Order Completed!
+            </h2>
+            <Progress
+              color="green"
+              radius="md"
+              size="xl"
+              value={percentOrderCompleted}
+              striped
+            />
+          </div>
           <DataTableComponent
             columns={[
               {
@@ -445,6 +492,7 @@ const CreateGrnPage = (props: Props) => {
           />
           <div className="p-5 w-100% flex">
             <Button
+              disabled={submitButtonDisabler || data.length == 0}
               onClick={submitHandler}
               className="ml-auto bg-red-500 w-40"
               color={"orange"}

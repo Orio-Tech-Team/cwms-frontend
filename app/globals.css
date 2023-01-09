@@ -19,3 +19,7 @@ body {
   z-index: 9 !important;
   position: fixed;
 }
+/*  */
+.ql-editor{
+  @apply h-[200px] scrollbar-thin overflow-y-scroll
+}
