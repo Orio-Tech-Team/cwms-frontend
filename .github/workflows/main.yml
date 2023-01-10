@@ -34,9 +34,9 @@ jobs:
           path: |
             package.json
             next.config.js
-            public
-            .next
-            node_modules
+            public/
+            .next/
+            node_modules/
   deploy:
     name: Deploy 🚀
     needs: build
