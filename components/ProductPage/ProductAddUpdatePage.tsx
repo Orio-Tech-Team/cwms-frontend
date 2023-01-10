@@ -40,6 +40,7 @@ const ProductAddUpdatePage = (props: Props) => {
   const [vendorData, setVendorData]: any[] = UseVendorData();
   const [productData, setProductData]: any[] = UseProductData();
   const [categoryData, setCategoryData]: any[] = UseCategoryData();
+
   //
   const [productTags, setProductTags]: any[] = React.useState([]);
   const [productGenericFormula, setProductGenericFormula]: any[] =
@@ -132,7 +133,7 @@ const ProductAddUpdatePage = (props: Props) => {
     }
     //
     setSubmitButtonDisabler(true);
-    const url_temp = isUpdate ? "/product/update/" : "/vendor/add_product/";
+    const url_temp = isUpdate ? "/product/update/" : "/product/add_product/";
     const data_to_send_temp = {
       ...values,
       productConversion: productConversion,
@@ -585,6 +586,7 @@ const ProductAddUpdatePage = (props: Props) => {
               }
               {...form.getInputProps("manufacturer_id")}
             />
+
             <DualListBoxComponent
               label="Categories"
               data={categoryData.map((each_category: any) => {
@@ -600,6 +602,7 @@ const ProductAddUpdatePage = (props: Props) => {
               })}
               {...form.getInputProps("category")}
             />
+
             <DualListBoxComponent
               label="Vendors"
               data={vendorData.map((each_vendor: any) => {

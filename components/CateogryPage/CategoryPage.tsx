@@ -97,19 +97,22 @@ const CategoryPage = (props: Props) => {
       },
     ];
     //
-    const dataTemp = categoryData.map((eachItem: any, key: number) => {
+    const child_temp: any[] = [];
+    const dataTemp = categoryData.map((each_category: any, key: number) => {
+      if (each_category.child && each_category.child.length > 0) {
+        each_category.child.forEach((each_child: any) => {
+          child_temp.push(each_child);
+        });
+      }
       return {
         key: key,
-        id: eachItem.id,
-        category_name: eachItem.category_name,
-        category_description: eachItem.category_description,
-        category_sorting: eachItem.category_sorting,
-        status: eachItem.category_status ? "Active" : "In-Active",
-        category_level: eachItem.category_level,
+        ...each_category,
+        status: each_category.category_status ? "Active" : "In-Active",
       };
     });
+    const table_temp = [...child_temp, ...dataTemp];
     //
-    setData(dataTemp);
+    setData(table_temp);
     setColumns(columnsTemp);
   };
   //
