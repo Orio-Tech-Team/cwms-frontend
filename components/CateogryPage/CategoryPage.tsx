@@ -96,7 +96,7 @@ const CategoryPage = (props: Props) => {
         grow: 0,
       },
     ];
-    //
+
     const child_temp: any[] = [];
     const dataTemp = categoryData.map((each_category: any, key: number) => {
       if (each_category.child && each_category.child.length > 0) {
