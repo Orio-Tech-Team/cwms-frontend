@@ -63,4 +63,5 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             export PATH=/opt/cpanel/ea-nodejs16/bin/:$PATH
+            pm2 status
             pm2 restart wms-frontend
