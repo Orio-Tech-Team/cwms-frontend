@@ -10,7 +10,7 @@ type Props = {
 };
 
 const RichTextComponent = (props: Props) => {
-  return <RichTextEditor {...props} />;
+  return <RichTextEditor aria-placeholder="Enter SKU Description" {...props} />;
 };
 
 export default RichTextComponent;
