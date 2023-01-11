@@ -6,15 +6,100 @@ import DataTableComponent from "../Shared/DataTableComponent/DataTableComponent"
 import Link from "next/link";
 import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbComponent";
 import UseProductData from "../../modules/Product/UseProductData";
+import axiosFunction from "../../SharedFunctions/AxiosFunction";
+import { useRouter } from "next/navigation";
 
 type Props = {};
 
 const ProductPage = (props: Props) => {
+  const router = useRouter();
   const [productData, setProductData]: Array<any> = UseProductData();
   const [columns, setColumns]: Array<any> = React.useState([]);
   const [data, setData]: Array<any> = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  // functions
+  const updateHandler = async (_id: any) => {
+    var category: any[] = [];
+    var productTags: any[] = [];
+    var vendor: any[] = [];
+    var productGenericFormula: any[] = [];
+    var product_conversion_su_1 = "Carton";
+    var product_conversion_ic_1 = "1";
+    var product_conversion_su_2 = "";
+    var product_conversion_ic_2 = "1";
+    var product_conversion_su_3 = "";
+    var product_conversion_ic_3 = "1";
+    //
+    const [found_data] = productData.filter(
+      (each_product: any) => each_product.id == _id
+    );
+    //
+    const response = await axiosFunction({
+      urlPath: "/product/find_for_update",
+      data: { _id },
+      method: "post",
+    });
+    console.log(response.data);
 
+    //
+    if (response.data.product_categories.length > 0) {
+      response.data.product_categories.forEach((each_category: any) => {
+        category.push(each_category.categoryId);
+      });
+    }
+    //
+    if (response.data.product_generic.length > 0) {
+      response.data.product_generic.forEach((each_formula: any) => {
+        productGenericFormula.push(each_formula.product_generic_formula);
+      });
+    }
+    //
+    if (response.data.product_tags.length > 0) {
+      response.data.product_tags.forEach((each_tag: any) => {
+        productTags.push(each_tag.tag_name);
+      });
+    }
+    //
+    if (response.data.product_vendors.length > 0) {
+      response.data.product_vendors.forEach((each_vendor: any) => {
+        vendor.push(each_vendor.vendorId);
+      });
+    }
+    if (response.data.product_conversion.length > 0) {
+      product_conversion_su_1 =
+        response.data.product_conversion[0].selling_unit;
+      product_conversion_ic_1 =
+        response.data.product_conversion[0].item_conversion;
+      product_conversion_su_2 =
+        response.data.product_conversion[1].selling_unit;
+      product_conversion_ic_2 =
+        response.data.product_conversion[1].item_conversion;
+      product_conversion_su_3 =
+        response.data.product_conversion[2].selling_unit;
+      product_conversion_ic_3 =
+        response.data.product_conversion[2].item_conversion;
+    }
+    //
+    const data_to_send_temp = {
+      ...found_data,
+      quantity: found_data.quantity == "" ? 0 : found_data.quantity,
+      manufacturer_id: found_data.manufacturerId,
+      purchasing_price: 0,
+      category,
+      productTags,
+      vendor,
+      productGenericFormula,
+      product_conversion_su_1,
+      product_conversion_ic_1,
+      product_conversion_su_2,
+      product_conversion_ic_2,
+      product_conversion_su_3,
+      product_conversion_ic_3,
+    };
+    localStorage.setItem("product_data", JSON.stringify(data_to_send_temp));
+    router.push(`/dashboard/products/update_product/?id=${_id}`);
+  };
+  //
   const tableGenerator = () => {
     const columnTemp = [
       {
@@ -36,13 +121,7 @@ const ProductPage = (props: Props) => {
         grow: 2,
         sortable: true,
       },
-      {
-        name: "Purchasing Unit",
-        selector: (row: any) => row.purchasing_unit,
-        grow: 0,
-        width: "106px",
-        center: true,
-      },
+
       {
         name: "Trade Price",
         selector: (row: any) => row.trade_price,
@@ -97,12 +176,12 @@ const ProductPage = (props: Props) => {
         name: "Action",
         cell: (row: any) => (
           <>
-            <Link
-              className="bg-[#002884] p-1 rounded-md text-white"
-              href={`/dashboard/products/update_product/?id=${row.id}`}
+            <span
+              className="bg-[#002884] rounded-md w-5 h-5 flex justify-center items-center"
+              onClick={() => updateHandler(row.id)}
             >
-              <AiFillEdit />
-            </Link>
+              <AiFillEdit className="text-white" />
+            </span>
           </>
         ),
         ignoreRowClick: true,
@@ -115,16 +194,8 @@ const ProductPage = (props: Props) => {
     //
     const dataTemp = productData.map((each_product: any, key: number) => {
       return {
+        ...each_product,
         key: key,
-        id: each_product.id,
-        product_name: each_product.product_name,
-        manufacturer_name: each_product.manufacturer_name,
-        purchasing_unit: each_product.purchasing_unit,
-        trade_price: each_product.trade_price,
-        discounted_price: each_product.discounted_price,
-        maximum_retail_price: each_product.maximum_retail_price,
-        stock_nature: each_product.stock_nature,
-        quantity: each_product.quantity,
         item_status: each_product.item_status ? "Active" : "In-Active",
       };
     });

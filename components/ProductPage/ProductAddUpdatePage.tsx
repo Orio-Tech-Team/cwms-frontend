@@ -40,59 +40,69 @@ const ProductAddUpdatePage = (props: Props) => {
   const [vendorData, setVendorData]: any[] = UseVendorData();
   const [productData, setProductData]: any[] = UseProductData();
   const [categoryData, setCategoryData]: any[] = UseCategoryData();
-
+  const local_storage_response: any = {
+    ...JSON.parse(localStorage.getItem("product_data")!),
+  };
   //
-  const [productTags, setProductTags]: any[] = React.useState([]);
+  const [productTags, setProductTags]: any = React.useState(
+    isUpdate ? local_storage_response.productTags : []
+  );
   const [productGenericFormula, setProductGenericFormula]: any[] =
-    React.useState([]);
+    React.useState(
+      isUpdate ? local_storage_response.productGenericFormula : []
+    );
   //
   const form = useForm({
-    initialValues: {
-      item_status: false,
-      product_name: "",
-      sku_description: "",
-      sku_department: "",
-      item_nature: "",
-      trade_discount: 0,
-      manufacturer_id: "",
-      tax_code: "",
-      purchasing_unit: "",
-      trade_price: 0,
-      discounted_price: "",
-      maximum_retail_price: 0,
-      sku_minimum_level: "",
-      sku_maximum_level: "",
-      sku_reorder_level: "",
-      sku_warehouse_lead_time: new Date(),
-      item_release_level: "",
-      price_levels: "",
-      stock_nature: "",
-      bar_code: "",
-      item_storage_location: "",
-      selling_discount: "",
-      item_tracking_level: "",
-      product_lifecycle: "",
-      sales_tax_group: "",
-      sales_tax_percentage: "",
-      quantity: 0,
-      prescription_required: false,
-      drap_id: "",
-      dosage_instruction: "",
-      side_effects: "",
-      discount_type: "price",
-      margin: 0,
-      purchasing_price: 0,
-      productTags: [],
-      category: [],
-      vendor: [],
-      productGenericFormula: [],
-      product_conversion_su_1: "Carton",
-      product_conversion_ic_1: "1",
-      product_conversion_su_2: "",
-      product_conversion_ic_2: "1",
-      product_conversion_su_3: "",
-      product_conversion_ic_3: "1",
-    },
+    initialValues: isUpdate
+      ? {
+          ...JSON.parse(localStorage.getItem("product_data")!),
+        }
+      : {
+          item_status: false,
+          product_name: "",
+          sku_description: "",
+          sku_department: "",
+          item_nature: "",
+          trade_discount: 0,
+          manufacturer_id: "",
+          tax_code: "",
+          purchasing_unit: "",
+          trade_price: 0,
+          discounted_price: "",
+          maximum_retail_price: 0,
+          sku_minimum_level: "",
+          sku_maximum_level: "",
+          sku_reorder_level: "",
+          sku_warehouse_lead_time: new Date(),
+          item_release_level: "",
+          price_levels: "",
+          stock_nature: "",
+          bar_code: "",
+          item_storage_location: "",
+          selling_discount: "",
+          item_tracking_level: "",
+          product_lifecycle: "",
+          sales_tax_group: "",
+          sales_tax_percentage: "",
+          quantity: 0,
+          prescription_required: false,
+          drap_id: "",
+          dosage_instruction: "",
+          side_effects: "",
+          discount_type: "price",
+          margin: 0,
+          purchasing_price: 0,
+          productTags: [],
+          category: [],
+          vendor: [],
+          productGenericFormula: [],
+          product_conversion_su_1: "Carton",
+          product_conversion_ic_1: "1",
+          product_conversion_su_2: "",
+          product_conversion_ic_2: "1",
+          product_conversion_su_3: "",
+          product_conversion_ic_3: "1",
+        },
   });
 
   const submitHandler = async (values: any) => {
@@ -145,6 +155,8 @@ const ProductAddUpdatePage = (props: Props) => {
       data: data_to_send_temp,
       method: isUpdate ? "PUT" : "POST",
     });
+    console.log(product_id_response);
+
     //
     setProductData([]);
     //
