@@ -26,14 +26,20 @@ const VendorAddUpdatePage = (props: Props) => {
   const { withHoldTaxGroup, withHoldTaxPercentage } = UseVendorTaxData();
   //
   const [submitButtonDisabler, setSubmitButtonDisabler] = React.useState(false);
+  const local_storage_data: any = {
+    ...JSON.parse(localStorage.getItem("vendor_data")!),
+  };
+
   //
   const form = useForm({
     validateInputOnChange: true,
     initialValues: isUpdate
       ? {
-          ...JSON.parse(localStorage.getItem("vendor_data")!),
-          cnic_expiry_date: new Date(),
-          tax_exemption_validity: new Date(),
+          ...local_storage_data,
+          cnic_expiry_date: new Date(local_storage_data.cnic_expiry_date),
+          tax_exemption_validity: new Date(
+            local_storage_data.tax_exemption_validity
+          ),
         }
       : {
           vendor_status: false,

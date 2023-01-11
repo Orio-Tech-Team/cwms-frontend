@@ -39,8 +39,6 @@ const ProductPage = (props: Props) => {
       data: { _id },
       method: "post",
     });
-    console.log(response.data);
-
     //
     if (response.data.product_categories.length > 0) {
       response.data.product_categories.forEach((each_category: any) => {
@@ -83,6 +81,7 @@ const ProductPage = (props: Props) => {
     const data_to_send_temp = {
       ...found_data,
       quantity: found_data.quantity == "" ? 0 : found_data.quantity,
+
       manufacturer_id: found_data.manufacturerId,
       purchasing_price: 0,
       category,

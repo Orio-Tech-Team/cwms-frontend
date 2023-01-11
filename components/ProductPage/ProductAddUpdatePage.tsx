@@ -21,6 +21,8 @@ import UseCategoryData from "../../modules/Category/UseCategoryData";
 import DualListBoxComponent from "../Shared/DualListBoxComponent/DualListBoxComponent";
 import RichTextComponent from "../Shared/RichTextComponent/RichTextComponent";
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
+import NotificationComponent from "../Shared/NotificationComponent/NotificationComponent";
+import { localStorageClearFunction } from "../../SharedFunctions/LocalStorageClearFunction";
 
 type Props = {};
 
@@ -55,7 +57,10 @@ const ProductAddUpdatePage = (props: Props) => {
   const form = useForm({
     initialValues: isUpdate
       ? {
-          ...JSON.parse(localStorage.getItem("product_data")!),
+          ...local_storage_response,
+          sku_warehouse_lead_time: new Date(
+            local_storage_response.sku_warehouse_lead_time
+          ),
         }
       : {
           item_status: false,
@@ -155,8 +160,6 @@ const ProductAddUpdatePage = (props: Props) => {
       data: data_to_send_temp,
       method: isUpdate ? "PUT" : "POST",
     });
-    console.log(product_id_response);
-
     //
     setProductData([]);
     //
@@ -171,6 +174,7 @@ const ProductAddUpdatePage = (props: Props) => {
         trigger: true,
       };
     });
+    localStorageClearFunction();
     setTimeout(() => {
       router.push("/dashboard/products/");
     }, 3000);
@@ -552,7 +556,7 @@ const ProductAddUpdatePage = (props: Props) => {
                 }`}
               >
                 <Select
-                  className="w-[47%]"
+                  className="w-[47%] z-[999] relative"
                   placeholder="Pick Selling Unit"
                   size="md"
                   // label="Selling Unit"
@@ -681,6 +685,13 @@ const ProductAddUpdatePage = (props: Props) => {
             </Button>
           </form>
         </div>
+        <NotificationComponent
+          description={notification.description}
+          isSuccess={notification.isSuccess}
+          title={notification.title}
+          trigger={notification.trigger}
+          setNotification={setNotification}
+        />
       </main>
     </>
   );
