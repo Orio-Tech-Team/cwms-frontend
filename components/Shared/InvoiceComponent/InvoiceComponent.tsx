@@ -2,7 +2,17 @@
 import React from "react";
 
 type Props = {};
+//
+// qty x tp = total
+// tp p disocunt lagy ga * quantity
+// tp - disocunted us pe gst lagana hai 800 mai plus hoga
 
+// total amount = total tp * total quantity
+// total discount = total discount
+// sales tax = gst * qty
+// advance --
+// net total amount + sales - total discount
+//
 const InvoiceComponent = (props: Props) => {
   return (
     <>
