@@ -1,11 +1,14 @@
 "use client";
-import { Loader, Button } from "@mantine/core";
+import { Loader, Button, TextInput } from "@mantine/core";
+import { ImBin2 } from "react-icons/im";
 import Link from "next/link";
 import React from "react";
 import UsePurchaseOrderData from "../../modules/PurchaseOrder/UsePurchaseOrderData";
 import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbComponent";
 import DataTableComponent from "../Shared/DataTableComponent/DataTableComponent";
-
+import ModalComponent from "../Shared/ModalComponent/ModalComponent";
+import axiosFunction from "../../SharedFunctions/AxiosFunction";
+//
 type Props = {};
 
 const PurchaseOrderPage = (props: Props) => {
@@ -14,6 +17,28 @@ const PurchaseOrderPage = (props: Props) => {
   const [columns, setColumns]: Array<any> = React.useState([]);
   const [data, setData]: Array<any> = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [modalActive, setModalActive] = React.useState(false);
+  const [selectedId, setSelectedId] = React.useState("");
+  const [comment, setComment] = React.useState("");
+  //
+  const modalConfirmHandler = (_id: any) => {
+    setModalActive(true);
+    setSelectedId(_id);
+  };
+  const modalCancelFunction = async () => {
+    await axiosFunction({
+      urlPath: "/purchase_order/cancel/",
+      data: {
+        _id: selectedId,
+        comment: comment,
+      },
+      method: "POST",
+    });
+    setPurchaseOrderData([]);
+    setTimeout(() => {
+      setModalActive(false);
+    }, 2000);
+  };
   //
   const tableGenerator = () => {
     const invoiceGenerator = (row: any) => {};
@@ -91,6 +116,23 @@ const PurchaseOrderPage = (props: Props) => {
         center: true,
         grow: 0,
       },
+      {
+        center: true,
+        ignoreRowClick: true,
+        allowOverflow: true,
+        grow: 0,
+        width: "70px",
+        cell: (row: any) => (
+          <>
+            <span
+              onClick={() => modalConfirmHandler(row.id)}
+              className="bg-red-500 flex justify-center items-center h-6 w-6 rounded-md"
+            >
+              <ImBin2 className="text-white flex justify-center items-center" />
+            </span>
+          </>
+        ),
+      },
     ];
     //
     const dataTemp = PurchaseOrderData.map((each_item: any, key: number) => {
@@ -151,6 +193,40 @@ const PurchaseOrderPage = (props: Props) => {
             <DataTableComponent columns={columns} data={data} />
           )}
         </div>
+        <ModalComponent modalStatus={modalActive} modalHandler={setModalActive}>
+          <div>
+            <h1 className="text-center mb-10 text-bold text-xl">
+              Are you sure you want to cancel Purchase Order ID: {selectedId}
+            </h1>
+            <TextInput
+              className="mb-10"
+              label="Reason Of Cancelling Purchase Order"
+              placeholder="Enter Here..."
+              size="md"
+              onChange={(e: any) => {
+                setComment(e.target.value);
+              }}
+              value={comment}
+            />
+            <div className="flex justify-end gap-10">
+              <Button
+                size="md"
+                className="bg-red-500 hover:bg-red-900"
+                onClick={() => setModalActive(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={modalCancelFunction}
+                size="md"
+                className="bg-blue-500"
+                bg="blue"
+              >
+                Yes
+              </Button>
+            </div>
+          </div>
+        </ModalComponent>
       </main>
     </>
   );

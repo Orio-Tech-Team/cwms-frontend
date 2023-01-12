@@ -333,16 +333,17 @@ const PurchaseOrderAddPage = (props: Props) => {
         <div className="mt-5 mb-7">
           <BreadcrumbComponent />
           <h1 className="font-semibold text-[1.5rem] text-[#3b3e66]">
-            Add Purchase Order
+            Create New Purchase Order
           </h1>
           <p className="text-gray-500">
-            Please see Add Purchase Order form below all connected channels
+            Please see Create New Purchase Order form below all connected
+            channels
           </p>
         </div>
         <div className="shadow-xl border border-gray-100 rounded-md bg-white">
           <div className="flex justify-between items-center p-5 border-b-[1px]">
             <p className="font-semibold text-gray-500 py-2">
-              Here you can manage your all Add Purchase Order!
+              Here you can manage your all Create Purchase Order!
             </p>
           </div>
           <form

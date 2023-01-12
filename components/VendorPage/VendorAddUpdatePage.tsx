@@ -357,8 +357,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Enter STRN"
               size="md"
               label="STRN"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               type={"text"}
               {...form.getInputProps("strn")}
             />
@@ -473,8 +473,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Enter Vendor Credit Limit"
               size="md"
               label="Vendor Credit Limit"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               type={"text"}
               {...form.getInputProps("vendor_credit_limit")}
             />
@@ -505,8 +505,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Enter Branch Code"
               size="md"
               label="Branch Code"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               type={"text"}
               {...form.getInputProps("bank_branch_code")}
             />

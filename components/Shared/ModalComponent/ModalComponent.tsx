@@ -4,27 +4,33 @@ import { Button } from "@mantine/core";
 import { MdCancel } from "react-icons/md";
 
 type Props = {
-  modalHandler: () => void;
+  modalHandler: (pre: boolean) => void;
   modalStatus: boolean;
   children: JSX.Element;
+  className?: string;
 };
 
-const ModalComponent = ({ modalHandler, modalStatus, children }: Props) => {
+const ModalComponent = ({
+  className,
+  modalHandler,
+  modalStatus,
+  children,
+}: Props) => {
   return (
     <>
       <div
-        className={`fixed w-screen bg-[#000000c6] h-screen z-[999] top-0 left-0 transition-all backdrop-blur flex justify-center items-center overflow-hidden ${
+        className={`fixed w-screen bg-[#000000c6] h-screen z-[999] top-0 left-0 transition-all backdrop-blur flex justify-center items-center overflow-hidden  ${
           modalStatus ? "visible" : "invisible"
         }`}
       >
         <div
-          className={`flex flex-col bg-white w-[1000px] max-w-[95%] rounded-md p-5  transition-all s ${
+          className={`flex flex-col bg-white w-[1000px] max-w-[95%] rounded-md p-5  transition-all ${className} ${
             modalStatus ? "scale-100" : "scale-0"
           }`}
         >
           <div className="flex justify-end border-b-2 pb-3 px-3">
             <Button
-              onClick={modalHandler}
+              onClick={() => modalHandler(false)}
               compact
               className="bg-transparent text-black text-md flex justify-center items-center hover:bg-transparent w-10 h-10"
             >
