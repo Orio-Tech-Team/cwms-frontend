@@ -34,8 +34,11 @@ const PurchaseOrderPage = (props: Props) => {
       },
       method: "POST",
     });
+
     setPurchaseOrderData([]);
     setTimeout(() => {
+      setSelectedId("");
+      setComment("");
       setModalActive(false);
     }, 2000);
   };
@@ -89,7 +92,11 @@ const PurchaseOrderPage = (props: Props) => {
       {
         name: "Status",
         selector: (row: any) =>
-          row.order_status == "App" ? "Approved" : "Pending",
+          row.order_status == "Cancel"
+            ? "Canceled"
+            : row.order_status == "App"
+            ? "Approved"
+            : "Pending",
         grow: 0,
         center: true,
         sortable: false,
@@ -99,6 +106,7 @@ const PurchaseOrderPage = (props: Props) => {
         cell: (row: any) => (
           <>
             <Button
+              disabled={row.order_status == "Cancel"}
               compact
               className="bg-[#002884]"
               onClick={() =>
@@ -107,7 +115,11 @@ const PurchaseOrderPage = (props: Props) => {
                   : actionFunction(row)
               }
             >
-              {row.order_status === "Pen" ? "Approve" : "Invoice"}
+              {row.order_status == "Cancel"
+                ? "Canceled"
+                : row.order_status === "Pen"
+                ? "Approve"
+                : "Invoice"}
             </Button>
           </>
         ),
@@ -124,12 +136,13 @@ const PurchaseOrderPage = (props: Props) => {
         width: "70px",
         cell: (row: any) => (
           <>
-            <span
+            <Button
+              disabled={row.order_status != "Pen" && row.order_status != "App"}
               onClick={() => modalConfirmHandler(row.id)}
-              className="bg-red-500 flex justify-center items-center h-6 w-6 rounded-md"
+              className="bg-red-500 flex justify-center items-center h-6 w-4 rounded-md"
             >
               <ImBin2 className="text-white flex justify-center items-center" />
-            </span>
+            </Button>
           </>
         ),
       },
