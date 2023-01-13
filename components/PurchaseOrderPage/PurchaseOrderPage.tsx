@@ -44,8 +44,27 @@ const PurchaseOrderPage = (props: Props) => {
   };
   //
   const tableGenerator = () => {
-    const invoiceGenerator = (row: any) => {};
-    const actionFunction = (row: any) => {};
+    const invoiceGenerator = (row: any) => {
+      const [searched_purchase_order] = PurchaseOrderData.filter(
+        (each_purchase_order: any) => {
+          return each_purchase_order.id == row.id;
+        }
+      );
+      localStorage.setItem(
+        "invoice_data",
+        JSON.stringify(searched_purchase_order)
+      );
+      const url = `http://${window.location.hostname}:4000/invoice/`;
+      window.open(url);
+    };
+    const actionFunction = async (row: any) => {
+      const id = row.id;
+      await axiosFunction({
+        urlPath: `/purchase_order/order_approved/${id}`,
+        method: "PUT",
+      });
+      setPurchaseOrderData([]);
+    };
     //
     const columnTemp = [
       {
@@ -110,7 +129,7 @@ const PurchaseOrderPage = (props: Props) => {
               compact
               className="bg-[#002884]"
               onClick={() =>
-                row.order_status === "Received"
+                row.order_status === "App"
                   ? invoiceGenerator(row)
                   : actionFunction(row)
               }

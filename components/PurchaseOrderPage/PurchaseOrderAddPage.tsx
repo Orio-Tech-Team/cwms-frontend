@@ -120,7 +120,7 @@ const PurchaseOrderAddPage = (props: Props) => {
           selected_products_temp.push({
             ...each_product,
             required_quantity: 0,
-            unit_of_measurement: "",
+            unit_of_measurement: "Box",
             trade_price: "",
             trade_discount: "",
             foc: false,
@@ -516,9 +516,9 @@ const PurchaseOrderAddPage = (props: Props) => {
                         key={row.id}
                         className=""
                         placeholder={"Select UOM"}
-                        data={["Carton", "Box", "Pieces"]}
+                        data={["Box"]}
                         size={"xs"}
-                        disabled={row.disabled}
+                        disabled={true}
                         value={row.unit_of_measurement}
                         onChange={(event: any) =>
                           tableInputHandler(row, "unit_of_measurement", event)
