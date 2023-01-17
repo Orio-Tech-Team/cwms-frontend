@@ -13,6 +13,7 @@ import NotificationComponent from "../Shared/NotificationComponent/NotificationC
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
 import UseVendorData from "../../modules/Vendor/UseVendorData";
 import { formValidator } from "../../SharedFunctions/NumberValidator";
+import { localStorageClearFunction } from "../../SharedFunctions/LocalStorageClearFunction";
 
 type Props = {};
 
@@ -42,7 +43,7 @@ const VendorAddUpdatePage = (props: Props) => {
           ),
         }
       : {
-          vendor_status: false,
+          status: false,
           vendor_name: "",
           procurement_category: "",
           vendor_classification: "",
@@ -141,16 +142,16 @@ const VendorAddUpdatePage = (props: Props) => {
     }
     setSubmitButtonDisabler(true);
     //
-    const url_temp = isUpdate ? "/vendor/update/" : "/vendor/add_vendor/";
+    const url_temp = isUpdate ? "/vendor/update/" : "/vendor/create/";
     //
     const vendor_id_response = await axiosFunction({
       urlPath: url_temp,
       data: value,
-      method: isUpdate ? "PUT" : "POST",
+      method: "POST",
     });
     //
     setVendorData([]);
-    const [new_vendor_id] = vendor_id_response.data.data;
+    const new_vendor_id = vendor_id_response.data[0].id;
     setNotification((pre) => {
       return {
         description: `Vendor with ID: ${[new_vendor_id]} ${
@@ -161,6 +162,7 @@ const VendorAddUpdatePage = (props: Props) => {
         trigger: true,
       };
     });
+    localStorageClearFunction();
     setTimeout(() => {
       router.push("/dashboard/vendors/");
     }, 3000);
@@ -192,7 +194,7 @@ const VendorAddUpdatePage = (props: Props) => {
               className="w-[100%]"
               label="Vendor Status"
               description="Active / In-Active"
-              {...form.getInputProps("vendor_status", { type: "checkbox" })}
+              {...form.getInputProps("status", { type: "checkbox" })}
             />
             <TextInput
               className="w-[47%]"

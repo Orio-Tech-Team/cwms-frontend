@@ -9,6 +9,7 @@ import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbCompone
 import NotificationComponent from "../Shared/NotificationComponent/NotificationComponent";
 import { formValidator } from "../../SharedFunctions/NumberValidator";
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
+import { localStorageClearFunction } from "../../SharedFunctions/LocalStorageClearFunction";
 //
 type Props = {};
 //
@@ -16,6 +17,7 @@ const CategoryAddUpdatePage = (props: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isUpdate = searchParams.get("id") != "add";
+
   const [categoryData, setCategoryData]: any[] = UseCategoryData();
   const parentCategories = categoryData.filter((each_category: any) => {
     return each_category.parent_id === null;
@@ -29,29 +31,41 @@ const CategoryAddUpdatePage = (props: Props) => {
     trigger: false,
   });
   //
+  var localStorageData: any = isUpdate
+    ? {
+        ...JSON.parse(localStorage.getItem("category_data")!),
+      }
+    : {};
+
   const form = useForm({
     validateInputOnChange: true,
     initialValues: isUpdate
       ? {
-          ...JSON.parse(localStorage.getItem("category_data")!),
+          ...localStorageData,
+          category_image_url:
+            localStorageData.category_image_url == null
+              ? ""
+              : localStorageData.category_image_url,
+          category_description:
+            localStorageData.category_description == null
+              ? ""
+              : localStorageData.category_description,
         }
       : {
           category_level: "Parent Level",
           category_name: "",
           comment: "",
           category_description: "",
-          category_status: false,
-          category_sorting: "",
-          category_image: "",
+          status: false,
+          sorting: "",
+          category_image_url: "",
           parent_id: null,
         },
     validate: (values) => {
+      console.log(values);
+
       return {
-        category_sorting: formValidator(
-          values.category_sorting,
-          "category_sorting",
-          "number"
-        ),
+        sorting: formValidator(values.sorting, "sorting", "number"),
       };
     },
   });
@@ -65,17 +79,15 @@ const CategoryAddUpdatePage = (props: Props) => {
           ? values.parent_id
           : null,
     };
-    const url_temp = isUpdate
-      ? "/product/category/update/"
-      : "/product/category/add_category/";
+    const url_temp = isUpdate ? "/category/update/" : "/category/create/";
 
     const category_response = await axiosFunction({
       urlPath: url_temp,
       data: dataToSend,
-      method: isUpdate ? "PUT" : "POST",
+      method: "POST",
     });
     setCategoryData([]);
-    const [new_category_id] = category_response.data.data;
+    const new_category_id = category_response.data[0].id;
     setNotification((pre) => {
       return {
         description: `Category with ID: ${[new_category_id]} ${
@@ -86,6 +98,7 @@ const CategoryAddUpdatePage = (props: Props) => {
         trigger: true,
       };
     });
+    localStorageClearFunction();
     setTimeout(() => {
       router.push("/dashboard/categories/");
     }, 3000);
@@ -118,7 +131,7 @@ const CategoryAddUpdatePage = (props: Props) => {
               className="w-[100%]"
               label="Category Status"
               description="Active / In-Active"
-              {...form.getInputProps("category_status", {
+              {...form.getInputProps("status", {
                 type: "checkbox",
               })}
             />
@@ -192,7 +205,7 @@ const CategoryAddUpdatePage = (props: Props) => {
               required
               withAsterisk
               type={"text"}
-              {...form.getInputProps("category_sorting")}
+              {...form.getInputProps("sorting")}
             />
             <TextInput
               className="w-[47%]"
@@ -200,7 +213,7 @@ const CategoryAddUpdatePage = (props: Props) => {
               size="md"
               label="URL for Image"
               type={"text"}
-              {...form.getInputProps("category_image")}
+              {...form.getInputProps("category_image_url")}
             />
             <Button
               size="md"

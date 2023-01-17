@@ -119,31 +119,7 @@ const CreateGrnPage = (props: Props) => {
       }
     );
     //
-    var is_in_grn_temp = false;
-    var index_temp = 0;
-    grnData.forEach((each_grn: any) => {
-      if (_id == each_grn.po_id) {
-        is_in_grn_temp = true;
-        if (each_grn.is_updatable) {
-          searched_grn_purchase_order.push({
-            index: index_temp++,
-            product_id: each_grn.product_id,
-            product_name: each_grn.product_name,
-            required_quantity: each_grn.remaining_quantity,
-            received_quantity: each_grn.remaining_quantity,
-            maximum_retail_price: each_grn.maximum_retail_price,
-            trade_price: each_grn.trade_price,
-            discounted_percentage: each_grn.discounted_percentage,
-            batch_no: each_grn.batch_no,
-            batch_expiry: each_grn.batch_expiry,
-            foc: each_grn.foc ? "Yes" : "No",
-            comments: each_grn.comments,
-          });
-        }
-      }
-    });
-    //
-    if (searched_purchase_order === undefined) {
+    if (searched_purchase_order == undefined) {
       setNotification((pre: any) => ({
         description: "No Purchase Order Found!",
         title: "Not Found!",
@@ -154,9 +130,12 @@ const CreateGrnPage = (props: Props) => {
     }
     //
     const { order_status } = searched_purchase_order;
-    if (order_status != "App" && order_status != "PRec") {
-      var order_status_temp = "";
-      if (order_status === "Pen") {
+    if (order_status != "Approved" && order_status != "Par-Received") {
+      var order_status_temp = "Received";
+      if (order_status === "Canceled") {
+        order_status_temp == "Cancelled";
+      }
+      if (order_status === "Pending") {
         order_status_temp = "Pending for approval";
       }
       setNotification((pre: any) => ({
@@ -168,42 +147,136 @@ const CreateGrnPage = (props: Props) => {
       return;
     }
     //
-    if (is_in_grn_temp && searched_grn_purchase_order.length == 0) {
-      setNotification((pre: any) => ({
-        description: `Purchase Order is Completed!`,
-        title: "Success",
-        isSuccess: true,
-        trigger: true,
-      }));
-      setData([]);
-      return;
-    }
-    //
-    if (is_in_grn_temp) {
-      setData(searched_grn_purchase_order);
-      return;
-    }
-    //
-    var table_data_temp: any[] = [];
-    searched_purchase_order.dataToSend.forEach(
-      (each_product_item: any, key: number) => {
-        table_data_temp.push({
-          index: key,
-          product_id: each_product_item.product_id,
-          product_name: each_product_item.product_name,
-          required_quantity: each_product_item.required_quantity,
-          received_quantity: each_product_item.required_quantity,
-          maximum_retail_price: 0,
-          trade_price: each_product_item.trade_price,
-          discounted_percentage: each_product_item.trade_discount,
-          batch_no: "",
-          batch_expiry: new Date(),
-          comments: "",
-          foc: each_product_item.foc,
-        });
+    searched_grn_purchase_order = grnData.filter((each_grn: any) => {
+      return each_grn.po_id == _id;
+    });
+    var is_in_grn_temp = false;
+    if (searched_grn_purchase_order.length > 0) is_in_grn_temp = true;
+
+    if (!is_in_grn_temp) {
+      if (searched_purchase_order.purchase_order_detail.length > 0) {
+        var order_detail_temp: any[] = [];
+        var index = 0;
+        searched_purchase_order.purchase_order_detail.forEach(
+          (each_detail: any) => {
+            order_detail_temp.push({
+              ...each_detail,
+              index: index++,
+              received_quantity: 0,
+              maximum_retail_price: 0,
+              discount_percentage: 0,
+              batch_number: "",
+              batch_expiry: new Date(),
+              comments: "",
+            });
+          }
+        );
+        setData(order_detail_temp);
       }
-    );
-    setData(table_data_temp);
+      return;
+    }
+
+    if (is_in_grn_temp) {
+      var index = 0;
+      searched_grn_purchase_order = [];
+      grnData.forEach((each_grn: any) => {
+        if (each_grn.is_updatable) {
+          searched_grn_purchase_order.push({
+            index: index++,
+            ...each_grn,
+          });
+        }
+      });
+    }
+    //
+    console.log(searched_grn_purchase_order);
+    console.log(searched_purchase_order);
+    //
+    //
+    // var index_temp = 0;
+    // grnData.forEach((each_grn: any) => {
+    //   if (_id == each_grn.po_id) {
+    //     is_in_grn_temp = true;
+    //     if (each_grn.is_updatable) {
+    //       searched_grn_purchase_order.push({
+    //         index: index_temp++,
+    //         product_id: each_grn.product_id,
+    //         product_name: each_grn.product_name,
+    //         required_quantity: each_grn.remaining_quantity,
+    //         received_quantity: each_grn.remaining_quantity,
+    //         maximum_retail_price: each_grn.maximum_retail_price,
+    //         trade_price: each_grn.trade_price,
+    //         discount_percentage: each_grn.discount_percentage,
+    //         batch_number: each_grn.batch_number,
+    //         batch_expiry: each_grn.batch_expiry,
+    //         foc: each_grn.foc ? "Yes" : "No",
+    //         comments: each_grn.comments,
+    //       });
+    //     }
+    //   }
+    // });
+    // //
+    // if (searched_purchase_order === undefined) {
+    //   setNotification((pre: any) => ({
+    //     description: "No Purchase Order Found!",
+    //     title: "Not Found!",
+    //     isSuccess: false,
+    //     trigger: true,
+    //   }));
+    //   return;
+    // }
+    // //
+    // const { order_status } = searched_purchase_order;
+    // if (order_status != "Approved" && order_status != "Par-Received") {
+    //   var order_status_temp = "";
+    //   if (order_status === "Pending") {
+    //     order_status_temp = "Pending for approval";
+    //   }
+    //   setNotification((pre: any) => ({
+    //     description: `Purchase Order is ${order_status_temp}!`,
+    //     title: "Error",
+    //     isSuccess: false,
+    //     trigger: true,
+    //   }));
+    //   return;
+    // }
+    // //
+    // if (is_in_grn_temp && searched_grn_purchase_order.length == 0) {
+    //   setNotification((pre: any) => ({
+    //     description: `Purchase Order is Completed!`,
+    //     title: "Success",
+    //     isSuccess: true,
+    //     trigger: true,
+    //   }));
+    //   setData([]);
+    //   return;
+    // }
+    // //
+    // if (is_in_grn_temp) {
+    //   setData(searched_grn_purchase_order);
+    //   return;
+    // }
+    // //
+    // var table_data_temp: any[] = [];
+    // searched_purchase_order.dataToSend.forEach(
+    //   (each_product_item: any, key: number) => {
+    //     table_data_temp.push({
+    //       index: key,
+    //       product_id: each_product_item.product_id,
+    //       product_name: each_product_item.product_name,
+    //       required_quantity: each_product_item.required_quantity,
+    //       received_quantity: each_product_item.required_quantity,
+    //       maximum_retail_price: 0,
+    //       trade_price: each_product_item.trade_price,
+    //       discount_percentage: each_product_item.trade_discount,
+    //       batch_number: "",
+    //       batch_expiry: new Date(),
+    //       comments: "",
+    //       foc: each_product_item.foc,
+    //     });
+    //   }
+    // );
+    // setData(table_data_temp);
   };
   //
   const submitHandler = async () => {
@@ -405,11 +478,11 @@ const CreateGrnPage = (props: Props) => {
                     <TextInput
                       size="xs"
                       type="text"
-                      value={row.discounted_percentage}
+                      value={row.discount_percentage}
                       onChange={(e: any) => {
                         tableInputHandler(
                           row.index,
-                          "discounted_percentage",
+                          "discount_percentage",
                           e.target.value,
                           "number"
                         );
@@ -427,11 +500,11 @@ const CreateGrnPage = (props: Props) => {
                     <TextInput
                       size="xs"
                       type="text"
-                      value={row.batch_no}
+                      value={row.batch_number}
                       onChange={(e: any) => {
                         tableInputHandler(
                           row.index,
-                          "batch_no",
+                          "batch_number",
                           e.target.value
                         );
                       }}

@@ -63,7 +63,7 @@ const ProductAddUpdatePage = (props: Props) => {
           ),
         }
       : {
-          item_status: false,
+          status: false,
           product_name: "",
           sku_description: "",
           sku_department: "",
@@ -148,22 +148,28 @@ const ProductAddUpdatePage = (props: Props) => {
     }
     //
     setSubmitButtonDisabler(true);
-    const url_temp = isUpdate ? "/product/update/" : "/product/add_product/";
+    const url_temp = isUpdate ? "/product/update/" : "/product/create/";
     const data_to_send_temp = {
       ...values,
-      productConversion: productConversion,
+      product_tag: values.productTags,
+      product_generic_formula: values.productGenericFormula,
+      product_conversion: productConversion,
+      sales_tax_percentage: values.sales_tax_group.substring(
+        0,
+        form.getInputProps("sales_tax_group").value.indexOf("%")
+      ),
       margin: +values.maximum_retail_price - +values.trade_price,
     };
     //
     const product_id_response = await axiosFunction({
       urlPath: url_temp,
       data: data_to_send_temp,
-      method: isUpdate ? "PUT" : "POST",
+      method: "POST",
     });
     //
     setProductData([]);
     //
-    const [new_product_id] = product_id_response.data.data;
+    const new_product_id = product_id_response.data[0].id;
     setNotification((pre) => {
       return {
         description: `Product with ID: ${[new_product_id]} ${
@@ -207,7 +213,7 @@ const ProductAddUpdatePage = (props: Props) => {
               className="w-[100%]"
               label="Product Status"
               description="Active / In-Active"
-              {...form.getInputProps("item_status", { type: "checkbox" })}
+              {...form.getInputProps("status", { type: "checkbox" })}
             />
             <Switch
               size="md"

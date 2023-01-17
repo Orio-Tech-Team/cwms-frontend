@@ -40,12 +40,13 @@ const LoginPage = (props: Props) => {
     }
     //
     const response = await axiosFunction({
-      urlPath: "/login/",
+      urlPath: "/user/login/",
       method: "POST",
       data: { user_id: emailValue, password: passwordValue },
     });
+
     //
-    if (response.status === 402) {
+    if (response.status === 404) {
       setNotification((pre) => {
         return {
           description: "Incorrect Credentials or User Not Found!",
@@ -66,10 +67,10 @@ const LoginPage = (props: Props) => {
       };
     });
 
-    setCookie("token", response.data.token, { secure: false });
-    setCookie("type", response.data.type, { secure: false });
-    setCookie("user_id", response.data.user_id, { secure: false });
-    setCookie("account_number", response.data.account_number, {
+    setCookie("token", response.data[0].token, { secure: false });
+    setCookie("type", response.data[0].type, { secure: false });
+    setCookie("user_id", response.data[0].user_id, { secure: false });
+    setCookie("account_number", response.data[0].account_number, {
       secure: false,
     });
     return router.push("/dashboard/");

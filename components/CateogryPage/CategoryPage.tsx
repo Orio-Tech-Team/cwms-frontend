@@ -20,11 +20,18 @@ const CategoryPage = (props: Props) => {
   const [isLoading, setIsLoading] = React.useState(true);
   //
   const updateHandler = async (_id: number) => {
-    const category_response = await axiosFunction({
-      urlPath: `/product/category/update/${_id}`,
+    const filtered_category = await axiosFunction({
+      urlPath: "/category/find/",
+      method: "POST",
+      data: {
+        id: _id,
+      },
     });
-    const [data_to_send_temp] = category_response.data;
-    localStorage.setItem("category_data", JSON.stringify(data_to_send_temp));
+
+    localStorage.setItem(
+      "category_data",
+      JSON.stringify(filtered_category.data[0])
+    );
     router.push(`/dashboard/categories/update_category/?id=${_id}`);
   };
   //
@@ -51,7 +58,7 @@ const CategoryPage = (props: Props) => {
       },
       {
         name: "Sorting",
-        selector: (row: any) => row.category_sorting,
+        selector: (row: any) => row.sorting,
         grow: 0,
         width: "100px",
       },
@@ -101,16 +108,20 @@ const CategoryPage = (props: Props) => {
     const dataTemp = categoryData.map((each_category: any, key: number) => {
       if (each_category.child && each_category.child.length > 0) {
         each_category.child.forEach((each_child: any) => {
-          child_temp.push(each_child);
+          child_temp.push({
+            ...each_child,
+            status: each_child.status ? "Active" : "In-Active",
+          });
         });
       }
       return {
         key: key,
         ...each_category,
-        status: each_category.category_status ? "Active" : "In-Active",
+        status: each_category.status ? "Active" : "In-Active",
       };
     });
     const table_temp = [...child_temp, ...dataTemp];
+
     //
     setData(table_temp);
     setColumns(columnsTemp);

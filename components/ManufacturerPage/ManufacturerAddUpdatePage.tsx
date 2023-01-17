@@ -10,6 +10,7 @@ import ManufacturerDropDownValues from "../../modules/Manufacturer/ManufacturerD
 import NotificationComponent from "../Shared/NotificationComponent/NotificationComponent";
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
 import UseManufacturerData from "../../modules/Manufacturer/UseManufacturerData";
+import { localStorageClearFunction } from "../../SharedFunctions/LocalStorageClearFunction";
 //
 type Props = {};
 //
@@ -20,15 +21,19 @@ const ManufacturerAddUpdatePage = (props: Props) => {
   const [manufactureData, setManufacturerData]: any[] = UseManufacturerData();
   const [submitButtonDisabler, setSubmitButtonDisabler] = React.useState(false);
   //
+  const localStorageData = {
+    ...JSON.parse(localStorage.getItem("manufacturer_data")!),
+  };
+
   const form = useForm({
     initialValues: isUpdate
       ? {
-          ...JSON.parse(localStorage.getItem("manufacturer_data")!),
+          ...localStorageData,
         }
       : {
           manufacturer_name: "",
           line_of_business: "",
-          manufacturer_status: true,
+          status: false,
         },
   });
   //
@@ -43,14 +48,15 @@ const ManufacturerAddUpdatePage = (props: Props) => {
     setSubmitButtonDisabler(true);
     const url_temp = isUpdate
       ? "/manufacturer/update/"
-      : "/manufacturer/add_manufacturer/";
+      : "/manufacturer/create/";
     const manufacturer_response = await axiosFunction({
       urlPath: url_temp,
       data: values,
-      method: isUpdate ? "PUT" : "POST",
+      method: "POST",
     });
     setManufacturerData([]);
-    const [new_manufacturer_id] = manufacturer_response.data.data;
+
+    const new_manufacturer_id = manufacturer_response.data[0].id;
     setNotification((pre) => {
       return {
         description: `Manufacturer with ID: ${[new_manufacturer_id]} ${
@@ -61,6 +67,7 @@ const ManufacturerAddUpdatePage = (props: Props) => {
         trigger: true,
       };
     });
+    localStorageClearFunction();
     setTimeout(() => {
       router.push("/dashboard/manufacturer/");
     }, 3000);
@@ -94,7 +101,7 @@ const ManufacturerAddUpdatePage = (props: Props) => {
               className="w-[100%]"
               label="Manufacturer Status"
               description="Active / In-Active"
-              {...form.getInputProps("manufacturer_status", {
+              {...form.getInputProps("status", {
                 type: "checkbox",
               })}
             />

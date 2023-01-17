@@ -7,26 +7,25 @@ import DataTableComponent from "../Shared/DataTableComponent/DataTableComponent"
 import Link from "next/link";
 import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbComponent";
 import { useRouter } from "next/navigation";
-import axiosFunction from "../../SharedFunctions/AxiosFunction";
 //
 type Props = {};
 
 const ManufacturerPage = (props: Props) => {
   const router = useRouter();
-  const [ManufacturerData, setManufacturerData]: Array<any> =
-    UseManufacturerData();
+  const [ManufacturerData, setManufacturerData]: any[] = UseManufacturerData();
   const [columns, setColumns]: Array<any> = React.useState([]);
   const [data, setData]: Array<any> = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   //
   const updateHandler = async (_id: number) => {
-    const manufacturer_response = await axiosFunction({
-      urlPath: `/manufacturer/update/${_id}`,
-    });
-    const [data_to_send_temp] = manufacturer_response.data;
+    const [filtered_manufacturer] = ManufacturerData.filter(
+      (each_manufacturer: any) => {
+        return _id == each_manufacturer.id;
+      }
+    );
     localStorage.setItem(
       "manufacturer_data",
-      JSON.stringify(data_to_send_temp)
+      JSON.stringify(filtered_manufacturer)
     );
     router.push(`/dashboard/manufacturer/update_manufacturer/?id=${_id}`);
   };
@@ -106,9 +105,9 @@ const ManufacturerPage = (props: Props) => {
         id: each_item.id,
         manufacturer_name: each_item.manufacturer_name,
         line_of_business: each_item.line_of_business,
-        status: each_item.manufacturer_status ? "Active" : "In-Active",
-        createdAt: each_item.createdAt.toString().substring(0, 10),
-        updatedAt: each_item.updatedAt.toString().substring(0, 10),
+        status: each_item.status ? "Active" : "In-Active",
+        createdAt: each_item.created_at.toString().substring(0, 10),
+        updatedAt: each_item.updated_at.toString().substring(0, 10),
       };
     });
     setColumns(columnsTemp);
