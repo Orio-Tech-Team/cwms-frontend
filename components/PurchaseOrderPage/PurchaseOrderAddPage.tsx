@@ -95,7 +95,7 @@ const PurchaseOrderAddPage = (props: Props) => {
       setSelectedProducts(temp_data_variable);
     });
   };
-  //
+
   React.useEffect(() => {
     setSelectedProducts([]);
     if (form.getInputProps("vendor_id").value != "") {

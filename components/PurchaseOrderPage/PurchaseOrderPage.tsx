@@ -47,12 +47,17 @@ const PurchaseOrderPage = (props: Props) => {
   //
   const tableGenerator = () => {
     const invoiceGenerator = (row: any) => {
+<<<<<<< HEAD
       const [purchase_order_temp] = PurchaseOrderData.filter(
+=======
+      const [searched_purchase_order] = PurchaseOrderData.filter(
+>>>>>>> 57c0b57412c42a306de7bc2e9fdc6040afd935f5
         (each_purchase_order: any) => {
           return each_purchase_order.id == row.id;
         }
       );
       localStorage.setItem(
+<<<<<<< HEAD
         "purchase_order",
         JSON.stringify(purchase_order_temp)
       );
@@ -68,6 +73,20 @@ const PurchaseOrderPage = (props: Props) => {
         method: "POST",
       });
 
+=======
+        "invoice_data",
+        JSON.stringify(searched_purchase_order)
+      );
+      const url = `http://${window.location.hostname}:4000/invoice/`;
+      window.open(url);
+    };
+    const actionFunction = async (row: any) => {
+      const id = row.id;
+      await axiosFunction({
+        urlPath: `/purchase_order/order_approved/${id}`,
+        method: "PUT",
+      });
+>>>>>>> 57c0b57412c42a306de7bc2e9fdc6040afd935f5
       setPurchaseOrderData([]);
     };
     //
@@ -122,6 +141,7 @@ const PurchaseOrderPage = (props: Props) => {
       },
       {
         name: "Action",
+<<<<<<< HEAD
         cell: (row: any) => {
           var button_text = "";
           if (row.is_cancelled) {
@@ -154,6 +174,28 @@ const PurchaseOrderPage = (props: Props) => {
             </>
           );
         },
+=======
+        cell: (row: any) => (
+          <>
+            <Button
+              disabled={row.order_status == "Cancel"}
+              compact
+              className="bg-[#002884]"
+              onClick={() =>
+                row.order_status === "App"
+                  ? invoiceGenerator(row)
+                  : actionFunction(row)
+              }
+            >
+              {row.order_status == "Cancel"
+                ? "Canceled"
+                : row.order_status === "Pen"
+                ? "Approve"
+                : "Invoice"}
+            </Button>
+          </>
+        ),
+>>>>>>> 57c0b57412c42a306de7bc2e9fdc6040afd935f5
         ignoreRowClick: true,
         allowOverflow: true,
         center: true,
