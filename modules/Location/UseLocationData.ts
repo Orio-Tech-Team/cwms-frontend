@@ -8,7 +8,11 @@ const UseLocationData = () => {
   const [data, setData] = useRecoilState(LocationAtom);
   const dataFetcher = async () => {
     const response = await axiosFunction({
-      urlPath: `/get_location/${getCookie("account_number")}`,
+      urlPath: `/location/find_all/`,
+      method: "POST",
+      data: {
+        account_number: getCookie("account_number"),
+      },
     });
     setData(response.data);
   };

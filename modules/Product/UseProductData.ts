@@ -7,7 +7,7 @@ const UseProductData = () => {
   const [data, setData] = useRecoilState(productAtom);
   //
   const dataFetcher = async () => {
-    const response = await axiosFunction({ urlPath: "/product/" });
+    const response = await axiosFunction({ urlPath: "/product/find_all/" });
     setData(response.data);
   };
   //

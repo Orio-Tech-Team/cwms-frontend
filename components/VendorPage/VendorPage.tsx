@@ -19,18 +19,19 @@ const VendorPage = (props: Props) => {
   const [vendorData, setVendorData]: Array<any> = UseVendorData();
   //
   const updateHandler = async (_id: number) => {
-    const vendor_response = await axiosFunction({
-      urlPath: `/vendor/update/${_id}`,
+    const [filtered_vendor] = vendorData.filter((each_vendor: any) => {
+      return _id == each_vendor.id;
     });
-    var manufacturer_id_temp: any[] = [];
-    vendor_response.data.manufacturer.forEach((each_manufacturer: any) => {
-      manufacturer_id_temp.push(each_manufacturer.id);
-    });
+    const manufacturer = filtered_vendor.manufacturers.map(
+      (each_manufacturer: any) => {
+        return each_manufacturer.id;
+      }
+    );
     localStorage.setItem(
       "vendor_data",
       JSON.stringify({
-        ...vendor_response.data,
-        manufacturer: manufacturer_id_temp,
+        ...filtered_vendor,
+        manufacturer: manufacturer,
       })
     );
     router.push(`/dashboard/vendors/update_vendor/?id=${_id}`);
@@ -98,10 +99,10 @@ const VendorPage = (props: Props) => {
         selector: (row: any) => (
           <span
             className={`font-semibold ${
-              row.vendor_status === "Active" ? "text-green-700" : "text-red-700"
+              row.status === "Active" ? "text-green-700" : "text-red-700"
             }`}
           >
-            {row.vendor_status}
+            {row.status}
           </span>
         ),
         grow: 0,
@@ -138,7 +139,7 @@ const VendorPage = (props: Props) => {
         business_phone_number: each_product.business_phone_number,
         email_address: each_product.email_address,
         payment_method: each_product.payment_method,
-        vendor_status: each_product.vendor_status ? "Active" : "In-Active",
+        status: each_product.status ? "Active" : "In-Active",
       };
     });
     setColumns(columnTemp);

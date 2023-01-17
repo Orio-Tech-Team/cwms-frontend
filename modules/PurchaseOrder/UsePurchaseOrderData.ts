@@ -6,21 +6,10 @@ import axiosFunction from "../../SharedFunctions/AxiosFunction";
 const UsePurchaseOrderData = () => {
   const [data, setData] = useRecoilState(PurchaseOrderAtom);
   const dataFetcher = async () => {
-    var dataToSend: Array<any> = [];
-    const response = await axiosFunction({ urlPath: "/product_order/" });
-    const madeData = response.data.order_response.map((each_item: any) => {
-      dataToSend = [];
-      response.data.order_detail_response.map((each_detail: any) => {
-        if (each_item.id === each_detail.po_id) {
-          dataToSend.push(each_detail);
-        }
-      });
-      return {
-        ...each_item,
-        dataToSend,
-      };
+    const response = await axiosFunction({
+      urlPath: "/purchase_order/find_all/",
     });
-    setData(madeData);
+    setData(response.data);
   };
   useEffect(() => {
     if (data.length === 0) {

@@ -6,7 +6,9 @@ import axiosFunction from "../../SharedFunctions/AxiosFunction";
 const UseManufacturerData = () => {
   const [data, setData]: any[] = useRecoilState(ManufacturerAtom);
   const dataFetcher = async () => {
-    const response = await axiosFunction({ urlPath: "/manufacturer/" });
+    const response = await axiosFunction({
+      urlPath: "/manufacturer/find_all/",
+    });
     setData(response.data);
   };
   useEffect(() => {

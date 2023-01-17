@@ -6,7 +6,7 @@ import { VendorAtom } from "./VendorRecoil";
 const UseVendorData = () => {
   const [data, setData] = useRecoilState(VendorAtom);
   const dataFetcher = async () => {
-    const response = await axiosFunction({ urlPath: "/vendor/" });
+    const response = await axiosFunction({ urlPath: "/vendor/find_all" });
     setData(response.data);
   };
   useEffect(() => {

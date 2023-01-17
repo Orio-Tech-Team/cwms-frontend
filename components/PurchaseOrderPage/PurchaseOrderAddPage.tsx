@@ -9,7 +9,6 @@ import DataTableComponent from "../Shared/DataTableComponent/DataTableComponent"
 import UseVendorData from "../../modules/Vendor/UseVendorData";
 import UseProductData from "../../modules/Product/UseProductData";
 import UseLocationData from "../../modules/Location/UseLocationData";
-import UseProductVendorData from "../../modules/Product/UseProductVendorData";
 import NotificationComponent from "../Shared/NotificationComponent/NotificationComponent";
 import {
   decimalNumberValidatorFunction,
@@ -17,24 +16,20 @@ import {
 } from "../../SharedFunctions/NumberValidator";
 //icons
 import { AiOutlineShoppingCart } from "react-icons/ai";
-import UseProductConversionData from "../../modules/Product/UseProductConversionData";
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
 import { useRouter } from "next/navigation";
 import UsePurchaseOrderData from "../../modules/PurchaseOrder/UsePurchaseOrderData";
 //
 type Props = {};
 var addToCartDisabler = true;
-var po_created_id: number = 0;
+var purchase_order_id: number = 0;
 
 const PurchaseOrderAddPage = (props: Props) => {
   const router = useRouter();
   const [vendorData, setVendorData]: Array<any> = UseVendorData();
   const [locationData, setLocationData]: Array<any> = UseLocationData();
   const [productData, setProductData]: Array<any> = UseProductData();
-  const [productVendorData, setProductVendorData]: Array<any> =
-    UseProductVendorData();
-  const [productConversionData, setProductConversionData]: Array<any> =
-    UseProductConversionData();
+  //
   const [purchaseOrderData, setPurchaseOrderData]: any[] =
     UsePurchaseOrderData();
   // States
@@ -69,11 +64,13 @@ const PurchaseOrderAddPage = (props: Props) => {
 
   // tableInputHandler
   const tableInputHandler = (row: any, name: string, value: any) => {
-    if (name === "unit_of_measurement" || name === "foc") {
+    if (name === "foc") {
       var temp_data_variable = [...selectedProducts];
-      temp_data_variable[row.key] = {
-        ...temp_data_variable[row.key],
+      temp_data_variable[row.index] = {
+        ...temp_data_variable[row.index],
         [name]: value,
+        trade_price: 0,
+        trade_discount: 0,
       };
       setSelectedProducts(temp_data_variable);
       return;
@@ -81,8 +78,8 @@ const PurchaseOrderAddPage = (props: Props) => {
     if (name === "required_quantity") {
       numberValidatorFunction(value, (number_value: any) => {
         var temp_data_variable = [...selectedProducts];
-        temp_data_variable[row.key] = {
-          ...temp_data_variable[row.key],
+        temp_data_variable[row.index] = {
+          ...temp_data_variable[row.index],
           [name]: number_value,
         };
         setSelectedProducts(temp_data_variable);
@@ -91,79 +88,73 @@ const PurchaseOrderAddPage = (props: Props) => {
     }
     decimalNumberValidatorFunction(value, (number_value: any) => {
       var temp_data_variable = [...selectedProducts];
-      temp_data_variable[row.key] = {
-        ...temp_data_variable[row.key],
+      temp_data_variable[row.index] = {
+        ...temp_data_variable[row.index],
         [name]: number_value,
       };
       setSelectedProducts(temp_data_variable);
     });
   };
-  //Filter Product
-  const selectedProductFilterer = (_id: number) => {
-    var product_ids_temp: Array<any> = [];
-    var selected_products_temp: Array<any> = [];
-    var index_temp: number = -1;
-    //
-    productVendorData.forEach((each_product_vendor_data: any) => {
-      if (each_product_vendor_data.vendorId === _id) {
-        index_temp++;
-        product_ids_temp.push({
-          id: each_product_vendor_data.productId,
-          key: index_temp,
-        });
-      }
-    });
-    //
-    productData.forEach((each_product: any) => {
-      product_ids_temp.forEach((each_id: any) => {
-        if (each_id.id === each_product.id) {
-          selected_products_temp.push({
-            ...each_product,
-            required_quantity: 0,
-            unit_of_measurement: "",
-            trade_price: "",
-            trade_discount: "",
-            foc: false,
-            disabled: true,
-            key: each_id.key,
-          });
-        }
-      });
-    });
-    setSelectedProducts(selected_products_temp);
-  };
+  //
   React.useEffect(() => {
     setSelectedProducts([]);
     if (form.getInputProps("vendor_id").value != "") {
-      tableFresherToggler();
-      selectedProductFilterer(form.getInputProps("vendor_id").value);
-      vendorData.map((each_vendor: any, key: number) => {
-        if (each_vendor.id === form.getInputProps("vendor_id").value) {
-          setSelectedVendor(each_vendor);
-        }
+      const vendor_data_temp = JSON.parse(
+        form.getInputProps("vendor_id").value
+      );
+      //
+      var index = 0;
+      const product_data_temp: any[] = [];
+      vendor_data_temp.products.forEach((each_product: any) => {
+        const [filtered_data_temp] = productData.filter(
+          (each_vendor_product: any) => {
+            return each_product.id == each_vendor_product.id;
+          }
+        );
+
+        product_data_temp.push({
+          id: filtered_data_temp.id,
+          index: index++,
+          product_name: filtered_data_temp.product_name,
+          sales_tax_percentage: filtered_data_temp.sales_tax_percentage,
+          required_quantity: filtered_data_temp.quantity,
+          unit_of_measurement: "Box",
+          disabled: true,
+          foc: false,
+          trade_price: 0,
+          trade_discount: 0,
+          product_conversion: filtered_data_temp.product_conversions,
+          manufacturer: filtered_data_temp.manufacturer,
+        });
       });
+      //
+
+      setSelectedProducts(product_data_temp);
+      setSelectedVendor(vendor_data_temp);
     }
   }, [form.getInputProps("vendor_id").value]);
 
   // Row Select Function
   const rowSelectFunction = (row: any) => {
+    const selected_row: any[] = row.selectedRows;
     var temp_data_variable = [...selectedProducts];
-    var temp_data: Array<any> = [];
-
-    temp_data_variable.map((each_data: any) => {
-      temp_data.push({
+    //
+    temp_data_variable = temp_data_variable.map((each_data: any) => {
+      return {
         ...each_data,
         disabled: true,
-      });
-    });
-    row.selectedRows.forEach((each_item: any) => {
-      temp_data[each_item.key] = {
-        ...temp_data[each_item.key],
-        disabled: false,
       };
     });
+    selected_row.forEach((each_data: any) => {
+      const index = each_data.index;
+      var temp = {
+        ...each_data,
+        disabled: false,
+      };
+      temp_data_variable[index] = temp;
+    });
 
-    setSelectedProducts(temp_data);
+    setSelectedProducts(temp_data_variable);
     //
     if (row.selectedCount > 0) {
       addToCartDisabler = false;
@@ -173,20 +164,14 @@ const PurchaseOrderAddPage = (props: Props) => {
   };
   // Add to Cart Function
   const addToCartFunction = () => {
-    var disabled_products_temp: any[] = [];
-    var total_temp = 0;
-    var total_discount_temp = 0;
-    var tax_temp = 0;
-    //
-    selectedProducts.forEach((each_product: any, key: number) => {
+    var previous_data: any[] = [...orderedProducts];
+    var selected_products_temp: any[] = [];
+    selectedProducts.forEach((each_product: any) => {
       if (!each_product.disabled) {
-        if (
-          each_product.required_quantity === "" ||
-          each_product.unit_of_measurement === ""
-        ) {
+        if (each_product.required_quantity == 0) {
           setNotification((pre) => {
             return {
-              description: "Required Quantity and UOM cannot be empty!",
+              description: "Required Quantity cannot be empty or zero!",
               title: "Error",
               isSuccess: false,
               trigger: true,
@@ -194,80 +179,98 @@ const PurchaseOrderAddPage = (props: Props) => {
           });
           return;
         }
-        productConversionData.map((each_conversion: any) => {
-          if (each_conversion.product_id === each_product.id) {
-            total_temp =
-              +total_temp +
-              +(+each_product.trade_price * +each_product.required_quantity);
-            //
-            (total_discount_temp =
-              +total_discount_temp +
-              +(
-                (+each_product.required_quantity *
-                  +each_product.trade_price *
-                  +each_product.trade_discount) /
-                100
-              )),
-              (tax_temp =
-                +tax_temp +
-                +(
-                  +(
-                    +each_product.required_quantity *
-                    +each_product.trade_price *
-                    +each_product.sales_tax_percentage
-                  ) / 100
-                )),
-              //
-              disabled_products_temp.push({
-                product_id: each_product.id,
-                product_name: each_product.product_name,
-                vendor_name: selectedVendor.vendor_name,
-                sales_tax_percentage: each_product.sales_tax_percentage,
-                required_quantity: each_product.required_quantity,
-                item_conversion: each_conversion.item_conversion,
-                manufacturer: each_product.manufacturer_name,
-                unit_of_measurement: each_product.unit_of_measurement,
-                trade_price: each_product.trade_price,
-                trade_discount: each_product.trade_discount,
-                foc: each_product.foc ? "Yes" : "No",
-                total_price: (
-                  +each_product.trade_price * +each_product.required_quantity
-                ).toFixed(3),
-                total_discount: (
-                  (+each_product.required_quantity *
-                    +each_product.trade_price *
-                    +each_product.trade_discount) /
-                  100
-                ).toFixed(3),
-                taxed_price: (
-                  (+each_product.required_quantity *
-                    +each_product.trade_price *
-                    +each_product.sales_tax_percentage) /
-                  100
-                ).toFixed(3),
-              });
-          }
-        });
+
+        selected_products_temp.push(each_product);
       }
     });
+    if (selected_products_temp.length == 0) return;
     //
-    orderedProducts.forEach((each_ordered_products: any) => {
-      disabled_products_temp.forEach((each_disabled_product: any) => {
+    const order_data: any[] = selected_products_temp.map(
+      (each_selected_product: any) => {
+        return {
+          product_id: each_selected_product.id,
+          product_name: each_selected_product.product_name,
+          sales_tax_percentage: each_selected_product.sales_tax_percentage,
+          required_quantity: each_selected_product.required_quantity,
+          item_conversion:
+            each_selected_product.product_conversion[0].item_conversion,
+          manufacturer_name:
+            each_selected_product.manufacturer.manufacturer_name,
+          manufacturer_id: each_selected_product.manufacturer.id,
+          uom: each_selected_product.unit_of_measurement,
+          trade_price: each_selected_product.trade_price,
+          trade_discount_percentage: each_selected_product.trade_discount,
+          gst_percentage: each_selected_product.sales_tax_percentage,
+          foc: each_selected_product.foc,
+          status: true,
+          total_price: (
+            +each_selected_product.required_quantity *
+            +each_selected_product.trade_price
+          ).toFixed(3),
+          trade_price_after_trade_discount: (
+            +each_selected_product.trade_price -
+            +(+each_selected_product.trade_discount / 100) *
+              +each_selected_product.trade_price
+          ).toFixed(3),
+          trade_price_after_applying_gst: (
+            +each_selected_product.trade_price +
+            +(+each_selected_product.sales_tax_percentage / 100) *
+              +each_selected_product.trade_price
+          ).toFixed(3),
+        };
+      }
+    );
+    selected_products_temp.forEach((each_selected_temp: any) => {
+      previous_data.forEach((each_previous: any) => {
         if (
-          each_ordered_products.product_id ===
-            each_disabled_product.product_id &&
-          each_ordered_products.foc != each_disabled_product.foc
+          each_selected_temp.id == each_previous.product_id &&
+          each_selected_temp.foc != each_previous.foc
         ) {
-          console.log("Hello");
+          order_data.push({
+            product_id: each_previous.product_id,
+            product_name: each_previous.product_name,
+            sales_tax_percentage: each_previous.sales_tax_percentage,
+            required_quantity: each_previous.required_quantity,
+            item_conversion: each_previous.item_conversion,
+            manufacturer_name: each_previous.manufacturer_name,
+            manufacturer_id: each_previous.manufacturer_id,
+            uom: each_previous.uom,
+            trade_price: each_previous.trade_price,
+            trade_discount_percentage: each_previous.trade_discount_percentage,
+            gst_percentage: each_previous.gst_percentage,
+            foc: each_previous.foc,
+            status: true,
+            total_price: each_previous.total_price,
+            trade_price_after_trade_discount:
+              each_previous.trade_price_after_trade_discount,
+            trade_price_after_applying_gst:
+              each_previous.trade_price_after_applying_gst,
+          });
         }
       });
     });
     //
-    setOrderedProducts(disabled_products_temp);
+    var total_temp = order_data.reduce(
+      (partial: any, each_temp: any) => +partial + +each_temp.total_price,
+      0
+    );
+    var total_discount_temp = order_data.reduce(
+      (partial: any, each_temp: any) =>
+        +partial + +each_temp.trade_price_after_trade_discount,
+      0
+    );
+    var tax_temp = order_data.reduce(
+      (partial: any, each_temp: any) =>
+        +partial + +each_temp.trade_price_after_applying_gst,
+      0
+    );
+
     setSubtotal(total_temp);
     setSubtotalDiscount(total_discount_temp);
     setTotalTax(tax_temp);
+    setOrderedProducts(order_data);
   };
+
   //
   const tableResetFunction = () => {
     form.reset();
@@ -293,25 +296,28 @@ const PurchaseOrderAddPage = (props: Props) => {
       payment_terms: selectedVendor.payment_terms,
       po_type: selectedVendor.vendor_classification,
       po_date: new Date(),
-      delivery_date: form.getInputProps("expected_delivery_date").value,
+      expected_delivery_date: form.getInputProps("expected_delivery_date")
+        .value,
       order_type: form.getInputProps("order_type").value,
       delivery_location: form.getInputProps("delivery_location").value,
       orders: orderedProducts,
-      subtotal: subtotal,
-      total_discounted_price: subtotalDiscount,
-      total_tax: totalTax,
-      grand_total: subtotal + totalTax - subtotalDiscount,
+      total_amount: subtotal,
+      total_discount: subtotalDiscount,
+      sales_tax: totalTax,
+      net_amount: subtotal + totalTax - subtotalDiscount,
     };
-    const po_id_response = await axiosFunction({
+
+    const response = await axiosFunction({
       data: dataToSend,
       method: "POST",
-      urlPath: "/product_order/add_product_order/",
+      urlPath: "/purchase_order/create/",
     });
-    po_created_id = po_id_response.data.po_id;
+
+    purchase_order_id = response.data[0].dataValues.id;
     setPurchaseOrderData([]);
     setNotification((pre) => {
       return {
-        description: `Purchase Order ID:${po_created_id} created successfully!`,
+        description: `Purchase Order ID:${purchase_order_id} created successfully!`,
         title: "Success",
         isSuccess: true,
         trigger: true,
@@ -391,7 +397,10 @@ const PurchaseOrderAddPage = (props: Props) => {
                 size="md"
                 disabled={form.getInputProps("vendor_id").value != ""}
                 data={vendorData.map((each_item: any) => {
-                  return { label: each_item.vendor_name, value: each_item.id };
+                  return {
+                    label: each_item.vendor_name,
+                    value: JSON.stringify(each_item),
+                  };
                 })}
                 {...form.getInputProps("vendor_id")}
               />
@@ -516,9 +525,9 @@ const PurchaseOrderAddPage = (props: Props) => {
                         key={row.id}
                         className=""
                         placeholder={"Select UOM"}
-                        data={["Carton", "Box", "Pieces"]}
+                        data={["Box"]}
                         size={"xs"}
-                        disabled={row.disabled}
+                        disabled={true}
                         value={row.unit_of_measurement}
                         onChange={(event: any) =>
                           tableInputHandler(row, "unit_of_measurement", event)
@@ -538,7 +547,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                         key={row.id}
                         placeholder={"Enter Trade Price"}
                         size={"xs"}
-                        disabled={row.disabled}
+                        disabled={row.disabled || row.foc}
                         value={row.trade_price}
                         onChange={(event: React.FormEvent<HTMLInputElement>) =>
                           tableInputHandler(
@@ -562,7 +571,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                         key={row.id}
                         placeholder={"Enter Trade Discount"}
                         size={"xs"}
-                        disabled={row.disabled}
+                        disabled={row.disabled || row.foc}
                         value={row.trade_discount}
                         onChange={(event: React.FormEvent<HTMLInputElement>) =>
                           tableInputHandler(
@@ -610,6 +619,7 @@ const PurchaseOrderAddPage = (props: Props) => {
               <h2 className="p-5 border-b-2 font-semibold text-[1.2rem] text-[#3b3e66]">
                 Order Cart
               </h2>
+              {/* paste here */}
               <DataTableComponent
                 columns={[
                   {
@@ -626,7 +636,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                   },
                   {
                     name: "Vendor Name",
-                    selector: (row: any) => row.vendor_name,
+                    selector: () => selectedVendor.vendor_name,
                     grow: 1,
                   },
                   {
@@ -654,7 +664,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                   },
                   {
                     name: "UOM",
-                    selector: (row: any) => row.unit_of_measurement,
+                    selector: (row: any) => row.uom,
                     grow: 0,
                     center: true,
                     width: "80px",
@@ -668,14 +678,15 @@ const PurchaseOrderAddPage = (props: Props) => {
                   },
                   {
                     name: "Trade Discount",
-                    selector: (row: any) => row.trade_discount || "0%",
+                    selector: (row: any) =>
+                      row.trade_discount_percentage + "%" || "0%",
                     grow: 0,
                     center: true,
                     width: "130px",
                   },
                   {
                     name: "FOC",
-                    selector: (row: any) => row.foc,
+                    selector: (row: any) => (row.foc ? "Yes" : "No"),
                     grow: 0,
                     center: true,
                     width: "60px",
@@ -689,7 +700,8 @@ const PurchaseOrderAddPage = (props: Props) => {
                   },
                   {
                     name: "Total Discount",
-                    selector: (row: any) => row.total_discount,
+                    selector: (row: any) =>
+                      row.trade_price_after_trade_discount,
                     grow: 0,
                     center: true,
                     width: "140px",
@@ -697,6 +709,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                 ]}
                 data={orderedProducts}
               />
+              {/*  */}
             </div>
             <div className="ml-auto min-w-[400px]">
               <div className="flex justify-between">
@@ -721,7 +734,7 @@ const PurchaseOrderAddPage = (props: Props) => {
             <Button
               className="bg-[#002884] hover:bg-[#0e2762] w-[300px] ml-auto"
               type={"submit"}
-              disabled={orderedProducts.length === 0 || po_created_id != 0}
+              disabled={orderedProducts.length === 0 || purchase_order_id != 0}
             >
               Order
             </Button>

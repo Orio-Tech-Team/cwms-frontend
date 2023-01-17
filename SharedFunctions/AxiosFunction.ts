@@ -37,14 +37,11 @@ const axiosFunction = async ({
     config["params"] = params;
   }
   //
-  const result = await axios(config)
-    .then(function (response) {
-      return response;
-    })
-    .catch(function (error) {
-      return error.response;
-    });
-
-  return result;
+  const result = await axios(config);
+  if (result.data.status == 200) {
+    return result.data;
+  }
+  console.log(result.data);
+  return result.data;
 };
 export default axiosFunction;

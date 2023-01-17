@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import PurchaseOrderType from "../../../modules/PurchaseOrder/PurchaseOrderType";
 
 type Props = {};
 //
@@ -14,6 +15,39 @@ type Props = {};
 // net total amount + sales - total discount
 //
 const InvoiceComponent = (props: Props) => {
+  const [purchaseOrder, setPurchaseOrder] = React.useState<PurchaseOrderType>({
+    address: "",
+    advance_income: "",
+    advance_income_tax: 0,
+    arrival_date: new Date(),
+    city: "",
+    delivery_location: "",
+    expected_delivery_date: new Date(),
+    id: 0,
+    net_amount: 0,
+    ntn: "",
+    order_status: "",
+    order_type: "Advance",
+    payment_terms: "",
+    po_type: "",
+    sales_tax: 0,
+    status: "",
+    strn: "",
+    total_amount: 0,
+    total_discount: 0,
+    vendor_id: 0,
+    vendor_name: "",
+    purchase_order_detail: [],
+  });
+  const [product, setProduct] = React.useState<any[]>([]);
+  React.useEffect(() => {
+    const localStorageData = JSON.parse(
+      localStorage.getItem("purchase_order")!
+    );
+    setPurchaseOrder(localStorageData);
+    setProduct(localStorageData.purchase_order_detail);
+  }, []);
+
   return (
     <>
       <section className="flex justify-center">
@@ -26,57 +60,63 @@ const InvoiceComponent = (props: Props) => {
             <div className="min-w-[200px]">
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">Vendor:</span>
-                <span>Vendor 1</span>
+                <span>{purchaseOrder.vendor_name}</span>
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">Address:</span>
-                <span>Some Where</span>
+                <span>{purchaseOrder.address}</span>
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">City:</span>
-                <span>Karachi</span>
+                <span>{purchaseOrder.city}</span>
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">NTN:</span>
-                <span>1</span>
+                <span>{purchaseOrder.ntn}</span>
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">STRN:</span>
-                <span>12</span>
+                <span>{purchaseOrder.strn}</span>
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">Payment Terms:</span>
-                <span>15D</span>
+                <span>{purchaseOrder.payment_terms}</span>
               </div>
             </div>
             <div className="min-w-[200px]">
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">PO Number:</span>
-                <span>1043</span>
+                <span>{purchaseOrder.id}</span>
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">PO Date:</span>
-                <span>Some Where</span>
+                <span>
+                  {purchaseOrder.created_at?.toString().substring(0, 10)}
+                </span>
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">Delivery Date:</span>
-                <span>Karachi</span>
+                <span>
+                  {purchaseOrder.expected_delivery_date
+                    ?.toString()
+                    .substring(0, 10)}
+                </span>
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">Delivery Location:</span>
-                <span>1</span>
+                <span>{purchaseOrder.delivery_location}</span>
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">PO Type:</span>
-                <span>12</span>
+                <span>{purchaseOrder.po_type}</span>
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">Sales Tax #:</span>
-                <span>15D</span>
+                <span>{123}</span>
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">NTN:</span>
-                <span>XXXX</span>
+                <span>{purchaseOrder.ntn}</span>
               </div>
             </div>
           </div>
@@ -99,7 +139,53 @@ const InvoiceComponent = (props: Props) => {
                 </tr>
               </thead>
               <tbody>
-                <tr></tr>
+                {product.length > 0
+                  ? product.map((each_product: any, key: number) => {
+                      console.log(each_product);
+
+                      return (
+                        <tr key={key}>
+                          <td className="border-r border-r-black text-center">
+                            {key + 1}
+                          </td>
+                          <td className="border-r border-r-black text-center">
+                            {each_product.product_name}
+                          </td>
+                          <td className="border-r border-r-black text-center">
+                            {each_product.manufacturer_name}
+                          </td>
+                          <td className="border-r border-r-black text-center">
+                            {each_product.item_conversion}
+                          </td>
+                          <td className="border-r border-r-black text-center">
+                            {each_product.uom}
+                          </td>
+                          <td className="border-r border-r-black text-center">
+                            {each_product.required_quantity}
+                          </td>
+                          <td className="border-r border-r-black text-center">
+                            {each_product.trade_price}
+                          </td>
+                          <td className="border-r border-r-black text-center">
+                            {each_product.trade_discount_percentage}
+                          </td>
+                          <td className="border-r border-r-black text-center">
+                            {(
+                              +each_product.trade_price +
+                              +(+each_product.sales_tax_percentage / 100) *
+                                +each_product.trade_price
+                            ).toFixed(3)}
+                          </td>
+                          <td className="text-center">
+                            {(
+                              +each_product.trade_price *
+                              +each_product.required_quantity
+                            ).toFixed(3)}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  : ""}
               </tbody>
             </table>
           </div>
@@ -110,7 +196,7 @@ const InvoiceComponent = (props: Props) => {
                 Total Amount
               </div>
               <div className="w-[85px] border border-l-black text-center">
-                202002
+                {purchaseOrder.total_amount}
               </div>
             </div>
             <div className="flex justify-end border border-black border-t-0">
@@ -119,7 +205,7 @@ const InvoiceComponent = (props: Props) => {
                 Total Discount
               </div>
               <div className="w-[85px] border border-l-black text-center">
-                202002
+                {purchaseOrder.total_discount}
               </div>
             </div>
             <div className="flex justify-end border border-black border-t-0">
@@ -128,7 +214,7 @@ const InvoiceComponent = (props: Props) => {
                 Sales Tax
               </div>
               <div className="w-[85px] border border-l-black text-center">
-                202002
+                {purchaseOrder.sales_tax}
               </div>
             </div>
             <div className="flex justify-end border border-black border-t-0">
@@ -137,7 +223,7 @@ const InvoiceComponent = (props: Props) => {
                 Advance Income Tax
               </div>
               <div className="w-[85px] border border-l-black text-center">
-                202002
+                {purchaseOrder.advance_income}
               </div>
             </div>
             <div className="flex justify-end border border-black border-t-0">
@@ -146,14 +232,16 @@ const InvoiceComponent = (props: Props) => {
                 Net Amount
               </div>
               <div className="w-[85px] border border-l-black text-center">
-                202002
+                {purchaseOrder.net_amount}
               </div>
             </div>
           </div>
-          <p className="font-bold text-[0.8rem] mt-2">
-            "This is an Advance Payment Purchase Order where the payment has
-            been made in advance"
-          </p>
+          {purchaseOrder.po_type == "Advance" && (
+            <p className="font-bold text-[0.8rem] mt-2">
+              "This is an Advance Payment Purchase Order where the payment has
+              been made in advance"
+            </p>
+          )}
         </main>
       </section>
     </>

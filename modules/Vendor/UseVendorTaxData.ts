@@ -16,8 +16,9 @@ const UseVendorTaxData = () => {
 
   const dataFetcher = async () => {
     const response = await axiosFunction({
-      urlPath: "/vendor/add_vendor/vendor_tax/",
+      urlPath: "/vendor/find_vendor_tax/",
     });
+
     //
     response.data.forEach((each_data: any) => {
       if (each_data.type === "with_hold") {

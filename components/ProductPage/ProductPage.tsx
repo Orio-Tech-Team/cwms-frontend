@@ -17,11 +17,12 @@ const ProductPage = (props: Props) => {
   const [columns, setColumns]: Array<any> = React.useState([]);
   const [data, setData]: Array<any> = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
+
   // functions
   const updateHandler = async (_id: any) => {
     var category: any[] = [];
-    var productTags: any[] = [];
     var vendor: any[] = [];
+    var productTags: any[] = [];
     var productGenericFormula: any[] = [];
     var product_conversion_su_1 = "Carton";
     var product_conversion_ic_1 = "1";
@@ -30,60 +31,58 @@ const ProductPage = (props: Props) => {
     var product_conversion_su_3 = "";
     var product_conversion_ic_3 = "1";
     //
-    const [found_data] = productData.filter(
+    const [filtered_product] = productData.filter(
       (each_product: any) => each_product.id == _id
     );
-    //
-    const response = await axiosFunction({
-      urlPath: "/product/find_for_update",
-      data: { _id },
-      method: "post",
-    });
-    //
-    if (response.data.product_categories.length > 0) {
-      response.data.product_categories.forEach((each_category: any) => {
-        category.push(each_category.categoryId);
+
+    if (filtered_product.product_conversions.length > 0) {
+      var product_conversion = [...filtered_product.product_conversions];
+      var sorted_conversion: any[] = product_conversion.sort(
+        (obj1: any, obj2: any) => {
+          if (obj1.sorting > obj2.sorting) {
+            return 1;
+          }
+          if (obj1.sorting < obj2.sorting) {
+            return -1;
+          }
+          return 0;
+        }
+      );
+
+      product_conversion_ic_1 = sorted_conversion[0].item_conversion;
+      product_conversion_ic_2 = sorted_conversion[1].item_conversion;
+      product_conversion_ic_3 = sorted_conversion[2].item_conversion;
+      product_conversion_su_1 = sorted_conversion[0].selling_unit;
+      product_conversion_su_2 = sorted_conversion[1].selling_unit;
+      product_conversion_su_3 = sorted_conversion[2].selling_unit;
+    }
+
+    if (filtered_product.product_generic_formulas.length > 0) {
+      productGenericFormula = filtered_product.product_generic_formulas.map(
+        (each_formula: any) => {
+          return each_formula.product_generic_formula;
+        }
+      );
+    }
+    if (filtered_product.product_tags.length > 0) {
+      productTags = filtered_product.product_tags.map((each_tag: any) => {
+        return each_tag.tag;
       });
     }
-    //
-    if (response.data.product_generic.length > 0) {
-      response.data.product_generic.forEach((each_formula: any) => {
-        productGenericFormula.push(each_formula.product_generic_formula);
+    if (filtered_product.categories.length > 0) {
+      category = filtered_product.categories.map((each_category: any) => {
+        return each_category.id;
       });
     }
-    //
-    if (response.data.product_tags.length > 0) {
-      response.data.product_tags.forEach((each_tag: any) => {
-        productTags.push(each_tag.tag_name);
+
+    if (filtered_product.vendors.length > 0) {
+      vendor = filtered_product.vendors.map((each_vendor: any) => {
+        return each_vendor.id;
       });
-    }
-    //
-    if (response.data.product_vendors.length > 0) {
-      response.data.product_vendors.forEach((each_vendor: any) => {
-        vendor.push(each_vendor.vendorId);
-      });
-    }
-    if (response.data.product_conversion.length > 0) {
-      product_conversion_su_1 =
-        response.data.product_conversion[0].selling_unit;
-      product_conversion_ic_1 =
-        response.data.product_conversion[0].item_conversion;
-      product_conversion_su_2 =
-        response.data.product_conversion[1].selling_unit;
-      product_conversion_ic_2 =
-        response.data.product_conversion[1].item_conversion;
-      product_conversion_su_3 =
-        response.data.product_conversion[2].selling_unit;
-      product_conversion_ic_3 =
-        response.data.product_conversion[2].item_conversion;
     }
     //
     const data_to_send_temp = {
-      ...found_data,
-      quantity: found_data.quantity == "" ? 0 : found_data.quantity,
-
-      manufacturer_id: found_data.manufacturerId,
-      purchasing_price: 0,
+      ...filtered_product,
       category,
       productTags,
       vendor,
@@ -161,10 +160,10 @@ const ProductPage = (props: Props) => {
         selector: (row: any) => (
           <span
             className={`font-semibold ${
-              row.item_status === "Active" ? "text-green-700" : "text-red-700"
+              row.status === "Active" ? "text-green-700" : "text-red-700"
             }`}
           >
-            {row.item_status}
+            {row.status}
           </span>
         ),
         grow: 0,
@@ -195,7 +194,8 @@ const ProductPage = (props: Props) => {
       return {
         ...each_product,
         key: key,
-        item_status: each_product.item_status ? "Active" : "In-Active",
+        manufacturer_name: each_product.manufacturer.manufacturer_name,
+        status: each_product.status ? "Active" : "In-Active",
       };
     });
     //

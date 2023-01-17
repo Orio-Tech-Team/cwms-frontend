@@ -6,7 +6,7 @@ import axiosFunction from "../../SharedFunctions/AxiosFunction";
 const UseCategoryData = () => {
   const [data, setData]: any[] = useRecoilState(CategoryRecoil);
   const dataFetcher = async () => {
-    const response = await axiosFunction({ urlPath: "/product/category/" });
+    const response = await axiosFunction({ urlPath: "/category/find_all/" });
     setData(response.data);
   };
   useEffect(() => {
