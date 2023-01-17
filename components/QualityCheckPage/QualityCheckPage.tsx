@@ -17,7 +17,7 @@ const QualityCheckPage = (props: Props) => {
   //   functions
   const actionHandler = async (row: any, status: boolean) => {
     setButtonDisabler(true);
-    var url = status ? "/grn/quality_checker/" : "/grn/quality_reject/";
+    var url = status ? "/grn/approve/" : "/grn/reject/";
     //
     await axiosFunction({
       method: "POST",
@@ -30,7 +30,7 @@ const QualityCheckPage = (props: Props) => {
   //
   const tableGenerator = () => {
     const data_temp = grnData.filter((each_grn: any) => {
-      return !each_grn.qc_check && each_grn.grn_status != "D";
+      return !each_grn.qc_approved && each_grn.grn_status != "D";
     });
     setData(data_temp);
   };
@@ -90,6 +90,13 @@ const QualityCheckPage = (props: Props) => {
                   sortable: true,
                 },
                 {
+                  name: "UOM",
+                  selector: (row: any) => row.uom,
+                  grow: 0,
+                  center: true,
+                  width: "80px",
+                },
+                {
                   name: "Req. Qty",
                   selector: (row: any) => row.required_quantity,
                   grow: 0,
@@ -119,7 +126,7 @@ const QualityCheckPage = (props: Props) => {
                 },
                 {
                   name: "Disc %",
-                  selector: (row: any) => row.discounted_percentage,
+                  selector: (row: any) => row.discount_percentage,
                   grow: 0,
                   center: true,
                   width: "100px",
@@ -133,11 +140,12 @@ const QualityCheckPage = (props: Props) => {
                 },
                 {
                   name: "Batch Expiry",
-                  selector: (row: any) => row.batch_expiry,
+                  selector: (row: any) => row.batch_expiry.substring(0, 10),
                   grow: 0,
                   center: true,
                   width: "120px",
                 },
+
                 {
                   name: "Comments",
                   selector: (row: any) => row.comments,

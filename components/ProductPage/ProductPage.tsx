@@ -49,12 +49,14 @@ const ProductPage = (props: Props) => {
         }
       );
 
+      if (sorted_conversion[1].selling_unit == "Box") {
+        product_conversion_su_3 = sorted_conversion[2].selling_unit;
+        product_conversion_ic_3 = sorted_conversion[2].item_conversion;
+      }
       product_conversion_ic_1 = sorted_conversion[0].item_conversion;
       product_conversion_ic_2 = sorted_conversion[1].item_conversion;
-      product_conversion_ic_3 = sorted_conversion[2].item_conversion;
       product_conversion_su_1 = sorted_conversion[0].selling_unit;
       product_conversion_su_2 = sorted_conversion[1].selling_unit;
-      product_conversion_su_3 = sorted_conversion[2].selling_unit;
     }
 
     if (filtered_product.product_generic_formulas.length > 0) {

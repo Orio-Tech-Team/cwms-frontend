@@ -95,44 +95,7 @@ const PurchaseOrderAddPage = (props: Props) => {
       setSelectedProducts(temp_data_variable);
     });
   };
-<<<<<<< HEAD
-  //Filter Product
-  const selectedProductFilterer = (_id: number) => {
-    var product_ids_temp: Array<any> = [];
-    var selected_products_temp: Array<any> = [];
-    var index_temp: number = -1;
-    //
-    productVendorData.forEach((each_product_vendor_data: any) => {
-      if (each_product_vendor_data.vendorId === _id) {
-        index_temp++;
-        product_ids_temp.push({
-          id: each_product_vendor_data.productId,
-          key: index_temp,
-        });
-      }
-    });
-    //
-    productData.forEach((each_product: any) => {
-      product_ids_temp.forEach((each_id: any) => {
-        if (each_id.id === each_product.id) {
-          selected_products_temp.push({
-            ...each_product,
-            required_quantity: 0,
-            unit_of_measurement: "Box",
-            trade_price: "",
-            trade_discount: "",
-            foc: false,
-            disabled: true,
-            key: each_id.key,
-          });
-        }
-      });
-    });
-    setSelectedProducts(selected_products_temp);
-  };
-=======
 
->>>>>>> 6dbe392b970aa6213c88c5103589024a080979a7
   React.useEffect(() => {
     setSelectedProducts([]);
     if (form.getInputProps("vendor_id").value != "") {
@@ -155,7 +118,9 @@ const PurchaseOrderAddPage = (props: Props) => {
           product_name: filtered_data_temp.product_name,
           sales_tax_percentage: filtered_data_temp.sales_tax_percentage,
           required_quantity: filtered_data_temp.quantity,
-          unit_of_measurement: "Box",
+          unit_of_measurement:
+            filtered_data_temp.product_conversions[1].selling_unit,
+
           disabled: true,
           foc: false,
           trade_price: 0,
@@ -222,15 +187,46 @@ const PurchaseOrderAddPage = (props: Props) => {
     });
     if (selected_products_temp.length == 0) return;
     //
+    var total_temp = 0;
+    var total_discount_temp = 0;
+    var tax_temp = 0;
+    //
     const order_data: any[] = selected_products_temp.map(
       (each_selected_product: any) => {
+        //
+        var total_price = (
+          +each_selected_product.required_quantity *
+          +each_selected_product.trade_price
+        ).toFixed(3);
+        total_temp = total_temp + +total_price;
+        //
+        var trade_price_after_trade_discount = (
+          +(+each_selected_product.trade_discount / 100) * +total_price
+        ).toFixed(3);
+        total_discount_temp =
+          total_discount_temp + +trade_price_after_trade_discount;
+        //
+        var trade_price_after_applying_gst = (
+          +(+each_selected_product.sales_tax_percentage / 100) *
+          +(+total_price - +trade_price_after_trade_discount)
+        ).toFixed(3);
+        tax_temp = tax_temp + +trade_price_after_applying_gst;
+        //
+        var { item_conversion, selling_unit } =
+          each_selected_product.product_conversion[
+            each_selected_product.product_conversion.length - 1
+          ];
+        //
         return {
           product_id: each_selected_product.id,
           product_name: each_selected_product.product_name,
           sales_tax_percentage: each_selected_product.sales_tax_percentage,
           required_quantity: each_selected_product.required_quantity,
           item_conversion:
-            each_selected_product.product_conversion[0].item_conversion,
+            each_selected_product.unit_of_measurement == selling_unit
+              ? each_selected_product.required_quantity
+              : +item_conversion * +each_selected_product.required_quantity,
+          last_selling_unit: selling_unit,
           manufacturer_name:
             each_selected_product.manufacturer.manufacturer_name,
           manufacturer_id: each_selected_product.manufacturer.id,
@@ -240,20 +236,9 @@ const PurchaseOrderAddPage = (props: Props) => {
           gst_percentage: each_selected_product.sales_tax_percentage,
           foc: each_selected_product.foc,
           status: true,
-          total_price: (
-            +each_selected_product.required_quantity *
-            +each_selected_product.trade_price
-          ).toFixed(3),
-          trade_price_after_trade_discount: (
-            +each_selected_product.trade_price -
-            +(+each_selected_product.trade_discount / 100) *
-              +each_selected_product.trade_price
-          ).toFixed(3),
-          trade_price_after_applying_gst: (
-            +each_selected_product.trade_price +
-            +(+each_selected_product.sales_tax_percentage / 100) *
-              +each_selected_product.trade_price
-          ).toFixed(3),
+          total_price: total_price,
+          trade_price_after_trade_discount: trade_price_after_trade_discount,
+          trade_price_after_applying_gst: +trade_price_after_applying_gst,
         };
       }
     );
@@ -282,25 +267,12 @@ const PurchaseOrderAddPage = (props: Props) => {
               each_previous.trade_price_after_trade_discount,
             trade_price_after_applying_gst:
               each_previous.trade_price_after_applying_gst,
+            actual_price: each_previous.actual_price,
           });
         }
       });
     });
     //
-    var total_temp = order_data.reduce(
-      (partial: any, each_temp: any) => +partial + +each_temp.total_price,
-      0
-    );
-    var total_discount_temp = order_data.reduce(
-      (partial: any, each_temp: any) =>
-        +partial + +each_temp.trade_price_after_trade_discount,
-      0
-    );
-    var tax_temp = order_data.reduce(
-      (partial: any, each_temp: any) =>
-        +partial + +each_temp.trade_price_after_applying_gst,
-      0
-    );
 
     setSubtotal(total_temp);
     setSubtotalDiscount(total_discount_temp);
@@ -562,7 +534,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                         key={row.id}
                         className=""
                         placeholder={"Select UOM"}
-                        data={["Box"]}
+                        data={["Box", "Pieces"]}
                         size={"xs"}
                         disabled={true}
                         value={row.unit_of_measurement}
@@ -683,7 +655,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                     ),
                     grow: 0,
                     center: true,
-                    width: "150px",
+                    width: "100px",
                   },
                   {
                     name: "Quantity",
@@ -736,12 +708,19 @@ const PurchaseOrderAddPage = (props: Props) => {
                     width: "140px",
                   },
                   {
-                    name: "Total Discount",
+                    name: "T.D",
                     selector: (row: any) =>
                       row.trade_price_after_trade_discount,
                     grow: 0,
                     center: true,
-                    width: "140px",
+                    width: "100px",
+                  },
+                  {
+                    name: "T.P After GST",
+                    selector: (row: any) => row.trade_price_after_applying_gst,
+                    grow: 0,
+                    center: true,
+                    width: "100px",
                   },
                 ]}
                 data={orderedProducts}

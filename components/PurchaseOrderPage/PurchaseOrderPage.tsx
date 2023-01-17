@@ -8,12 +8,14 @@ import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbCompone
 import DataTableComponent from "../Shared/DataTableComponent/DataTableComponent";
 import ModalComponent from "../Shared/ModalComponent/ModalComponent";
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
+import PurchaseOrderType from "../../modules/PurchaseOrder/PurchaseOrderType";
 //
 type Props = {};
 
 const PurchaseOrderPage = (props: Props) => {
-  const [PurchaseOrderData, setPurchaseOrderData]: Array<any> =
+  const [PurchaseOrderData, setPurchaseOrderData]: any[] =
     UsePurchaseOrderData();
+
   const [columns, setColumns]: Array<any> = React.useState([]);
   const [data, setData]: Array<any> = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -29,7 +31,7 @@ const PurchaseOrderPage = (props: Props) => {
     await axiosFunction({
       urlPath: "/purchase_order/cancel/",
       data: {
-        _id: selectedId,
+        id: selectedId,
         comment: comment,
       },
       method: "POST",
@@ -45,24 +47,27 @@ const PurchaseOrderPage = (props: Props) => {
   //
   const tableGenerator = () => {
     const invoiceGenerator = (row: any) => {
-      const [searched_purchase_order] = PurchaseOrderData.filter(
+      const [purchase_order_temp] = PurchaseOrderData.filter(
         (each_purchase_order: any) => {
           return each_purchase_order.id == row.id;
         }
       );
       localStorage.setItem(
-        "invoice_data",
-        JSON.stringify(searched_purchase_order)
+        "purchase_order",
+        JSON.stringify(purchase_order_temp)
       );
-      const url = `http://${window.location.hostname}:4000/invoice/`;
-      window.open(url);
+      window.open("/invoice");
     };
+    //
     const actionFunction = async (row: any) => {
-      const id = row.id;
       await axiosFunction({
-        urlPath: `/purchase_order/order_approved/${id}`,
-        method: "PUT",
+        urlPath: "/purchase_order/approve/",
+        data: {
+          id: row.id,
+        },
+        method: "POST",
       });
+
       setPurchaseOrderData([]);
     };
     //
@@ -110,38 +115,45 @@ const PurchaseOrderPage = (props: Props) => {
       },
       {
         name: "Status",
-        selector: (row: any) =>
-          row.order_status == "Cancel"
-            ? "Canceled"
-            : row.order_status == "App"
-            ? "Approved"
-            : "Pending",
+        selector: (row: any) => row.order_status,
         grow: 0,
         center: true,
         sortable: false,
       },
       {
         name: "Action",
-        cell: (row: any) => (
-          <>
-            <Button
-              disabled={row.order_status == "Cancel"}
-              compact
-              className="bg-[#002884]"
-              onClick={() =>
-                row.order_status === "App"
-                  ? invoiceGenerator(row)
-                  : actionFunction(row)
-              }
-            >
-              {row.order_status == "Cancel"
-                ? "Canceled"
-                : row.order_status === "Pen"
-                ? "Approve"
-                : "Invoice"}
-            </Button>
-          </>
-        ),
+        cell: (row: any) => {
+          var button_text = "";
+          if (row.is_cancelled) {
+            button_text = "Cancelled";
+          } else {
+            if (row.order_status == "Pending") {
+              button_text = "Approve";
+            } else {
+              button_text = "Invoice";
+            }
+          }
+          return (
+            <>
+              <Button
+                disabled={
+                  row.is_cancelled ||
+                  row.order_status == "Received" ||
+                  row.order_status == "Par-Received"
+                }
+                compact
+                className="bg-[#002884]"
+                onClick={() =>
+                  row.order_status === "Pending"
+                    ? actionFunction(row)
+                    : invoiceGenerator(row)
+                }
+              >
+                {button_text}
+              </Button>
+            </>
+          );
+        },
         ignoreRowClick: true,
         allowOverflow: true,
         center: true,
@@ -156,7 +168,11 @@ const PurchaseOrderPage = (props: Props) => {
         cell: (row: any) => (
           <>
             <Button
-              disabled={row.order_status != "Pen" && row.order_status != "App"}
+              disabled={
+                row.is_cancelled ||
+                row.order_status == "Received" ||
+                row.order_status == "Par-Received"
+              }
               onClick={() => modalConfirmHandler(row.id)}
               className="bg-red-500 flex justify-center items-center h-6 w-4 rounded-md"
             >
@@ -172,10 +188,11 @@ const PurchaseOrderPage = (props: Props) => {
         key: key,
         id: each_item.id,
         vendor_name: each_item.vendor_name,
-        grand_total: each_item.grand_total,
-        expected_date: each_item.expected_date,
+        grand_total: each_item.net_amount,
+        expected_date: each_item.expected_delivery_date,
         order_status: each_item.order_status,
         order_type: each_item.order_type,
+        is_cancelled: each_item.is_cancelled,
       };
     });
 

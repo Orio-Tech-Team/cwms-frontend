@@ -150,9 +150,10 @@ const CreateGrnPage = (props: Props) => {
     searched_grn_purchase_order = grnData.filter((each_grn: any) => {
       return each_grn.po_id == _id;
     });
+    //
     var is_in_grn_temp = false;
     if (searched_grn_purchase_order.length > 0) is_in_grn_temp = true;
-
+    //
     if (!is_in_grn_temp) {
       if (searched_purchase_order.purchase_order_detail.length > 0) {
         var order_detail_temp: any[] = [];
@@ -162,9 +163,9 @@ const CreateGrnPage = (props: Props) => {
             order_detail_temp.push({
               ...each_detail,
               index: index++,
-              received_quantity: 0,
+              received_quantity: each_detail.required_quantity,
+              discount_percentage: each_detail.trade_discount_percentage,
               maximum_retail_price: 0,
-              discount_percentage: 0,
               batch_number: "",
               batch_expiry: new Date(),
               comments: "",
@@ -183,14 +184,24 @@ const CreateGrnPage = (props: Props) => {
         if (each_grn.is_updatable) {
           searched_grn_purchase_order.push({
             index: index++,
+            batch_expiry: new Date(each_grn.batch_expiry),
             ...each_grn,
           });
         }
       });
     }
+
+    if (searched_grn_purchase_order.length == 0) {
+      setNotification((pre: any) => ({
+        description: `Purchase Order is waiting for QC Check!`,
+        title: "Error",
+        isSuccess: false,
+        trigger: true,
+      }));
+    }
+    setData(searched_grn_purchase_order);
     //
-    console.log(searched_grn_purchase_order);
-    console.log(searched_purchase_order);
+
     //
     //
     // var index_temp = 0;
@@ -299,14 +310,15 @@ const CreateGrnPage = (props: Props) => {
       });
       return;
     }
+
     setSubmitButtonDisabler(true);
     const data_to_send = {
       po_id: form.getInputProps("purchase_order_id").value,
-      percentOrderCompleted: percentOrderCompleted,
-      grnData: data,
+      percent_order_completed: percentOrderCompleted,
+      grn_data: data,
     };
     //
-    await axiosFunction({
+    const response = await axiosFunction({
       urlPath: "/grn/create/",
       method: "POST",
       data: data_to_send,
@@ -314,12 +326,23 @@ const CreateGrnPage = (props: Props) => {
     //
     setGrnData([]);
     //
-    setNotification({
-      description: "GRN Created/Updated Successfully!",
-      title: "Success",
-      isSuccess: true,
-      trigger: true,
-    });
+
+    if (response.status == 200) {
+      setNotification({
+        description: "GRN Created/Updated Successfully!",
+        title: "Success",
+        isSuccess: true,
+        trigger: true,
+      });
+    } else {
+      setSubmitButtonDisabler(false);
+      setNotification({
+        description: "Error creating GRN!",
+        title: "Error",
+        isSuccess: false,
+        trigger: true,
+      });
+    }
     //
   };
   //
@@ -404,6 +427,13 @@ const CreateGrnPage = (props: Props) => {
                 grow: 0,
                 center: true,
                 width: "120px",
+              },
+              {
+                name: "UOM",
+                selector: (row: any) => row.uom,
+                grow: 0,
+                center: true,
+                width: "100px",
               },
               {
                 name: "Rec Quantity",

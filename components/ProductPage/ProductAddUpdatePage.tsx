@@ -107,6 +107,7 @@ const ProductAddUpdatePage = (props: Props) => {
           product_conversion_ic_2: "1",
           product_conversion_su_3: "",
           product_conversion_ic_3: "1",
+          mrp_unit_price: 0,
         },
   });
 
@@ -158,7 +159,7 @@ const ProductAddUpdatePage = (props: Props) => {
         0,
         form.getInputProps("sales_tax_group").value.indexOf("%")
       ),
-      margin: +values.maximum_retail_price - +values.trade_price,
+      margin: +values.mrp_unit_price - +values.trade_price,
     };
     //
     const product_id_response = await axiosFunction({
@@ -271,7 +272,7 @@ const ProductAddUpdatePage = (props: Props) => {
               size="md"
               label="Maximum Retail Price"
               type={"text"}
-              {...form.getInputProps("maximum_retail_price")}
+              {...form.getInputProps("mrp_unit_price")}
               disabled
             />
             <TextInput
