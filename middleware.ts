@@ -16,5 +16,7 @@ export async function middleware(req: NextRequest) {
   }
 }
 export const config = {
-  matcher: ["/((?!api|_next|static|favicon.ico|pharm_logo.png).*)"],
+  matcher: [
+    "/((?!api|_next|static|favicon.ico|pharm_logo.png|chickoo_logo.png).*)",
+  ],
 };

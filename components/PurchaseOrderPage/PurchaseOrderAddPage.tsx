@@ -388,12 +388,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                 Clear
               </Button>
             </div>
-            <ModalComponent
-              modalStatus={modalStatus}
-              modalHandler={modalHandler}
-            >
-              <div>Hello</div>
-            </ModalComponent>
+
             <div className="flex flex-wrap gap-5 justify-between">
               <Select
                 className="w-[47%]"
@@ -763,6 +758,9 @@ const PurchaseOrderAddPage = (props: Props) => {
           trigger={notification.trigger}
           setNotification={setNotification}
         />
+        <ModalComponent modalStatus={modalStatus} modalHandler={modalHandler}>
+          <div>Hello</div>
+        </ModalComponent>
       </main>
     </>
   );

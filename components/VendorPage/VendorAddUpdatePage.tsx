@@ -14,6 +14,7 @@ import axiosFunction from "../../SharedFunctions/AxiosFunction";
 import UseVendorData from "../../modules/Vendor/UseVendorData";
 import { formValidator } from "../../SharedFunctions/NumberValidator";
 import { localStorageClearFunction } from "../../SharedFunctions/LocalStorageClearFunction";
+import FileInputComponent from "../Shared/FileInputComponent/FileInputComponent";
 
 type Props = {};
 
@@ -27,9 +28,12 @@ const VendorAddUpdatePage = (props: Props) => {
   const { withHoldTaxGroup, withHoldTaxPercentage } = UseVendorTaxData();
   //
   const [submitButtonDisabler, setSubmitButtonDisabler] = React.useState(false);
-  const local_storage_data: any = {
-    ...JSON.parse(localStorage.getItem("vendor_data")!),
-  };
+  var local_storage_data: any;
+  if (isUpdate) {
+    local_storage_data = {
+      ...JSON.parse(localStorage.getItem("vendor_data")!),
+    };
+  }
 
   //
   const form = useForm({
@@ -82,6 +86,8 @@ const VendorAddUpdatePage = (props: Props) => {
           advance_income_tax: "",
           gst: "",
           minimum_order_quantity: "",
+          file_attachment: null,
+          comment: "",
         },
     validate: (values) => {
       return {
@@ -141,8 +147,8 @@ const VendorAddUpdatePage = (props: Props) => {
       return;
     }
     setSubmitButtonDisabler(true);
-    //
     const url_temp = isUpdate ? "/vendor/update/" : "/vendor/create/";
+
     //
     const vendor_id_response = await axiosFunction({
       urlPath: url_temp,
@@ -164,7 +170,7 @@ const VendorAddUpdatePage = (props: Props) => {
     });
     localStorageClearFunction();
     setTimeout(() => {
-      router.push("/dashboard/vendors/");
+      // router.push("/dashboard/vendors/");
     }, 3000);
   };
   return (
@@ -191,11 +197,23 @@ const VendorAddUpdatePage = (props: Props) => {
           >
             <Switch
               size="md"
-              className="w-[100%]"
+              className={
+                form.getInputProps("status").value ? "w-[100%]" : "w-[47%]"
+              }
               label="Vendor Status"
               description="Active / In-Active"
               {...form.getInputProps("status", { type: "checkbox" })}
             />
+            {!form.getInputProps("status").value && (
+              <TextInput
+                className="w-[47%]"
+                placeholder="Enter Comment"
+                size="md"
+                label="Comment"
+                type={"text"}
+                {...form.getInputProps("comment")}
+              />
+            )}
             <TextInput
               className="w-[47%]"
               placeholder="Enter Vendor Name"
@@ -546,8 +564,16 @@ const VendorAddUpdatePage = (props: Props) => {
               data={VendorDropDownValues.stock_return_policy}
               {...form.getInputProps("stock_return_policy")}
             />
+            <FileInputComponent
+              className="w-[100%]"
+              label="File Attachment"
+              placeholder="Upload your files"
+              size="md"
+              name="file_attachment"
+              {...form.getInputProps("file_attachment")}
+            />
             <Button
-              disabled={submitButtonDisabler}
+              // disabled={submitButtonDisabler}
               size="md"
               className="bg-red-500 w-56 ml-auto"
               type={"submit"}

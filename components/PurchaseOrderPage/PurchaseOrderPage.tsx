@@ -136,11 +136,7 @@ const PurchaseOrderPage = (props: Props) => {
           return (
             <>
               <Button
-                disabled={
-                  row.is_cancelled ||
-                  row.order_status == "Received" ||
-                  row.order_status == "Par-Received"
-                }
+                disabled={row.is_cancelled}
                 compact
                 className="bg-[#002884]"
                 onClick={() =>

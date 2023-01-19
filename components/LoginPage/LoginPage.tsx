@@ -79,11 +79,11 @@ const LoginPage = (props: Props) => {
     <>
       <main className="w-[100%] h-screen flex justify-center items-center select-none">
         <div className="w-[700px] max-w-[95%]">
-          <div className=" mx-auto w-[300px] h-[80px]">
+          <div className="mx-auto w-[600px] h-[200px] flex justify-center items-center">
             <Image
               priority
-              className="h-auto w-auto"
-              src="/pharm_logo.png"
+              className="h-[100%] w-[100%] object-contain"
+              src={process.env.LOGO_URL || ""}
               width={300}
               height={80}
               alt="Pharmacy Logo"

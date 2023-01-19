@@ -108,6 +108,7 @@ const CreateGrnPage = (props: Props) => {
   };
   //
   const searchPurchaseOrderFunction = (_id: string) => {
+    setData([]);
     setPercentOrderCompleted(100);
     setSubmitButtonDisabler(false);
     var searched_purchase_order: any = {};
@@ -181,11 +182,17 @@ const CreateGrnPage = (props: Props) => {
       var index = 0;
       searched_grn_purchase_order = [];
       grnData.forEach((each_grn: any) => {
-        if (each_grn.is_updatable) {
+        if (
+          each_grn.po_id == _id &&
+          each_grn.is_updatable &&
+          each_grn.grn_status != "D"
+        ) {
           searched_grn_purchase_order.push({
+            ...each_grn,
             index: index++,
             batch_expiry: new Date(each_grn.batch_expiry),
-            ...each_grn,
+            required_quantity: each_grn.remaining_quantity,
+            received_quantity: each_grn.remaining_quantity,
           });
         }
       });

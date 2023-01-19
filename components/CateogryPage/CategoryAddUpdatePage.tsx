@@ -128,13 +128,25 @@ const CategoryAddUpdatePage = (props: Props) => {
           >
             <Switch
               size="md"
-              className="w-[100%]"
+              className={
+                form.getInputProps("status").value ? "w-[100%]" : "w-[47%]"
+              }
               label="Category Status"
               description="Active / In-Active"
               {...form.getInputProps("status", {
                 type: "checkbox",
               })}
             />
+            {!form.getInputProps("status").value && (
+              <TextInput
+                className="w-[47%]"
+                placeholder="Enter Comment"
+                size="md"
+                label="Comment"
+                type={"text"}
+                {...form.getInputProps("comment")}
+              />
+            )}
             <Select
               className={`transition-all ${
                 form.getInputProps("category_level").value === "Sub Level"

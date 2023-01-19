@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import dynamic from "next/dynamic";
 //
 import { useRouter, useSearchParams } from "next/navigation";
 // components
@@ -21,9 +22,9 @@ const ManufacturerAddUpdatePage = (props: Props) => {
   const [manufactureData, setManufacturerData]: any[] = UseManufacturerData();
   const [submitButtonDisabler, setSubmitButtonDisabler] = React.useState(false);
   //
-  const localStorageData = {
-    ...JSON.parse(localStorage.getItem("manufacturer_data")!),
-  };
+  const [localStorageData, setLocalStorageData] = React.useState(
+    JSON.parse(window && window.localStorage.getItem("manufacturer_data")!)
+  );
 
   const form = useForm({
     initialValues: isUpdate
@@ -34,6 +35,7 @@ const ManufacturerAddUpdatePage = (props: Props) => {
           manufacturer_name: "",
           line_of_business: "",
           status: false,
+          comment: "",
         },
   });
   //
@@ -98,13 +100,25 @@ const ManufacturerAddUpdatePage = (props: Props) => {
           >
             <Switch
               size="md"
-              className="w-[100%]"
+              className={
+                form.getInputProps("status").value ? "w-[100%]" : "w-[47%]"
+              }
               label="Manufacturer Status"
               description="Active / In-Active"
               {...form.getInputProps("status", {
                 type: "checkbox",
               })}
             />
+            {!form.getInputProps("status").value && (
+              <TextInput
+                className="w-[47%]"
+                placeholder="Enter Comment"
+                size="md"
+                label="Comment"
+                type={"text"}
+                {...form.getInputProps("comment")}
+              />
+            )}
             <TextInput
               className="w-[47%]"
               placeholder="Enter Manufacturer Name"

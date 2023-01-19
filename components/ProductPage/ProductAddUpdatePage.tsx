@@ -61,6 +61,9 @@ const ProductAddUpdatePage = (props: Props) => {
           sku_warehouse_lead_time: new Date(
             local_storage_response.sku_warehouse_lead_time
           ),
+          margin:
+            +local_storage_response.mrp_unit_price -
+            +local_storage_response.trade_price,
         }
       : {
           status: false,
@@ -108,6 +111,7 @@ const ProductAddUpdatePage = (props: Props) => {
           product_conversion_su_3: "",
           product_conversion_ic_3: "1",
           mrp_unit_price: 0,
+          comment: "",
         },
   });
 
@@ -211,11 +215,23 @@ const ProductAddUpdatePage = (props: Props) => {
           >
             <Switch
               size="md"
-              className="w-[100%]"
+              className={
+                form.getInputProps("status").value ? "w-[100%]" : "w-[47%]"
+              }
               label="Product Status"
               description="Active / In-Active"
               {...form.getInputProps("status", { type: "checkbox" })}
             />
+            {!form.getInputProps("status").value && (
+              <TextInput
+                className="w-[47%]"
+                placeholder="Enter Comment"
+                size="md"
+                label="Comment"
+                type={"text"}
+                {...form.getInputProps("comment")}
+              />
+            )}
             <Switch
               size="md"
               className="w-[100%]"
@@ -272,7 +288,7 @@ const ProductAddUpdatePage = (props: Props) => {
               size="md"
               label="Maximum Retail Price"
               type={"text"}
-              {...form.getInputProps("mrp_unit_price")}
+              {...form.getInputProps("maximum_retail_price")}
               disabled
             />
             <TextInput
@@ -284,22 +300,19 @@ const ProductAddUpdatePage = (props: Props) => {
               disabled
             />
             <div className="w-[100%] flex justify-between">
-              <Radio.Group
-                className="w-[47%]"
-                orientation="vertical"
-                label="Select Discount Type"
-                spacing="xs"
-                offset="md"
+              <TextInput
+                className="w-[31%]"
                 size="md"
-                {...form.getInputProps("discount_type")}
-              >
-                <Radio value="price" label="Discounted Price" />
-                <Radio value="percentage" label="Discounted Percentage" />
-              </Radio.Group>
+                label="Maximum Retail Unit Price"
+                type={"text"}
+                {...form.getInputProps("mrp_unit_price")}
+                disabled
+              />
+
               {form.getInputProps("discount_type").value == "price" ? (
                 <TextInput
                   placeholder="Enter Discount Price"
-                  className="w-[47%]"
+                  className="w-[31%]"
                   size="md"
                   label="Discount Price"
                   type={"text"}
@@ -310,15 +323,31 @@ const ProductAddUpdatePage = (props: Props) => {
               ) : (
                 <TextInput
                   placeholder="Enter Discount Percentage"
-                  className="w-[47%]"
+                  className="w-[31%]"
                   size="md"
-                  label="Discount Percentage"
+                  label={`Discount Percentage ${(
+                    (+form.getInputProps("discounted_price").value / 100) *
+                    +form.getInputProps("mrp_unit_price").value
+                  ).toFixed(2)}`}
                   type={"text"}
                   required
                   withAsterisk
                   {...form.getInputProps("discounted_price")}
                 />
               )}
+
+              <Radio.Group
+                className="w-[31%]"
+                orientation="vertical"
+                label="Select Discount Type"
+                spacing="xs"
+                offset="md"
+                size="md"
+                {...form.getInputProps("discount_type")}
+              >
+                <Radio value="price" label="Discounted Price" />
+                <Radio value="percentage" label="Discounted Percentage" />
+              </Radio.Group>
             </div>
             <TextInput
               className="w-[47%]"
