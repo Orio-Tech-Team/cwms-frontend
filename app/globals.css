@@ -15,11 +15,11 @@ body {
 /* .table_date_picker {
   background-color: red;
 } */
-.table_date_picker .mantine-DatePicker-dropdown{
+.table_date_picker .mantine-DatePicker-dropdown {
   z-index: 9 !important;
   position: fixed;
 }
 /*  */
-.ql-editor{
-  @apply h-[200px] scrollbar-thin overflow-y-scroll
+.ql-editor {
+  @apply h-[200px] scrollbar-thin overflow-y-scroll;
 }

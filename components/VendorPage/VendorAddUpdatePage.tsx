@@ -15,6 +15,7 @@ import UseVendorData from "../../modules/Vendor/UseVendorData";
 import { formValidator } from "../../SharedFunctions/NumberValidator";
 import { localStorageClearFunction } from "../../SharedFunctions/LocalStorageClearFunction";
 import FileInputComponent from "../Shared/FileInputComponent/FileInputComponent";
+import axios from "axios";
 
 type Props = {};
 
@@ -148,26 +149,37 @@ const VendorAddUpdatePage = (props: Props) => {
     }
     setSubmitButtonDisabler(true);
     const url_temp = isUpdate ? "/vendor/update/" : "/vendor/create/";
-
     //
-    const vendor_id_response = await axiosFunction({
-      urlPath: url_temp,
-      data: value,
-      method: "POST",
-    });
+    const formData = new FormData();
+    for (var key in value) {
+      formData.append(key, value[key]);
+    }
+    try {
+      await axios.post("http://localhost:3001/api/vendor/create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } catch (err) {
+      console.log(err);
+    }
     //
-    setVendorData([]);
-    const new_vendor_id = vendor_id_response.data[0].id;
-    setNotification((pre) => {
-      return {
-        description: `Vendor with ID: ${[new_vendor_id]} ${
-          isUpdate ? "Updated" : "Created"
-        } successfully!`,
-        title: "Success",
-        isSuccess: true,
-        trigger: true,
-      };
-    });
+    // const vendor_id_response = await axiosFunction({
+    //   urlPath: url_temp,
+    //   data: value,
+    //   method: "POST",
+    // });
+    //
+    // setVendorData([]);
+    // const new_vendor_id = vendor_id_response.data[0].id;
+    // setNotification((pre) => {
+    //   return {
+    //     description: `Vendor with ID: ${[new_vendor_id]} ${
+    //       isUpdate ? "Updated" : "Created"
+    //     } successfully!`,
+    //     title: "Success",
+    //     isSuccess: true,
+    //     trigger: true,
+    //   };
+    // });
     localStorageClearFunction();
     setTimeout(() => {
       // router.push("/dashboard/vendors/");
