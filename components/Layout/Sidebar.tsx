@@ -52,7 +52,7 @@ const Sidebar = ({ sidebarActive }: Props) => {
             <Image
               priority
               className="h-auto w-auto"
-              src={process.env.LOGO_URL || "/chickoo_logo.png"}
+              src={process.env.LOGO_URL || ""}
               width={100}
               height={60}
               alt="Pharmacy Logo"
