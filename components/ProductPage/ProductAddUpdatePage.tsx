@@ -571,6 +571,7 @@ const ProductAddUpdatePage = (props: Props) => {
                   searchable
                   nothingFound="No options"
                   data={["Box", "Pieces"]}
+                  disabled={isUpdate}
                   {...form.getInputProps("product_conversion_su_2")}
                 />
                 <TextInput
@@ -581,6 +582,7 @@ const ProductAddUpdatePage = (props: Props) => {
                   required
                   withAsterisk
                   type={"text"}
+                  disabled={isUpdate}
                   {...form.getInputProps("product_conversion_ic_2")}
                 />
               </div>
@@ -603,6 +605,7 @@ const ProductAddUpdatePage = (props: Props) => {
                   searchable
                   nothingFound="No options"
                   data={["Pieces", "Strips"]}
+                  disabled={isUpdate}
                   {...form.getInputProps("product_conversion_su_3")}
                 />
                 <TextInput
@@ -615,6 +618,7 @@ const ProductAddUpdatePage = (props: Props) => {
                   }
                   withAsterisk
                   type={"text"}
+                  disabled={isUpdate}
                   {...form.getInputProps("product_conversion_ic_3")}
                 />
               </div>

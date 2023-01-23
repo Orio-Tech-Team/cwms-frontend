@@ -63,7 +63,9 @@ type Props = {
   title?: string;
   selectableRows?: boolean;
   onSelectedRowsChange?: (row: any) => void;
+  onRowClick?: (row: any) => void;
   clearSelectedRows?: boolean;
+  keyField?: string;
 };
 //
 type FilterProps = {
@@ -92,6 +94,8 @@ const DataTableComponent = ({
   data,
   title,
   clearSelectedRows,
+  onRowClick,
+  keyField,
 }: Props) => {
   const [filterText, setFilterText] = React.useState("");
   const [resetPaginationToggle, setResetPaginationToggle] =
@@ -142,6 +146,7 @@ const DataTableComponent = ({
       dense
       highlightOnHover
       pointerOnHover
+      keyField={keyField || "id"}
       //@ts-ignore
       direction="auto"
       pagination
@@ -156,6 +161,7 @@ const DataTableComponent = ({
       subHeaderWrap
       customStyles={customStyles}
       clearSelectedRows={clearSelectedRows}
+      onRowClicked={onRowClick}
     />
   );
 };

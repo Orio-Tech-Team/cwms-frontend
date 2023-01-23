@@ -182,11 +182,7 @@ const CreateGrnPage = (props: Props) => {
       var index = 0;
       searched_grn_purchase_order = [];
       grnData.forEach((each_grn: any) => {
-        if (
-          each_grn.po_id == _id &&
-          each_grn.is_updatable &&
-          each_grn.grn_status != "D"
-        ) {
+        if (each_grn.po_id == _id && each_grn.is_updatable) {
           searched_grn_purchase_order.push({
             ...each_grn,
             index: index++,

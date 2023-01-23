@@ -19,6 +19,7 @@ import { AiOutlineShoppingCart } from "react-icons/ai";
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
 import { useRouter } from "next/navigation";
 import UsePurchaseOrderData from "../../modules/PurchaseOrder/UsePurchaseOrderData";
+import ProductSearchTable from "./ProductSearchTable";
 //
 type Props = {};
 var addToCartDisabler = true;
@@ -102,6 +103,7 @@ const PurchaseOrderAddPage = (props: Props) => {
       const vendor_data_temp = JSON.parse(
         form.getInputProps("vendor_id").value
       );
+
       //
       var index = 0;
       const product_data_temp: any[] = [];
@@ -190,28 +192,37 @@ const PurchaseOrderAddPage = (props: Props) => {
     var total_temp = 0;
     var total_discount_temp = 0;
     var tax_temp = 0;
+    var total_price = 0;
+    var trade_price_after_trade_discount = 0;
+    var trade_price_after_applying_gst = 0;
     //
     const order_data: any[] = selected_products_temp.map(
       (each_selected_product: any) => {
         //
-        var total_price = (
-          +each_selected_product.required_quantity *
-          +each_selected_product.trade_price
-        ).toFixed(3);
-        total_temp = total_temp + +total_price;
-        //
-        var trade_price_after_trade_discount = (
-          +(+each_selected_product.trade_discount / 100) * +total_price
-        ).toFixed(3);
-        total_discount_temp =
-          total_discount_temp + +trade_price_after_trade_discount;
-        //
-        var trade_price_after_applying_gst = (
-          +(+each_selected_product.sales_tax_percentage / 100) *
-          +(+total_price - +trade_price_after_trade_discount)
-        ).toFixed(3);
-        tax_temp = tax_temp + +trade_price_after_applying_gst;
-        //
+        if (!each_selected_product.foc) {
+          total_price = +(
+            +each_selected_product.required_quantity *
+            +each_selected_product.trade_price
+          ).toFixed(3);
+          total_temp = total_temp + +total_price;
+          //
+          trade_price_after_trade_discount = +(
+            +(+each_selected_product.trade_discount / 100) * +total_price
+          ).toFixed(3);
+          total_discount_temp =
+            total_discount_temp + +trade_price_after_trade_discount;
+          //
+          trade_price_after_applying_gst = +(
+            +(+each_selected_product.sales_tax_percentage / 100) *
+            +(+total_price - +trade_price_after_trade_discount)
+          ).toFixed(3);
+          tax_temp = tax_temp + +trade_price_after_applying_gst;
+          //
+        } else {
+          total_price = 0;
+          trade_price_after_trade_discount = 0;
+          trade_price_after_applying_gst = 0;
+        }
         var { item_conversion, selling_unit } =
           each_selected_product.product_conversion[
             each_selected_product.product_conversion.length - 1
@@ -274,9 +285,9 @@ const PurchaseOrderAddPage = (props: Props) => {
     });
     //
 
-    setSubtotal(total_temp);
-    setSubtotalDiscount(total_discount_temp);
-    setTotalTax(tax_temp);
+    setSubtotal((pre: number) => +total_temp + pre);
+    setSubtotalDiscount((pre: number) => +total_discount_temp + pre);
+    setTotalTax((pre: number) => +tax_temp + pre);
     setOrderedProducts(order_data);
   };
 
@@ -341,6 +352,7 @@ const PurchaseOrderAddPage = (props: Props) => {
   const modalHandler = () => {
     setModalStatus((pre) => !pre);
   };
+
   //
   return (
     <>
@@ -703,7 +715,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                     width: "140px",
                   },
                   {
-                    name: "T.D",
+                    name: "Total Disc",
                     selector: (row: any) =>
                       row.trade_price_after_trade_discount,
                     grow: 0,
@@ -711,7 +723,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                     width: "100px",
                   },
                   {
-                    name: "T.P After GST",
+                    name: "Tax",
                     selector: (row: any) => row.trade_price_after_applying_gst,
                     grow: 0,
                     center: true,
@@ -759,7 +771,10 @@ const PurchaseOrderAddPage = (props: Props) => {
           setNotification={setNotification}
         />
         <ModalComponent modalStatus={modalStatus} modalHandler={modalHandler}>
-          <div>Hello</div>
+          <ProductSearchTable
+            {...form.getInputProps("vendor_id")}
+            modalHandler={modalHandler}
+          />
         </ModalComponent>
       </main>
     </>
