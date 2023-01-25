@@ -16,10 +16,12 @@ import {
 } from "../../SharedFunctions/NumberValidator";
 //icons
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { RiDeleteBin7Line } from "react-icons/ri";
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
 import { useRouter } from "next/navigation";
 import UsePurchaseOrderData from "../../modules/PurchaseOrder/UsePurchaseOrderData";
 import ProductSearchTable from "./ProductSearchTable";
+import _ from "lodash";
 //
 type Props = {};
 var addToCartDisabler = true;
@@ -195,40 +197,44 @@ const PurchaseOrderAddPage = (props: Props) => {
     var total_price = 0;
     var trade_price_after_trade_discount = 0;
     var trade_price_after_applying_gst = 0;
+    var order_temp: any[] = [];
     //
-    const order_data: any[] = selected_products_temp.map(
-      (each_selected_product: any) => {
+    selected_products_temp.forEach(
+      (each_selected_product: any, key: number) => {
         //
-        if (!each_selected_product.foc) {
-          total_price = +(
-            +each_selected_product.required_quantity *
-            +each_selected_product.trade_price
-          ).toFixed(3);
-          total_temp = total_temp + +total_price;
-          //
-          trade_price_after_trade_discount = +(
-            +(+each_selected_product.trade_discount / 100) * +total_price
-          ).toFixed(3);
-          total_discount_temp =
-            total_discount_temp + +trade_price_after_trade_discount;
-          //
-          trade_price_after_applying_gst = +(
-            +(+each_selected_product.sales_tax_percentage / 100) *
-            +(+total_price - +trade_price_after_trade_discount)
-          ).toFixed(3);
-          tax_temp = tax_temp + +trade_price_after_applying_gst;
-          //
-        } else {
-          total_price = 0;
-          trade_price_after_trade_discount = 0;
-          trade_price_after_applying_gst = 0;
-        }
+
+        total_price = +(
+          +each_selected_product.required_quantity *
+          +each_selected_product.trade_price
+        ).toFixed(3);
+        total_temp = total_temp + +total_price;
+        //
+        trade_price_after_trade_discount = +(
+          +(+each_selected_product.trade_discount / 100) * +total_price
+        ).toFixed(3);
+        total_discount_temp =
+          total_discount_temp + +trade_price_after_trade_discount;
+        //
+        trade_price_after_applying_gst = +(
+          +(+each_selected_product.sales_tax_percentage / 100) *
+          +(+total_price - +trade_price_after_trade_discount)
+        ).toFixed(3);
+        tax_temp = tax_temp + +trade_price_after_applying_gst;
+
         var { item_conversion, selling_unit } =
           each_selected_product.product_conversion[
             each_selected_product.product_conversion.length - 1
           ];
         //
-        return {
+        var [previous_object]: any = _.filter(previous_data, {
+          product_id: each_selected_product.id,
+        });
+        //
+        if (previous_object == undefined) {
+        }
+        //
+        var temp_var = {
+          id: `${key++}:${each_selected_product.foc ? "1" : "0"}`,
           product_id: each_selected_product.id,
           product_name: each_selected_product.product_name,
           sales_tax_percentage: each_selected_product.sales_tax_percentage,
@@ -251,44 +257,35 @@ const PurchaseOrderAddPage = (props: Props) => {
           trade_price_after_trade_discount: trade_price_after_trade_discount,
           trade_price_after_applying_gst: +trade_price_after_applying_gst,
         };
+        console.log(previous_object);
+
+        if (
+          previous_object != undefined &&
+          previous_object?.foc === each_selected_product.foc
+        ) {
+          console.log(previous_object);
+          console.log(each_selected_product);
+          order_temp[key] = temp_var;
+        } else if (
+          previous_object != undefined &&
+          previous_object?.foc != each_selected_product.foc
+        ) {
+          console.log("not matched");
+          order_temp.push(previous_object);
+          order_temp.push(temp_var);
+        } else {
+          order_temp.push(temp_var);
+          console.log(order_temp);
+        }
       }
     );
-    selected_products_temp.forEach((each_selected_temp: any) => {
-      previous_data.forEach((each_previous: any) => {
-        if (
-          each_selected_temp.id == each_previous.product_id &&
-          each_selected_temp.foc != each_previous.foc
-        ) {
-          order_data.push({
-            product_id: each_previous.product_id,
-            product_name: each_previous.product_name,
-            sales_tax_percentage: each_previous.sales_tax_percentage,
-            required_quantity: each_previous.required_quantity,
-            item_conversion: each_previous.item_conversion,
-            manufacturer_name: each_previous.manufacturer_name,
-            manufacturer_id: each_previous.manufacturer_id,
-            uom: each_previous.uom,
-            trade_price: each_previous.trade_price,
-            trade_discount_percentage: each_previous.trade_discount_percentage,
-            gst_percentage: each_previous.gst_percentage,
-            foc: each_previous.foc,
-            status: true,
-            total_price: each_previous.total_price,
-            trade_price_after_trade_discount:
-              each_previous.trade_price_after_trade_discount,
-            trade_price_after_applying_gst:
-              each_previous.trade_price_after_applying_gst,
-            actual_price: each_previous.actual_price,
-          });
-        }
-      });
-    });
+
     //
 
     setSubtotal((pre: number) => +total_temp + pre);
     setSubtotalDiscount((pre: number) => +total_discount_temp + pre);
     setTotalTax((pre: number) => +tax_temp + pre);
-    setOrderedProducts(order_data);
+    setOrderedProducts(order_temp);
   };
 
   //
@@ -728,6 +725,32 @@ const PurchaseOrderAddPage = (props: Props) => {
                     grow: 0,
                     center: true,
                     width: "100px",
+                  },
+                  {
+                    cell: (row: any) => (
+                      <>
+                        <Button
+                          onClick={() => {
+                            var temp_data = orderedProducts.filter(
+                              (each_ordered_product: any) => {
+                                return each_ordered_product.id != row.id;
+                              }
+                            );
+                            setOrderedProducts(temp_data);
+                          }}
+                          compact
+                          bg={"red"}
+                          className="w-[100%] bg-red-500 transition-all hover:bg-red-700"
+                        >
+                          <RiDeleteBin7Line />
+                        </Button>
+                      </>
+                    ),
+                    ignoreRowClick: true,
+                    allowOverflow: true,
+                    center: true,
+                    width: "80px",
+                    grow: 0,
                   },
                 ]}
                 data={orderedProducts}

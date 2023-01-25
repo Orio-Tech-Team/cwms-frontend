@@ -2,8 +2,10 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { MdKeyboardArrowRight } from "react-icons/md";
-import { Button } from "@mantine/core";
+import SidebarLink from "./SidebarLink";
+import { RxDashboard } from "react-icons/rx";
+import { BiChevronRight } from "react-icons/bi";
+import { Box, Button, NavLink } from "@mantine/core";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import NotificationComponent from "../Shared/NotificationComponent/NotificationComponent";
@@ -44,6 +46,29 @@ const Sidebar = ({ sidebarActive }: Props) => {
     }, 3000);
   };
   //
+  const [active, setActive] = React.useState<number>(0);
+  const data = SidebarLink.map((each_item: any, index: number) => {
+    return (
+      <NavLink
+        label={each_item.label}
+        rightSection={<BiChevronRight />}
+        icon={<each_item.icon />}
+        key={index}
+        active={index == active}
+        onClick={() => setActive(index)}
+        color="indigo"
+      >
+        {each_item.children.map((each_child: any, child_index: number) => {
+          return (
+            <Link key={child_index} href={each_child.link}>
+              <NavLink label={each_child.label} icon={<each_child.icon />} />
+            </Link>
+          );
+        })}
+      </NavLink>
+    );
+  });
+  //
   return (
     <>
       <div className={sidebarClass}>
@@ -60,75 +85,15 @@ const Sidebar = ({ sidebarActive }: Props) => {
           </div>
         </div>
         <div className="border-y-2 h-[calc(100vh_-_140px)] overflow-y-scroll overflow-x-hidden scrollbar-thin scrollbar-thumb-transparent scrollbar-track-transparent">
-          <ul className="flex flex-col gap-1">
-            <li>
-              <Link className={linkClass} href={"/dashboard/"}>
-                Dashboard
-              </Link>
-            </li>
-            <li>
-              <Link className={linkClass} href={"/dashboard/products/"}>
-                <span>Products</span>
-                <span className="text-xl flex justify-center items-center">
-                  <MdKeyboardArrowRight />
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link className={linkClass} href={"/dashboard/categories/"}>
-                <span>Categories</span>
-                <span className="text-xl flex justify-center items-center">
-                  <MdKeyboardArrowRight />
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link className={linkClass} href={"/dashboard/vendors/"}>
-                <span>Vendors</span>
-                <span className="text-xl flex justify-center items-center">
-                  <MdKeyboardArrowRight />
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link className={linkClass} href={"/dashboard/manufacturer/"}>
-                <span>Manufacturers</span>
-                <span className="text-xl flex justify-center items-center">
-                  <MdKeyboardArrowRight />
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link className={linkClass} href={"/dashboard/purchase_order/"}>
-                <span>Purchase Order</span>
-                <span className="text-xl flex justify-center items-center">
-                  <MdKeyboardArrowRight />
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                className={linkClass}
-                href={"/dashboard/purchase_order/create_grn/"}
-              >
-                <span>Create GRN</span>
-                <span className="text-xl flex justify-center items-center">
-                  <MdKeyboardArrowRight />
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                className={linkClass}
-                href={"/dashboard/purchase_order/quality_check/"}
-              >
-                <span>Quality Check</span>
-                <span className="text-xl flex justify-center items-center">
-                  <MdKeyboardArrowRight />
-                </span>
-              </Link>
-            </li>
-          </ul>
+          <Box sx={{ width: "100%" }}>
+            <Link href={"/dashboard/"}>
+              <NavLink
+                label={"Dashboard"}
+                icon={<RxDashboard size={16} stroke={"1.5"} />}
+              />
+            </Link>
+            {data}
+          </Box>
         </div>
         <div className="px-10 h-[70px] flex items-center">
           <Button

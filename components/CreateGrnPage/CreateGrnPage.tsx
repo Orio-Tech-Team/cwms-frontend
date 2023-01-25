@@ -296,12 +296,17 @@ const CreateGrnPage = (props: Props) => {
   const submitHandler = async () => {
     var is_empty_temp = false;
     data.forEach((each_data: any) => {
-      if (
-        each_data.received_quantity == "" ||
-        each_data.maximum_retail_price == "" ||
-        each_data.trade_price == ""
-      ) {
+      if (each_data.received_quantity == "") {
         is_empty_temp = true;
+      } else {
+        if (!each_data.foc) {
+          if (
+            each_data.maximum_retail_price == "" ||
+            each_data.trade_price == ""
+          ) {
+            is_empty_temp = true;
+          }
+        }
       }
     });
     if (is_empty_temp) {

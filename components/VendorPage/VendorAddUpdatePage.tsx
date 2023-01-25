@@ -275,8 +275,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Enter NTN"
               size="md"
               label="NTN"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               type={"text"}
               {...form.getInputProps("ntn")}
             />
@@ -285,8 +285,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Enter CNIC No"
               size="md"
               label="CNIC No"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               type={"text"}
               {...form.getInputProps("cnic")}
             />
@@ -295,8 +295,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Pick CNIC Expiry Date"
               size="md"
               label="CNIC Expiry Date"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               {...form.getInputProps("cnic_expiry_date")}
             />
             <Radio.Group
@@ -343,8 +343,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Pick Line of Business"
               size="md"
               label="Line of Business"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               searchable
               nothingFound="No options"
               data={VendorDropDownValues.line_of_business}
@@ -365,8 +365,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Pick With Hold Tax Group"
               size="md"
               label="With Hold Tax Group"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               searchable
               nothingFound="No options"
               data={withHoldTaxGroup}
@@ -377,8 +377,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Pick With Hold Tax Percentage"
               size="md"
               label="With Hold Tax Percentage"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               searchable
               nothingFound="No options"
               data={withHoldTaxPercentage}
@@ -399,8 +399,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Enter Drug License No"
               size="md"
               label="Drug License No"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               type={"text"}
               {...form.getInputProps("drug_license_no")}
             />
@@ -409,8 +409,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Enter Contact Person"
               size="md"
               label="Contact Person"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               type={"text"}
               {...form.getInputProps("contact_person")}
             />
@@ -419,8 +419,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Enter POC Phone Number"
               size="md"
               label="POC Phone Number"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               type={"text"}
               {...form.getInputProps("poc_phone_number")}
             />
@@ -429,8 +429,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Enter POC Email Address"
               size="md"
               label="POC Email Address"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               type={"text"}
               {...form.getInputProps("poc_email")}
             />
@@ -439,8 +439,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Enter Business Address"
               size="md"
               label="Business Address"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               type={"text"}
               {...form.getInputProps("business_address")}
             />
@@ -449,8 +449,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Pick City"
               size="md"
               label="City"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               searchable
               nothingFound="No options"
               data={VendorDropDownValues.city}
@@ -461,8 +461,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Enter Business Phone Number"
               size="md"
               label="Business Phone Number"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               type={"text"}
               {...form.getInputProps("business_phone_number")}
             />
@@ -493,8 +493,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Pick Payment Method"
               size="md"
               label="Payment Method"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               searchable
               nothingFound="No options"
               data={VendorDropDownValues.method_of_payment}
@@ -515,8 +515,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Enter Lead Time"
               size="md"
               label="Lead Time"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               type={"text"}
               {...form.getInputProps("delivery_lead_time")}
             />
@@ -525,8 +525,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Pick Bank Name"
               size="md"
               label="Bank Name"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               searchable
               nothingFound="No options"
               data={VendorDropDownValues.bank_name}
@@ -547,8 +547,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Pick Branch City"
               size="md"
               label="Branch City"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               searchable
               nothingFound="No options"
               data={VendorDropDownValues.city}
@@ -559,8 +559,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Enter IBAN Number"
               size="md"
               label="IBAN Number"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               type={"text"}
               {...form.getInputProps("account_ibn_number")}
             />
@@ -569,8 +569,8 @@ const VendorAddUpdatePage = (props: Props) => {
               placeholder="Pick Stock Return Policy"
               size="md"
               label="Stock Return Policy"
-              required
-              withAsterisk
+              // required
+              // withAsterisk
               searchable
               nothingFound="No options"
               data={VendorDropDownValues.stock_return_policy}

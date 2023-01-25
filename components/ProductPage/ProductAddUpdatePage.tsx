@@ -316,8 +316,6 @@ const ProductAddUpdatePage = (props: Props) => {
                   size="md"
                   label="Discount Price"
                   type={"text"}
-                  required
-                  withAsterisk
                   {...form.getInputProps("discounted_price")}
                 />
               ) : (
@@ -330,8 +328,6 @@ const ProductAddUpdatePage = (props: Props) => {
                     +form.getInputProps("mrp_unit_price").value
                   ).toFixed(2)}`}
                   type={"text"}
-                  required
-                  withAsterisk
                   {...form.getInputProps("discounted_price")}
                 />
               )}
@@ -370,8 +366,6 @@ const ProductAddUpdatePage = (props: Props) => {
               placeholder="Enter SKU Minimum Level"
               size="md"
               label="SKU Minimum Level"
-              required
-              withAsterisk
               type={"text"}
               {...form.getInputProps("sku_minimum_level")}
             />
@@ -380,8 +374,6 @@ const ProductAddUpdatePage = (props: Props) => {
               placeholder="Enter SKU Maximum Level"
               size="md"
               label="SKU Maximum Level"
-              required
-              withAsterisk
               type={"text"}
               {...form.getInputProps("sku_maximum_level")}
             />
@@ -415,8 +407,6 @@ const ProductAddUpdatePage = (props: Props) => {
               placeholder="Enter SKU Reorder Level"
               size="md"
               label="SKU Reorder Level"
-              required
-              withAsterisk
               type={"text"}
               {...form.getInputProps("sku_reorder_level")}
             />
@@ -425,8 +415,6 @@ const ProductAddUpdatePage = (props: Props) => {
               placeholder="Pick SKU Warehouse Lead Time"
               size="md"
               label="SKU Warehouse Lead Time"
-              required
-              withAsterisk
               {...form.getInputProps("sku_warehouse_lead_time")}
             />
             <Select
@@ -434,8 +422,6 @@ const ProductAddUpdatePage = (props: Props) => {
               placeholder="Pick Item Release Level"
               size="md"
               label="Item Release Level"
-              required
-              withAsterisk
               searchable
               nothingFound="No options"
               data={ProductDropDownData.item_release_level}
@@ -446,8 +432,6 @@ const ProductAddUpdatePage = (props: Props) => {
               placeholder="Pick Price Level"
               size="md"
               label="Price Level"
-              required
-              withAsterisk
               searchable
               nothingFound="No options"
               data={ProductDropDownData.price_levels}
@@ -470,8 +454,6 @@ const ProductAddUpdatePage = (props: Props) => {
               placeholder="Enter Barcode"
               size="md"
               label="Barcode"
-              required
-              withAsterisk
               type={"text"}
               {...form.getInputProps("bar_code")}
             />
@@ -480,8 +462,6 @@ const ProductAddUpdatePage = (props: Props) => {
               placeholder="Enter Drap ID"
               size="md"
               label="Drap ID"
-              required
-              withAsterisk
               type={"text"}
               {...form.getInputProps("drap_id")}
             />
@@ -490,8 +470,6 @@ const ProductAddUpdatePage = (props: Props) => {
               placeholder="Enter Dosage Instructions"
               size="md"
               label="Dosage Instructions"
-              required
-              withAsterisk
               type={"text"}
               {...form.getInputProps("dosage_instruction")}
             />
@@ -500,8 +478,6 @@ const ProductAddUpdatePage = (props: Props) => {
               placeholder="Enter Side Effects"
               size="md"
               label="Side Effects"
-              required
-              withAsterisk
               type={"text"}
               {...form.getInputProps("side_effects")}
             />
@@ -677,6 +653,8 @@ const ProductAddUpdatePage = (props: Props) => {
               placeholder="Select Product Tags"
               searchable
               creatable
+              required
+              withAsterisk
               getCreateLabel={(query) => `+ Create ${query}`}
               onCreate={(query) => {
                 const item = { value: query, label: query };
