@@ -30,12 +30,12 @@ const NavLinkData: any[] = [
     hasChildren: true,
     children: [
       {
-        label: "Show Vendors",
+        label: "Show Categories",
         link: "/dashboard/categories/",
         icon: AiOutlineUnorderedList,
       },
       {
-        label: "Add Vendor",
+        label: "Add Category",
         link: "/dashboard/categories/add_category?id=add",
         icon: RiAddFill,
       },
@@ -47,12 +47,12 @@ const NavLinkData: any[] = [
     hasChildren: true,
     children: [
       {
-        label: "Show Categories",
+        label: "Show Vendors",
         link: "/dashboard/vendors/",
         icon: AiOutlineUnorderedList,
       },
       {
-        label: "Add Category",
+        label: "Add Vendor",
         link: "/dashboard/vendors/add_vendor?id=add",
         icon: RiAddFill,
       },
