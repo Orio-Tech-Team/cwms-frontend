@@ -1,7 +1,14 @@
 import duplicationRemoverFunction from "../../SharedFunctions/DuplicationRemoverFunction";
 
 const data = {
-  sku_department: ["Consumer", "Medicine"],
+  sku_department: [
+    "SURGICAL",
+    "HEALTH CARE PRODUCTS",
+    "CONFECTIONARY",
+    "MEDICINES",
+    "CONSUMER",
+    "COMPOUNDING",
+  ],
   item_nature: ["Refrigerator", "Room Temperature", "Narcotics"],
   tax_code: ["GST 15%", "GST 17%", "Advance WHT"],
   purchasing_unit: ["Carton"],
