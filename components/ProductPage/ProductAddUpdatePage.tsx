@@ -62,8 +62,9 @@ const ProductAddUpdatePage = (props: Props) => {
             local_storage_response.sku_warehouse_lead_time
           ),
           margin:
-            +local_storage_response.mrp_unit_price -
-            +local_storage_response.trade_price,
+            local_storage_response.margin == ""
+              ? 0
+              : local_storage_response.margin,
         }
       : {
           status: false,
