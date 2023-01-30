@@ -174,6 +174,7 @@ const ProductAddUpdatePage = (props: Props) => {
     });
     //
     setProductData([]);
+    setVendorData([]);
     //
     const new_product_id = product_id_response.data[0].id;
     setNotification((pre) => {
