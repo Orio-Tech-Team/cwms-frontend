@@ -4,6 +4,8 @@ import { CgNotes } from "react-icons/cg";
 import { BsBoxSeam, BsShop } from "react-icons/bs";
 import { MdOutlinePrecisionManufacturing } from "react-icons/md";
 import { RiAddFill, RiTestTubeLine } from "react-icons/ri";
+import { FiSettings } from "react-icons/fi";
+import { HiUsers } from "react-icons/hi";
 
 //
 const NavLinkData: any[] = [
@@ -99,6 +101,18 @@ const NavLinkData: any[] = [
         label: "Quality Check",
         link: "/dashboard/purchase_order/quality_check",
         icon: RiTestTubeLine,
+      },
+    ],
+  },
+  {
+    label: "Settings",
+    icon: FiSettings,
+    hasChildren: true,
+    children: [
+      {
+        label: "Show Users",
+        link: "/dashboard/settings/users",
+        icon: HiUsers,
       },
     ],
   },

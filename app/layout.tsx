@@ -1,6 +1,8 @@
 "use client";
 import "./globals.css";
 import { RecoilRoot } from "recoil";
+import { MantineProvider } from "@mantine/core";
+import { NotificationsProvider } from "@mantine/notifications";
 //
 export default function RootLayout({
   children,
@@ -15,7 +17,11 @@ export default function RootLayout({
       */}
       <head />
       <body>
-        <RecoilRoot>{children}</RecoilRoot>
+        <MantineProvider withNormalizeCSS withGlobalStyles>
+          <NotificationsProvider>
+            <RecoilRoot>{children}</RecoilRoot>
+          </NotificationsProvider>
+        </MantineProvider>
       </body>
     </html>
   );

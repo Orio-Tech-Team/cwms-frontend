@@ -121,7 +121,7 @@ const PurchaseOrderAddPage = (props: Props) => {
           index: index++,
           product_name: filtered_data_temp.product_name,
           sales_tax_percentage: filtered_data_temp.sales_tax_percentage,
-          required_quantity: filtered_data_temp.quantity,
+          required_quantity: filtered_data_temp.quantity ?? 0,
           unit_of_measurement:
             filtered_data_temp.product_conversions[1].selling_unit,
 
@@ -151,15 +151,19 @@ const PurchaseOrderAddPage = (props: Props) => {
         disabled: true,
       };
     });
-    selected_row.forEach((each_data: any) => {
-      const index = each_data.index;
-      var temp = {
-        ...each_data,
-        disabled: false,
-      };
-      temp_data_variable[index] = temp;
+    //
+    selected_row.forEach((each_selected: any) => {
+      const index = temp_data_variable.findIndex(
+        (obj) => obj.index === each_selected.index
+      );
+      if (index !== -1) {
+        temp_data_variable[index] = {
+          ...temp_data_variable[index],
+          disabled: false,
+        };
+      }
     });
-
+    //
     setSelectedProducts(temp_data_variable);
     //
     if (row.selectedCount > 0) {
@@ -172,6 +176,8 @@ const PurchaseOrderAddPage = (props: Props) => {
   const addToCartFunction = () => {
     var previous_data: any[] = [...orderedProducts];
     var selected_products_temp: any[] = [];
+    //
+    //
     selectedProducts.forEach((each_product: any) => {
       if (!each_product.disabled) {
         if (each_product.required_quantity == 0) {
@@ -185,19 +191,18 @@ const PurchaseOrderAddPage = (props: Props) => {
           });
           return;
         }
-
-        selected_products_temp.push(each_product);
+        var key = `${each_product.id}-${each_product.foc ? "1" : "0"}`;
+        selected_products_temp.push({
+          key,
+          ...each_product,
+        });
       }
     });
     if (selected_products_temp.length == 0) return;
     //
-    var total_temp = 0;
-    var total_discount_temp = 0;
-    var tax_temp = 0;
     var total_price = 0;
     var trade_price_after_trade_discount = 0;
     var trade_price_after_applying_gst = 0;
-    var order_temp: any[] = [];
     //
     selected_products_temp.forEach(
       (each_selected_product: any, key: number) => {
@@ -207,87 +212,100 @@ const PurchaseOrderAddPage = (props: Props) => {
           +each_selected_product.required_quantity *
           +each_selected_product.trade_price
         ).toFixed(3);
-        total_temp = total_temp + +total_price;
         //
         trade_price_after_trade_discount = +(
           +(+each_selected_product.trade_discount / 100) * +total_price
         ).toFixed(3);
-        total_discount_temp =
-          total_discount_temp + +trade_price_after_trade_discount;
+
         //
         trade_price_after_applying_gst = +(
           +(+each_selected_product.sales_tax_percentage / 100) *
           +(+total_price - +trade_price_after_trade_discount)
         ).toFixed(3);
-        tax_temp = tax_temp + +trade_price_after_applying_gst;
 
         var { item_conversion, selling_unit } =
           each_selected_product.product_conversion[
             each_selected_product.product_conversion.length - 1
           ];
         //
-        var [previous_object]: any = _.filter(previous_data, {
-          product_id: each_selected_product.id,
-        });
-        //
-        if (previous_object == undefined) {
-        }
-        //
-        var temp_var = {
-          id: `${key++}:${each_selected_product.foc ? "1" : "0"}`,
-          product_id: each_selected_product.id,
-          product_name: each_selected_product.product_name,
-          sales_tax_percentage: each_selected_product.sales_tax_percentage,
-          required_quantity: each_selected_product.required_quantity,
-          item_conversion:
-            each_selected_product.unit_of_measurement == selling_unit
-              ? each_selected_product.required_quantity
-              : +item_conversion * +each_selected_product.required_quantity,
-          last_selling_unit: selling_unit,
-          manufacturer_name:
-            each_selected_product.manufacturer.manufacturer_name,
-          manufacturer_id: each_selected_product.manufacturer.id,
-          uom: each_selected_product.unit_of_measurement,
-          trade_price: each_selected_product.trade_price,
-          trade_discount_percentage: each_selected_product.trade_discount,
-          gst_percentage: each_selected_product.sales_tax_percentage,
-          foc: each_selected_product.foc,
-          status: true,
-          total_price: total_price,
-          trade_price_after_trade_discount: trade_price_after_trade_discount,
-          trade_price_after_applying_gst: +trade_price_after_applying_gst,
-        };
-        console.log(previous_object);
-
-        if (
-          previous_object != undefined &&
-          previous_object?.foc === each_selected_product.foc
-        ) {
-          console.log(previous_object);
-          console.log(each_selected_product);
-          order_temp[key] = temp_var;
-        } else if (
-          previous_object != undefined &&
-          previous_object?.foc != each_selected_product.foc
-        ) {
-          console.log("not matched");
-          order_temp.push(previous_object);
-          order_temp.push(temp_var);
+        var isOld = previous_data.findIndex(
+          (each_pre: any) => each_pre["key"] === each_selected_product["key"]
+        );
+        if (isOld !== -1) {
+          previous_data[isOld] = {
+            key: each_selected_product.key,
+            product_id: each_selected_product.id,
+            product_name: each_selected_product.product_name,
+            sales_tax_percentage: each_selected_product.sales_tax_percentage,
+            required_quantity: each_selected_product.required_quantity,
+            item_conversion:
+              each_selected_product.unit_of_measurement == selling_unit
+                ? each_selected_product.required_quantity
+                : +item_conversion * +each_selected_product.required_quantity,
+            last_selling_unit: selling_unit,
+            manufacturer_name:
+              each_selected_product.manufacturer.manufacturer_name,
+            manufacturer_id: each_selected_product.manufacturer.id,
+            uom: each_selected_product.unit_of_measurement,
+            trade_price: each_selected_product.trade_price,
+            trade_discount_percentage: each_selected_product.trade_discount,
+            gst_percentage: each_selected_product.sales_tax_percentage,
+            foc: each_selected_product.foc,
+            status: true,
+            total_price: total_price,
+            trade_price_after_trade_discount: trade_price_after_trade_discount,
+            trade_price_after_applying_gst: +trade_price_after_applying_gst,
+          };
         } else {
-          order_temp.push(temp_var);
-          console.log(order_temp);
+          previous_data.push({
+            key: each_selected_product.key,
+            product_id: each_selected_product.id,
+            product_name: each_selected_product.product_name,
+            sales_tax_percentage: each_selected_product.sales_tax_percentage,
+            required_quantity: each_selected_product.required_quantity,
+            item_conversion:
+              each_selected_product.unit_of_measurement == selling_unit
+                ? each_selected_product.required_quantity
+                : +item_conversion * +each_selected_product.required_quantity,
+            last_selling_unit: selling_unit,
+            manufacturer_name:
+              each_selected_product.manufacturer.manufacturer_name,
+            manufacturer_id: each_selected_product.manufacturer.id,
+            uom: each_selected_product.unit_of_measurement,
+            trade_price: each_selected_product.trade_price,
+            trade_discount_percentage: each_selected_product.trade_discount,
+            gst_percentage: each_selected_product.sales_tax_percentage,
+            foc: each_selected_product.foc,
+            status: true,
+            total_price: total_price,
+            trade_price_after_trade_discount: trade_price_after_trade_discount,
+            trade_price_after_applying_gst: +trade_price_after_applying_gst,
+          });
         }
+        //
       }
     );
-
     //
 
-    setSubtotal((pre: number) => +total_temp + pre);
-    setSubtotalDiscount((pre: number) => +total_discount_temp + pre);
-    setTotalTax((pre: number) => +tax_temp + pre);
-    setOrderedProducts(order_temp);
+    setOrderedProducts(previous_data);
   };
-
+  React.useEffect(() => {
+    var total_temp = 0;
+    var total_discount_temp = 0;
+    var tax_temp = 0;
+    orderedProducts.length > 0
+      ? orderedProducts.forEach((each_product: any) => {
+          total_temp = total_temp + +each_product.total_price;
+          total_discount_temp =
+            total_discount_temp +
+            +each_product.trade_price_after_trade_discount;
+          tax_temp = tax_temp + +each_product.trade_price_after_applying_gst;
+        })
+      : null;
+    setSubtotal(+total_temp);
+    setSubtotalDiscount(+total_discount_temp);
+    setTotalTax(+tax_temp);
+  }, [orderedProducts.length]);
   //
   const tableResetFunction = () => {
     form.reset();
@@ -733,7 +751,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                           onClick={() => {
                             var temp_data = orderedProducts.filter(
                               (each_ordered_product: any) => {
-                                return each_ordered_product.id != row.id;
+                                return each_ordered_product.key != row.key;
                               }
                             );
                             setOrderedProducts(temp_data);
