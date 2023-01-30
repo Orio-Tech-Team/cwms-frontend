@@ -124,14 +124,10 @@ const PurchaseOrderPage = (props: Props) => {
         name: "Action",
         cell: (row: any) => {
           var button_text = "";
-          if (row.is_cancelled) {
-            button_text = "Cancelled";
+          if (row.order_status == "Pending") {
+            button_text = "Approve";
           } else {
-            if (row.order_status == "Pending") {
-              button_text = "Approve";
-            } else {
-              button_text = "Invoice";
-            }
+            button_text = "Invoice";
           }
           return (
             <>
