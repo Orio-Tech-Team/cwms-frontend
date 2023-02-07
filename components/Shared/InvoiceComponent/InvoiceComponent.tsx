@@ -79,12 +79,17 @@ const InvoiceComponent = (props: Props) => {
     vendor_name: "",
     purchase_order_detail: [],
   });
+
   const [product, setProduct] = React.useState<any[]>([]);
   React.useEffect(() => {
     const localStorageData = JSON.parse(
       localStorage.getItem("purchase_order")!
     );
-    setPurchaseOrder(localStorageData);
+    setPurchaseOrder({
+      ...localStorageData,
+      created_at: new Date(localStorageData.created_at),
+      expected_delivery_date: new Date(localStorageData.expected_delivery_date),
+    });
     setProduct(localStorageData.purchase_order_detail);
   }, []);
 
@@ -137,16 +142,12 @@ const InvoiceComponent = (props: Props) => {
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">PO Date:</span>
-                <span>
-                  {purchaseOrder.created_at?.toString().substring(0, 10)}
-                </span>
+                <span>{`${purchaseOrder.created_at?.getDate()}/${purchaseOrder.created_at?.getMonth()}/${purchaseOrder.created_at?.getFullYear()}`}</span>
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">Delivery Date:</span>
                 <span>
-                  {purchaseOrder.expected_delivery_date
-                    ?.toString()
-                    .substring(0, 10)}
+                  {`${purchaseOrder.expected_delivery_date?.getDate()}/${purchaseOrder.expected_delivery_date?.getMonth()}/${purchaseOrder.expected_delivery_date?.getFullYear()}`}
                 </span>
               </div>
               <div className="flex gap-5 justify-between">
@@ -181,7 +182,7 @@ const InvoiceComponent = (props: Props) => {
                   <th className="w-[40px] border border-black">Qty</th>
                   <th className="w-[55px] border border-black">T.P</th>
                   <th className="w-[85px] border border-black">Discount %</th>
-                  <th className="w-[75px] border border-black">GST Value</th>
+                  <th className="w-[75px] border border-black">Sales Tax</th>
                   <th className="w-[85px] border border-black">Amount</th>
                 </tr>
               </thead>

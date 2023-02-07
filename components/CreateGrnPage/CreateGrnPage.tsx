@@ -466,7 +466,7 @@ const CreateGrnPage = (props: Props) => {
                 width: "120px",
               },
               {
-                name: "MPR",
+                name: "MRP",
                 cell: (row: any) => (
                   <>
                     <TextInput
