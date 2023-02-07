@@ -121,27 +121,38 @@ const PurchaseOrderPage = (props: Props) => {
         sortable: false,
       },
       {
-        name: "Action",
+        name: "Approve",
         cell: (row: any) => {
-          var button_text = "";
-          if (row.order_status == "Pending") {
-            button_text = "Approve";
-          } else {
-            button_text = "Invoice";
-          }
+          return (
+            <>
+              <Button
+                disabled={row.order_status != "Pending"}
+                compact
+                className="bg-[#002884]"
+                onClick={() => actionFunction(row)}
+              >
+                Approve
+              </Button>
+            </>
+          );
+        },
+        ignoreRowClick: true,
+        allowOverflow: true,
+        center: true,
+        grow: 0,
+      },
+      {
+        name: "Invoice",
+        cell: (row: any) => {
           return (
             <>
               <Button
                 // disabled={row.is_cancelled}
                 compact
                 className="bg-[#002884]"
-                onClick={() =>
-                  row.order_status === "Pending"
-                    ? actionFunction(row)
-                    : invoiceGenerator(row)
-                }
+                onClick={() => invoiceGenerator(row)}
               >
-                {button_text}
+                Invoice
               </Button>
             </>
           );

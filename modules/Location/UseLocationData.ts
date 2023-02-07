@@ -20,7 +20,7 @@ const UseLocationData = () => {
     if (data.length === 0) {
       dataFetcher();
     }
-  }, [data.length]);
+  }, [data]);
   return [data, setData];
 };
 //

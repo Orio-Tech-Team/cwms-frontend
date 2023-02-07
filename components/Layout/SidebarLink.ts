@@ -6,6 +6,8 @@ import { MdOutlinePrecisionManufacturing } from "react-icons/md";
 import { RiAddFill, RiTestTubeLine } from "react-icons/ri";
 import { FiSettings } from "react-icons/fi";
 import { HiUsers } from "react-icons/hi";
+import { FaWarehouse } from "react-icons/fa";
+import { SiBlueprint } from "react-icons/si";
 
 //
 const NavLinkData: any[] = [
@@ -113,6 +115,16 @@ const NavLinkData: any[] = [
         label: "Show Users",
         link: "/dashboard/settings/users",
         icon: HiUsers,
+      },
+      {
+        label: "Create WMS",
+        link: "/dashboard/settings/create_wms",
+        icon: FaWarehouse,
+      },
+      {
+        label: "WH Structuring",
+        link: "/dashboard/settings/warehouse_structuring",
+        icon: SiBlueprint,
       },
     ],
   },

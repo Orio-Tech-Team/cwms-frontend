@@ -23,3 +23,9 @@ body {
 .ql-editor {
   @apply h-[200px] scrollbar-thin overflow-y-scroll;
 }
+@media print {
+  @page {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}

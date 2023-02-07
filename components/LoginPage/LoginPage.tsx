@@ -66,13 +66,15 @@ const LoginPage = (props: Props) => {
         trigger: true,
       };
     });
-
+    //
+    //
     setCookie("token", response.data[0].token, { secure: false });
     setCookie("type", response.data[0].type, { secure: false });
     setCookie("user_id", response.data[0].user_id, { secure: false });
-    setCookie("account_number", response.data[0].account_number, {
+    setCookie("acc_no", response.data[0].acc_no, {
       secure: false,
     });
+    setCookie("loc_no", response.data[0].loc_no);
     return router.push("/dashboard/");
   };
   return (

@@ -17,6 +17,8 @@ type axiosParams = {
   params?: any;
 };
 //
+
+//
 const axiosFunction = async ({
   method = "GET",
   urlPath = "",
@@ -30,6 +32,10 @@ const axiosFunction = async ({
     url: `${url}${urlPath}`,
     headers: {
       Authorization: `Bearer ${getCookie("token")}`,
+      "X-Custom-Header": JSON.stringify({
+        acc_no: getCookie("acc_no"),
+        loc_no: getCookie("loc_no"),
+      }),
     },
     data: data,
   };

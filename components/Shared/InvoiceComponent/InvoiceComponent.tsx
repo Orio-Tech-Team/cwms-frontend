@@ -1,4 +1,5 @@
 "use client";
+import { Image } from "@mantine/core";
 import React from "react";
 import PurchaseOrderType from "../../../modules/PurchaseOrder/PurchaseOrderType";
 import { localStorageClearFunction } from "../../../SharedFunctions/LocalStorageClearFunction";
@@ -89,9 +90,16 @@ const InvoiceComponent = (props: Props) => {
 
   return (
     <>
-      <section className="flex justify-center">
+      <section className="flex min-h-screen justify-center items-center">
         <main className="w-[210mm]">
-          <div></div>
+          <div className="flex justify-between">
+            <div className="w-[200px]">
+              <Image src={"/pharm_logo.png"} />
+            </div>
+            <div className="w-[200px]">
+              <Image src={"/invoice.png"} />
+            </div>
+          </div>
           <div className="text-center text-[1.5rem] font-semibold">
             PURCHASE ORDER
           </div>
@@ -200,6 +208,10 @@ const InvoiceComponent = (props: Props) => {
                       ).toFixed(3);
                       tax_temp = tax_temp + +trade_price_after_applying_gst;
                       //
+                      var dis_temp =
+                        +each_product.trade_price -
+                        +(each_product.trade_discount_percentage / 100) *
+                          +each_product.trade_price;
                       //
                       return (
                         <tr key={key} className="border-b border-b-black">
@@ -228,11 +240,8 @@ const InvoiceComponent = (props: Props) => {
                             {each_product.trade_discount_percentage}
                           </td>
                           <td className="border-r border-r-black text-center">
-                            {(
-                              +each_product.trade_price +
-                              +(+each_product.sales_tax_percentage / 100) *
-                                +each_product.trade_price
-                            ).toFixed(3)}
+                            {(+each_product.sales_tax_percentage / 100) *
+                              dis_temp}
                           </td>
                           <td className="text-center">
                             {(
