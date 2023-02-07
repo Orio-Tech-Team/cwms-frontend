@@ -241,8 +241,10 @@ const InvoiceComponent = (props: Props) => {
                             {each_product.trade_discount_percentage}
                           </td>
                           <td className="border-r border-r-black text-center">
-                            {(+each_product.sales_tax_percentage / 100) *
-                              dis_temp}
+                            {(
+                              (+each_product.sales_tax_percentage / 100) *
+                              dis_temp
+                            ).toFixed(3)}
                           </td>
                           <td className="text-center">
                             {(
