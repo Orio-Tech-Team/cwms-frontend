@@ -58,9 +58,7 @@ const ProductAddUpdatePage = (props: Props) => {
     initialValues: isUpdate
       ? {
           ...local_storage_response,
-          sku_warehouse_lead_time: new Date(
-            local_storage_response.sku_warehouse_lead_time
-          ),
+
           margin:
             local_storage_response.margin == ""
               ? 0
@@ -82,7 +80,7 @@ const ProductAddUpdatePage = (props: Props) => {
           sku_minimum_level: "",
           sku_maximum_level: "",
           sku_reorder_level: "",
-          sku_warehouse_lead_time: new Date(),
+          sku_warehouse_lead_time: "",
           item_release_level: "",
           price_levels: "",
           stock_nature: "",
@@ -412,13 +410,15 @@ const ProductAddUpdatePage = (props: Props) => {
               type={"text"}
               {...form.getInputProps("sku_reorder_level")}
             />
-            <DatePicker
+            <TextInput
               className="w-[47%]"
-              placeholder="Pick SKU Warehouse Lead Time"
+              placeholder="Enter SKU Warehouse Lead Time"
               size="md"
               label="SKU Warehouse Lead Time"
+              type={"text"}
               {...form.getInputProps("sku_warehouse_lead_time")}
             />
+
             <Select
               className="w-[47%]"
               placeholder="Pick Item Release Level"

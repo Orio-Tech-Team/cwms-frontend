@@ -10,6 +10,7 @@ import NotificationComponent from "../Shared/NotificationComponent/NotificationC
 import { formValidator } from "../../SharedFunctions/NumberValidator";
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
 import { localStorageClearFunction } from "../../SharedFunctions/LocalStorageClearFunction";
+import replaceNullWithEmptyString from "../../SharedFunctions/ObjectNullRemover";
 //
 type Props = {};
 //
@@ -31,25 +32,19 @@ const CategoryAddUpdatePage = (props: Props) => {
     trigger: false,
   });
   //
-  var localStorageData: any = isUpdate
-    ? {
-        ...JSON.parse(localStorage.getItem("category_data")!),
-      }
-    : {};
+  var localStorageData: any = {};
+  if (isUpdate && typeof window != "undefined") {
+    localStorageData = replaceNullWithEmptyString({
+      ...JSON.parse(localStorage.getItem("category_data")!),
+    });
+  }
 
   const form = useForm({
     validateInputOnChange: true,
     initialValues: isUpdate
       ? {
           ...localStorageData,
-          category_image_url:
-            localStorageData.category_image_url == null
-              ? ""
-              : localStorageData.category_image_url,
-          category_description:
-            localStorageData.category_description == null
-              ? ""
-              : localStorageData.category_description,
+          sorting: +localStorageData.sorting,
         }
       : {
           category_level: "Parent Level",
@@ -57,7 +52,7 @@ const CategoryAddUpdatePage = (props: Props) => {
           comment: "",
           category_description: "",
           status: false,
-          sorting: "",
+          sorting: 999,
           category_image_url: "",
           parent_id: null,
         },
