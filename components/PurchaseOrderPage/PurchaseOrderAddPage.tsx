@@ -453,7 +453,7 @@ const PurchaseOrderAddPage = (props: Props) => {
                 required
                 withAsterisk
                 size="md"
-                data={locationData.map((each_item: any) => {
+                data={locationData?.map((each_item: any) => {
                   return {
                     label: each_item.loc_name,
                     value: each_item.loc_name,

@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
-import Image from "next/image";
 //
-import { Input, Button } from "@mantine/core";
+import { Input, Button, Image } from "@mantine/core";
 import { MdAlternateEmail, MdPassword } from "react-icons/md";
 import NotificationComponent from "../Shared/NotificationComponent/NotificationComponent";
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
+import customNotification from "../../SharedFunctions/CustomNotification";
 //
 //
 type Props = {};
@@ -28,13 +28,9 @@ const LoginPage = (props: Props) => {
     var emailValue = emailRef.current!.value;
     var passwordValue = passwordRef.current!.value;
     if (emailValue === "" || passwordValue === "") {
-      setNotification((pre) => {
-        return {
-          description: "Email Field and Password Field can not be empty!",
-          title: "Error",
-          isSuccess: false,
-          trigger: true,
-        };
+      customNotification({
+        message: "Email and Password cannot be empty!",
+        title: "Failed",
       });
       return "";
     }
@@ -47,26 +43,15 @@ const LoginPage = (props: Props) => {
 
     //
     if (response.status === 404) {
-      setNotification((pre) => {
-        return {
-          description: "Incorrect Credentials or User Not Found!",
-          title: "Error",
-          isSuccess: false,
-          trigger: true,
-        };
+      customNotification({
+        message: "Incorrect Credentials or User Not Found!",
+        title: "Failed",
       });
+
       return "";
     }
     //
-    setNotification((pre) => {
-      return {
-        description: "Login Successfully",
-        title: "Success",
-        isSuccess: true,
-        trigger: true,
-      };
-    });
-    //
+    customNotification({ message: "Login Successfully", title: "Success" });
     //
     setCookie("token", response.data[0].token, { secure: false });
     setCookie("type", response.data[0].type, { secure: false });
@@ -81,15 +66,8 @@ const LoginPage = (props: Props) => {
     <>
       <main className="w-[100%] h-screen flex justify-center items-center select-none">
         <div className="w-[700px] max-w-[95%]">
-          <div className="mx-auto w-[600px] h-[200px] flex justify-center items-center">
-            <Image
-              priority
-              className="h-[100%] w-[100%] object-contain"
-              src={process.env.LOGO_URL || ""}
-              width={300}
-              height={80}
-              alt="Pharmacy Logo"
-            />
+          <div className="mx-auto w-[300px] flex justify-center items-center">
+            <Image src={process.env.LOGO_URL || ""} alt="Pharmacy Logo" />
           </div>
           <div className="text-center">
             <h1 className="text-[2rem] font-semibold">Login to your account</h1>

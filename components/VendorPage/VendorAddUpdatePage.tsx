@@ -16,6 +16,7 @@ import { formValidator } from "../../SharedFunctions/NumberValidator";
 import { localStorageClearFunction } from "../../SharedFunctions/LocalStorageClearFunction";
 import FileInputComponent from "../Shared/FileInputComponent/FileInputComponent";
 import axios from "axios";
+import replaceNullWithEmptyString from "../../SharedFunctions/ObjectNullRemover";
 
 type Props = {};
 
@@ -30,10 +31,11 @@ const VendorAddUpdatePage = (props: Props) => {
   //
   const [submitButtonDisabler, setSubmitButtonDisabler] = React.useState(false);
   var local_storage_data: any;
-  if (isUpdate) {
-    local_storage_data = {
+  if (isUpdate && typeof window != "undefined") {
+    local_storage_data = replaceNullWithEmptyString({
       ...JSON.parse(localStorage.getItem("vendor_data")!),
-    };
+    });
+    console.log(local_storage_data);
   }
 
   //

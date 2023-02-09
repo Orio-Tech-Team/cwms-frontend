@@ -11,7 +11,7 @@ const UseLocationData = () => {
       urlPath: `/location/find_all/`,
       method: "POST",
       data: {
-        account_number: getCookie("account_number"),
+        account_number: getCookie("acc_no"),
       },
     });
     setData(response.data);
