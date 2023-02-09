@@ -1,5 +1,12 @@
 "use client";
-import { Button, Radio, Select, Switch, TextInput } from "@mantine/core";
+import {
+  Button,
+  MultiSelect,
+  Radio,
+  Select,
+  Switch,
+  TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
@@ -35,7 +42,6 @@ const VendorAddUpdatePage = (props: Props) => {
     local_storage_data = replaceNullWithEmptyString({
       ...JSON.parse(localStorage.getItem("vendor_data")!),
     });
-    console.log(local_storage_data);
   }
 
   //
@@ -44,6 +50,9 @@ const VendorAddUpdatePage = (props: Props) => {
     initialValues: isUpdate
       ? {
           ...local_storage_data,
+          procurement_category: JSON.parse(
+            local_storage_data.procurement_category
+          ),
           cnic_expiry_date: new Date(local_storage_data.cnic_expiry_date),
           tax_exemption_validity: new Date(
             local_storage_data.tax_exemption_validity
@@ -52,7 +61,7 @@ const VendorAddUpdatePage = (props: Props) => {
       : {
           status: false,
           vendor_name: "",
-          procurement_category: "",
+          procurement_category: [],
           vendor_classification: "",
           manufacturer: [],
           ntn: "",
@@ -126,9 +135,6 @@ const VendorAddUpdatePage = (props: Props) => {
       };
     },
   });
-
-  //
-
   //
   const [notification, setNotification] = React.useState({
     title: "",
@@ -147,6 +153,7 @@ const VendorAddUpdatePage = (props: Props) => {
           trigger: true,
         };
       });
+
       return;
     }
     setSubmitButtonDisabler(true);
@@ -164,9 +171,15 @@ const VendorAddUpdatePage = (props: Props) => {
     //   console.log(err);
     // }
     //
+    // here
+    var procurement_category = JSON.stringify(value.procurement_category);
+    //
     const vendor_id_response = await axiosFunction({
       urlPath: url_temp,
-      data: value,
+      data: {
+        ...value,
+        procurement_category,
+      },
       method: "POST",
     });
 
@@ -238,18 +251,20 @@ const VendorAddUpdatePage = (props: Props) => {
               type={"text"}
               {...form.getInputProps("vendor_name")}
             />
-            <Select
+            <MultiSelect
               className="w-[47%]"
+              data={VendorDropDownValues.procurement_category}
               placeholder="Pick Procurement Category"
               size="md"
               label="Procurement Category"
-              required
               withAsterisk
+              required
               searchable
-              nothingFound="No options"
-              data={VendorDropDownValues.procurement_category}
+              nothingFound="Nothing found"
+              clearable
               {...form.getInputProps("procurement_category")}
             />
+
             <DualListBoxComponent
               label="Manufacturers"
               data={manufacturerData.map((each_manufacturer: any) => {
@@ -340,7 +355,7 @@ const VendorAddUpdatePage = (props: Props) => {
               <Radio value="yes" label="Yes" />
               <Radio value="no" label="No" />
             </Radio.Group>
-            <Select
+            {/* <Select
               className="w-[47%]"
               placeholder="Pick Line of Business"
               size="md"
@@ -351,7 +366,7 @@ const VendorAddUpdatePage = (props: Props) => {
               nothingFound="No options"
               data={VendorDropDownValues.line_of_business}
               {...form.getInputProps("line_of_business")}
-            />
+            /> */}
             <DatePicker
               className="w-[47%]"
               placeholder="Pick Tax Exemption Validity"
