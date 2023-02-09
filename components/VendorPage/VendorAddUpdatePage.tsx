@@ -183,6 +183,7 @@ const VendorAddUpdatePage = (props: Props) => {
       method: "POST",
     });
 
+    router.push("/dashboard/vendors/");
     setVendorData([]);
     const new_vendor_id = vendor_id_response.data[0].id;
     setNotification((pre) => {
@@ -196,9 +197,7 @@ const VendorAddUpdatePage = (props: Props) => {
       };
     });
     localStorageClearFunction();
-    setTimeout(() => {
-      router.push("/dashboard/vendors/");
-    }, 3000);
+    router.push("/dashboard/vendors/");
   };
   return (
     <>
