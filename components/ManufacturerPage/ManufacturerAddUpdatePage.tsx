@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 //
 import { useRouter, useSearchParams } from "next/navigation";
 // components
-import { Button, Select, Switch, TextInput } from "@mantine/core";
+import { Button, MultiSelect, Select, Switch, TextInput } from "@mantine/core";
 import BreadcrumbComponent from "../Shared/BreadcrumbComponent/BreadcrumbComponent";
 import { useForm } from "@mantine/form";
 import ManufacturerDropDownValues from "../../modules/Manufacturer/ManufacturerDropDownValues";
@@ -30,10 +30,11 @@ const ManufacturerAddUpdatePage = (props: Props) => {
     initialValues: isUpdate
       ? {
           ...localStorageData,
+          line_of_business: JSON.parse(localStorageData.line_of_business),
         }
       : {
           manufacturer_name: "",
-          line_of_business: "",
+          line_of_business: [],
           status: false,
           comment: "",
         },
@@ -53,7 +54,10 @@ const ManufacturerAddUpdatePage = (props: Props) => {
       : "/manufacturer/create/";
     const manufacturer_response = await axiosFunction({
       urlPath: url_temp,
-      data: values,
+      data: {
+        ...values,
+        line_of_business: JSON.stringify(values.line_of_business),
+      },
       method: "POST",
     });
     setManufacturerData([]);
@@ -129,7 +133,7 @@ const ManufacturerAddUpdatePage = (props: Props) => {
               type={"text"}
               {...form.getInputProps("manufacturer_name")}
             />
-            <Select
+            <MultiSelect
               className="w-[47%]"
               placeholder="Pick Line Of Business"
               size="md"
@@ -137,10 +141,12 @@ const ManufacturerAddUpdatePage = (props: Props) => {
               required
               withAsterisk
               searchable
+              clearable
               nothingFound="No options"
               data={ManufacturerDropDownValues.line_of_business}
               {...form.getInputProps("line_of_business")}
             />
+
             <Button
               size="md"
               className="bg-red-500 w-56 ml-auto"
