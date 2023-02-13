@@ -42,6 +42,13 @@ const VendorAddUpdatePage = (props: Props) => {
     local_storage_data = replaceNullWithEmptyString({
       ...JSON.parse(localStorage.getItem("vendor_data")!),
     });
+    local_storage_data = {
+      ...local_storage_data,
+      procurement_category:
+        local_storage_data.procurement_category == ""
+          ? []
+          : local_storage_data.procurement_category,
+    };
   }
 
   //
@@ -50,11 +57,6 @@ const VendorAddUpdatePage = (props: Props) => {
     initialValues: isUpdate
       ? {
           ...local_storage_data,
-          procurement_category: JSON.parse(
-            local_storage_data.procurement_category
-              ? local_storage_data.procurement_category
-              : []
-          ),
           cnic_expiry_date: new Date(local_storage_data.cnic_expiry_date),
           tax_exemption_validity: new Date(
             local_storage_data.tax_exemption_validity

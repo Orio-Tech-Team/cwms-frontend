@@ -8,7 +8,7 @@ type PurchaseOrderType = {
   advance_income: string;
   strn: string;
   payment_terms: string;
-  expected_delivery_date: Date;
+  expected_delivery_date: string;
   delivery_location: string;
   po_type: string;
   arrival_date: Date;
@@ -21,7 +21,7 @@ type PurchaseOrderType = {
   net_amount: number;
   status: string;
   id: number;
-  created_at?: Date;
+  created_at?: string;
   updated_at?: Date;
   purchase_order_detail?: any[];
 };

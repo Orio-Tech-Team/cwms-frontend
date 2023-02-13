@@ -2,7 +2,7 @@
 import { Image } from "@mantine/core";
 import React from "react";
 import PurchaseOrderType from "../../../modules/PurchaseOrder/PurchaseOrderType";
-import { localStorageClearFunction } from "../../../SharedFunctions/LocalStorageClearFunction";
+import moment from "moment";
 
 type Props = {};
 //
@@ -62,7 +62,7 @@ const InvoiceComponent = (props: Props) => {
     arrival_date: new Date(),
     city: "",
     delivery_location: "",
-    expected_delivery_date: new Date(),
+    expected_delivery_date: new Date().toString(),
     id: 0,
     net_amount: 0,
     ntn: "",
@@ -85,10 +85,15 @@ const InvoiceComponent = (props: Props) => {
     const localStorageData = JSON.parse(
       localStorage.getItem("purchase_order")!
     );
+    const created_at = moment(new Date(localStorageData.created_at));
+    const expected_delivery_date = moment(
+      new Date(localStorageData.expected_delivery_date)
+    );
+
     setPurchaseOrder({
       ...localStorageData,
-      created_at: new Date(localStorageData.created_at),
-      expected_delivery_date: new Date(localStorageData.expected_delivery_date),
+      created_at: created_at.format("DD/MM/YYYY"),
+      expected_delivery_date: expected_delivery_date.format("DD/MM/YYYY"),
     });
     setProduct(localStorageData.purchase_order_detail);
   }, []);
@@ -142,12 +147,16 @@ const InvoiceComponent = (props: Props) => {
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">PO Date:</span>
-                <span>{`${purchaseOrder.created_at?.getDate()}/${purchaseOrder.created_at?.getMonth()}/${purchaseOrder.created_at?.getFullYear()}`}</span>
+                <span>
+                  {purchaseOrder.created_at ? purchaseOrder.created_at : ""}
+                </span>
               </div>
               <div className="flex gap-5 justify-between">
                 <span className="font-bold">Delivery Date:</span>
                 <span>
-                  {`${purchaseOrder.expected_delivery_date?.getDate()}/${purchaseOrder.expected_delivery_date?.getMonth()}/${purchaseOrder.expected_delivery_date?.getFullYear()}`}
+                  {purchaseOrder.expected_delivery_date
+                    ? purchaseOrder.expected_delivery_date
+                    : ""}
                 </span>
               </div>
               <div className="flex gap-5 justify-between">
