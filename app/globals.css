@@ -8,9 +8,9 @@
 *::before {
   font-family: "Poppins", sans-serif;
 }
-body {
+/* body {
   overflow: hidden;
-}
+} */
 
 /* .table_date_picker {
   background-color: red;
@@ -19,13 +19,29 @@ body {
   z-index: 9 !important;
   position: fixed;
 }
+
+/*  */
+.custom_list {
+  list-style: decimal;
+  @apply p-5;
+}
 /*  */
 .ql-editor {
   @apply h-[200px] scrollbar-thin overflow-y-scroll;
 }
+
+.main_page_invoice {
+  padding: 100px 0px;
+}
 @media print {
   @page {
-    margin-top: 0;
-    margin-bottom: 0;
+    size: A4;
+    margin: 0px;
+  }
+
+  .main_page_invoice {
+    padding: 200px 0px;
+    page-break-before: always;
+    page-break-after: always;
   }
 }

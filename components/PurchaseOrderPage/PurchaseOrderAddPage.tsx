@@ -112,7 +112,9 @@ const PurchaseOrderAddPage = (props: Props) => {
       vendor_data_temp.products.forEach((each_product: any) => {
         const [filtered_data_temp] = productData.filter(
           (each_vendor_product: any) => {
-            return each_product.id == each_vendor_product.id;
+            return (
+              each_product.status && each_product.id == each_vendor_product.id
+            );
           }
         );
 
@@ -427,12 +429,14 @@ const PurchaseOrderAddPage = (props: Props) => {
                 withAsterisk
                 size="md"
                 disabled={form.getInputProps("vendor_id").value != ""}
-                data={vendorData.map((each_item: any) => {
-                  return {
-                    label: each_item.vendor_name,
-                    value: JSON.stringify(each_item),
-                  };
-                })}
+                data={vendorData
+                  .filter((each_item: any) => each_item.status)
+                  .map((each_item: any) => {
+                    return {
+                      label: each_item.vendor_name,
+                      value: JSON.stringify(each_item),
+                    };
+                  })}
                 {...form.getInputProps("vendor_id")}
               />
               <DatePicker
