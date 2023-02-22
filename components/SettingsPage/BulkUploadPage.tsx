@@ -61,7 +61,7 @@ const ProductUpload = () => {
       />
       <Button
         type={"submit"}
-        className="bg-red-500 hover:bg-red-900 transition-all"
+        className="bg-red-500 hover:bg-red-900 transition-all hover:scale-110"
       >
         Upload
       </Button>
@@ -106,7 +106,7 @@ const VendorUpload = () => {
       />
       <Button
         type={"submit"}
-        className="bg-red-500 hover:bg-red-900 transition-all"
+        className="bg-red-500 hover:bg-red-900 transition-all hover:scale-110"
       >
         Upload
       </Button>
@@ -151,7 +151,7 @@ const CategoryUpload = () => {
       />
       <Button
         type={"submit"}
-        className="bg-red-500 hover:bg-red-900 transition-all"
+        className="bg-red-500 hover:bg-red-900 transition-all hover:scale-110"
       >
         Upload
       </Button>
@@ -196,7 +196,7 @@ const ManufacturerUpload = () => {
       />
       <Button
         type={"submit"}
-        className="bg-red-500 hover:bg-red-900 transition-all"
+        className="bg-red-500 hover:bg-red-900 transition-all hover:scale-110"
       >
         Upload
       </Button>
