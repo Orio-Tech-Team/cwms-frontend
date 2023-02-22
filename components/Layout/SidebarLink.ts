@@ -112,6 +112,11 @@ const NavLinkData: any[] = [
     hasChildren: true,
     children: [
       {
+        label: "Bulk Upload",
+        link: "/dashboard/settings/bulk_upload",
+        icon: HiUsers,
+      },
+      {
         label: "Show Users",
         link: "/dashboard/settings/users",
         icon: HiUsers,
