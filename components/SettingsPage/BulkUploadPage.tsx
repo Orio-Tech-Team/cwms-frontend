@@ -41,8 +41,8 @@ const ProductUpload = () => {
     const base64 = await base64Converter(file!);
     //
     const response = await axiosFunction({
-      urlPath: "/bulk_upload",
-      data: { product_csv: base64 },
+      urlPath: "/bulk_upload/product_upload",
+      data: { csv: base64 },
       method: "POST",
     });
   };
@@ -86,8 +86,8 @@ const VendorUpload = () => {
     const base64 = await base64Converter(file!);
     //
     const response = await axiosFunction({
-      urlPath: "/bulk_upload",
-      data: { product_csv: base64 },
+      urlPath: "/bulk_upload/vendor_upload",
+      data: { csv: base64 },
       method: "POST",
     });
   };
@@ -131,8 +131,8 @@ const CategoryUpload = () => {
     const base64 = await base64Converter(file!);
     //
     const response = await axiosFunction({
-      urlPath: "/bulk_upload",
-      data: { product_csv: base64 },
+      urlPath: "/bulk_upload/category_upload",
+      data: { csv: base64 },
       method: "POST",
     });
   };
@@ -176,8 +176,8 @@ const ManufacturerUpload = () => {
     const base64 = await base64Converter(file!);
     //
     const response = await axiosFunction({
-      urlPath: "/bulk_upload",
-      data: { product_csv: base64 },
+      urlPath: "/bulk_upload/manufacturer_upload",
+      data: { csv: base64 },
       method: "POST",
     });
   };
