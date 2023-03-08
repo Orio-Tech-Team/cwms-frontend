@@ -23,7 +23,9 @@ import RichTextComponent from "../Shared/RichTextComponent/RichTextComponent";
 import axiosFunction from "../../SharedFunctions/AxiosFunction";
 import NotificationComponent from "../Shared/NotificationComponent/NotificationComponent";
 import { localStorageClearFunction } from "../../SharedFunctions/LocalStorageClearFunction";
+//
 
+//
 type Props = {};
 
 const ProductAddUpdatePage = (props: Props) => {
@@ -191,6 +193,7 @@ const ProductAddUpdatePage = (props: Props) => {
     }, 3000);
   };
   //
+
   return (
     <>
       <main className="flex flex-col justify-center px-5 pb-7">
@@ -613,8 +616,10 @@ const ProductAddUpdatePage = (props: Props) => {
               data={
                 manufacturerData.length > 0
                   ? manufacturerData.map((each_manufacturer: any) => ({
-                      value: each_manufacturer.id,
-                      label: each_manufacturer.manufacturer_name,
+                      value: each_manufacturer.id ? each_manufacturer.id : "",
+                      label: each_manufacturer.manufacturer_name
+                        ? each_manufacturer.manufacturer_name
+                        : "",
                     }))
                   : []
               }
@@ -623,15 +628,10 @@ const ProductAddUpdatePage = (props: Props) => {
 
             <DualListBoxComponent
               label="Categories"
-              data={categoryData.map((each_category: any) => {
+              data={categoryData.map((each_cat: any) => {
                 return {
-                  label: each_category.category_name,
-                  options: each_category.child.map((each_child: any) => {
-                    return {
-                      value: each_child.id,
-                      label: each_child.category_name,
-                    };
-                  }),
+                  label: each_cat.category_name,
+                  value: each_cat.id,
                 };
               })}
               {...form.getInputProps("category")}
