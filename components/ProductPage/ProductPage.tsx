@@ -13,7 +13,19 @@ type Props = {};
 
 const ProductPage = (props: Props) => {
   const router = useRouter();
-  const [productData, setProductData]: Array<any> = UseProductData();
+  const [productData, setProductData] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const product_data_fetcher = async () => {
+    setLoading(true);
+    const response = await axiosFunction({ urlPath: "/product/find_for_dt" });
+    setProductData(response.data);
+    setLoading(false);
+  };
+  //
+  React.useEffect(() => {
+    product_data_fetcher();
+  }, []);
+  //
   const [columns, setColumns]: Array<any> = React.useState([]);
   const [data, setData]: Array<any> = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -31,9 +43,12 @@ const ProductPage = (props: Props) => {
     var product_conversion_su_3 = "";
     var product_conversion_ic_3 = "1";
     //
-    const [filtered_product] = productData.filter(
-      (each_product: any) => each_product.id == _id
-    );
+    const data = await axiosFunction({
+      urlPath: "/product/find",
+      method: "post",
+      data: { id: _id },
+    });
+    const filtered_product = data.data[0];
 
     if (filtered_product.product_conversions.length > 0) {
       var product_conversion = [...filtered_product.product_conversions];
