@@ -98,47 +98,42 @@ const PurchaseOrderAddPage = (props: Props) => {
       setSelectedProducts(temp_data_variable);
     });
   };
-
-  React.useEffect(() => {
+  const productFinder = async (ids: any[]) => {
     setSelectedProducts([]);
-    if (form.getInputProps("vendor_id").value != "") {
-      const vendor_data_temp = JSON.parse(
-        form.getInputProps("vendor_id").value
-      );
-
-      //
-      var index = 0;
-      const product_data_temp: any[] = [];
-      vendor_data_temp.products.forEach((each_product: any) => {
-        const [filtered_data_temp] = productData.filter(
-          (each_vendor_product: any) => {
-            return (
-              each_product.status && each_product.id == each_vendor_product.id
-            );
-          }
-        );
-
-        product_data_temp.push({
-          id: filtered_data_temp.id,
-          index: index++,
-          product_name: filtered_data_temp.product_name,
-          sales_tax_percentage: filtered_data_temp.sales_tax_percentage,
-          required_quantity: filtered_data_temp.quantity ?? 0,
-          unit_of_measurement:
-            filtered_data_temp.product_conversions[1].selling_unit,
-
-          disabled: true,
-          foc: false,
-          trade_price: 0,
-          trade_discount: 0,
-          product_conversion: filtered_data_temp.product_conversions,
-          manufacturer: filtered_data_temp.manufacturer,
-        });
+    const filtered_product_response = await axiosFunction({
+      urlPath: "/product/find_in_ids",
+      method: "POST",
+      data: { ids: ids },
+    });
+    const filtered_product: any[] = [];
+    var index = 0;
+    filtered_product_response.data.forEach((each_elem: any) => {
+      filtered_product.push({
+        id: each_elem.id,
+        index: index++,
+        product_name: each_elem.product_name,
+        sales_tax_percentage: each_elem.sales_tax_percentage,
+        required_quantity: each_elem.quantity ?? 0,
+        unit_of_measurement: each_elem.product_conversions[1].selling_unit,
+        disabled: true,
+        foc: false,
+        trade_price: 0,
+        trade_discount: 0,
+        product_conversion: each_elem.product_conversions,
+        manufacturer: each_elem.manufacturer,
       });
-      //
-
-      setSelectedProducts(product_data_temp);
-      setSelectedVendor(vendor_data_temp);
+    });
+    setSelectedProducts(filtered_product);
+  };
+  React.useEffect(() => {
+    if (form.getInputProps("vendor_id").value != "") {
+      const product_ids: any[] = [];
+      const selected_vendor = JSON.parse(form.getInputProps("vendor_id").value);
+      selected_vendor.products.forEach((each_product: any) => {
+        product_ids.push(each_product.id);
+      });
+      setSelectedVendor(selected_vendor);
+      productFinder(product_ids);
     }
   }, [form.getInputProps("vendor_id").value]);
 
