@@ -56,13 +56,13 @@ const CategoryAddUpdatePage = (props: Props) => {
           category_image_url: "",
           parent_id: null,
         },
-    validate: (values) => {
-      console.log(values);
+    // validate: (values) => {
+    //   console.log(values);
 
-      return {
-        sorting: formValidator(values.sorting, "sorting", "number"),
-      };
-    },
+    //   return {
+    //     sorting: formValidator(values.sorting, "sorting", "number"),
+    //   };
+    // },
   });
   //
   const submitHandler = async (values: any) => {
