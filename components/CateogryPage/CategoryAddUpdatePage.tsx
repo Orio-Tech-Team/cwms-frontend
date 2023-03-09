@@ -175,14 +175,20 @@ const CategoryAddUpdatePage = (props: Props) => {
               searchable
               nothingFound="No options"
               data={
-                parentCategories.length == 0
+                categoryData.length == 0
                   ? []
-                  : parentCategories.map((each_category: any) => {
-                      return {
-                        value: each_category.id,
-                        label: each_category.category_name,
-                      };
-                    })
+                  : categoryData
+                      .map((each_category: any) => {
+                        if (each_category.category_level == "Sub Level") {
+                          return {
+                            value: each_category.id,
+                            label: each_category.category_name,
+                          };
+                        }
+                      })
+                      .filter(
+                        (each_category: any) => each_category != undefined
+                      )
               }
               {...form.getInputProps("parent_id")}
             />
