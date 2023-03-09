@@ -179,7 +179,7 @@ const CategoryAddUpdatePage = (props: Props) => {
                   ? []
                   : categoryData
                       .map((each_category: any) => {
-                        if (each_category.category_level == "Sub Level") {
+                        if (each_category.category_level == "Parent Level") {
                           return {
                             value: each_category.id,
                             label: each_category.category_name,
